@@ -59,13 +59,55 @@ export const V_SCALE_GRADES = [
 ]
 
 export const COLOR_CIRCUIT = [
-  { name: 'Teal', color: 'bg-teal-500', description: 'Up to 3' },
-  { name: 'Pink', color: 'bg-pink-500', description: '3 to 5a' },
-  { name: 'Green', color: 'bg-green-500', description: '5a to 6a' },
-  { name: 'Blue', color: 'bg-blue-500', description: '6a to 6c' },
-  { name: 'Yellow', color: 'bg-yellow-500', description: '6b+ to 7a+' },
-  { name: 'Red', color: 'bg-red-500', description: '7a to 7c' },
-  { name: 'Black', color: 'bg-neutral-950 border border-neutral-700', description: '7b+ to 8c+' },
+  {
+    name: 'Teal',
+    letter: 'T',
+    color: 'bg-teal-500',
+    textColor: 'text-teal-400',
+    description: 'Up to 3',
+  },
+  {
+    name: 'Pink',
+    letter: 'P',
+    color: 'bg-pink-500',
+    textColor: 'text-pink-400',
+    description: '3 to 5a',
+  },
+  {
+    name: 'Green',
+    letter: 'G',
+    color: 'bg-green-500',
+    textColor: 'text-green-400',
+    description: '5a to 6a',
+  },
+  {
+    name: 'Blue',
+    letter: 'B',
+    color: 'bg-blue-500',
+    textColor: 'text-blue-400',
+    description: '6a to 6c',
+  },
+  {
+    name: 'Yellow',
+    letter: 'Y',
+    color: 'bg-yellow-500',
+    textColor: 'text-yellow-400',
+    description: '6b+ to 7a+',
+  },
+  {
+    name: 'Red',
+    letter: 'R',
+    color: 'bg-red-500',
+    textColor: 'text-red-400',
+    description: '7a to 7c',
+  },
+  {
+    name: 'Black',
+    letter: 'K',
+    color: 'bg-neutral-950 border border-neutral-700',
+    textColor: 'text-neutral-400',
+    description: '7b+ to 8c+',
+  },
 ]
 
 export function getGradesForScale(scale: GradeScale): string[] {

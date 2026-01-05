@@ -111,8 +111,10 @@ export default function App() {
                         return color ? (
                           <div
                             key={color.name}
-                            className={`h-10 w-10 border-2 border-white/10 ${color.color}`}
-                          />
+                            className={`text-3xl font-black tracking-tight ${color.textColor}`}
+                          >
+                            {color.letter}
+                          </div>
                         ) : null
                       })()
                     ) : (
