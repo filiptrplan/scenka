@@ -10,7 +10,8 @@ interface AuthContextType {
   signOut: () => Promise<void>
   signInWithPasskey: () => Promise<void>
   // eslint-disable-next-line no-unused-vars
-  signInWithEmail: (_email: string) => Promise<void>
+  signInWithEmail: (email: string) => Promise<void>
+  isConfigured: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -21,6 +22,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!supabase) {
+      console.error('Supabase is not configured. Please check your .env file.')
+      setLoading(false)
+      return
+    }
+
     void supabase.auth.getSession().then(({ data: { session: sessionData } }) => {
       setSession(sessionData)
       setUser(sessionData?.user ?? null)
@@ -39,6 +46,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signOut = async () => {
+    if (!supabase) {
+      return Promise.reject(new Error('Supabase is not configured'))
+    }
     await supabase.auth.signOut()
   }
 
@@ -48,6 +58,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signInWithEmail = async (email: string) => {
+    if (!supabase) {
+      return Promise.reject(new Error('Supabase is not configured'))
+    }
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
@@ -62,7 +75,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, loading, signOut, signInWithPasskey, signInWithEmail }}
+      value={{
+        user,
+        session,
+        loading,
+        signOut,
+        signInWithPasskey,
+        signInWithEmail,
+        isConfigured: supabase !== null,
+      }}
     >
       {children}
     </AuthContext.Provider>
