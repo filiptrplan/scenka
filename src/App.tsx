@@ -1,7 +1,8 @@
-import { Plus, MapPin, TrendingDown, TrendingUp, Flame, LogOut } from 'lucide-react'
+import { LogOut, Plus, MapPin, TrendingDown, TrendingUp, Flame } from 'lucide-react'
 import { useState } from 'react'
+import { BrowserRouter, NavLink, Outlet, useLocation, Routes, Route } from 'react-router-dom'
 
-import { Logger, ProtectedRoute } from '@/components/features'
+import { ChartsPage, Logger, ProtectedRoute } from '@/components/features'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth'
@@ -71,12 +72,131 @@ const mockClimbs: ClimbSkeleton[] = [
   },
 ]
 
-export default function App() {
+function Dashboard() {
+  return (
+    <div className="flex flex-col gap-4 mb-24">
+      {mockClimbs.map((climb) => (
+        <div
+          key={climb.id}
+          className="group bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200"
+        >
+          <div className="flex items-start justify-between mb-1">
+            <div className="flex items-center gap-3 pt-2">
+              <div className="flex flex-col">
+                <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-1">
+                  {climb.date}
+                </div>
+                <div className="text-xs font-mono text-[#666] uppercase tracking-wider flex items-center gap-1">
+                  <MapPin className="h-3 w-3" />
+                  {climb.location}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-mono text-[#666]">{climb.gradeScale}</span>
+                {climb.gradeScale === 'Color' ? (
+                  (() => {
+                    const color = COLOR_CIRCUIT.find((c) => c.name === climb.grade)
+                    return color ? (
+                      <div
+                        key={color.name}
+                        className={`text-3xl font-black tracking-tight ${color.textColor}`}
+                      >
+                        {color.letter}
+                      </div>
+                    ) : null
+                  })()
+                ) : (
+                  <div className="text-3xl font-black tracking-tight">{climb.grade}</div>
+                )}
+              </div>
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1 border-2 ${
+                  climb.outcome === 'Sent'
+                    ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
+                    : 'bg-red-500/10 border-red-500/50 text-red-400'
+                }`}
+              >
+                {climb.outcome === 'Sent' ? (
+                  <TrendingUp className="h-4 w-4" />
+                ) : (
+                  <TrendingDown className="h-4 w-4" />
+                )}
+                <span className="text-xs font-black uppercase tracking-wider">{climb.outcome}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 mb-4 text-xs font-mono text-[#666] uppercase tracking-wider">
+            <div className="flex items-center gap-2">
+              <Flame className="h-4 w-4" />
+              <span>Awkwardness: {climb.awkwardness}/5</span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {climb.styles.length > 0 && (
+              <div>
+                <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
+                  Style
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {climb.styles.map((style) => (
+                    <Badge
+                      key={style}
+                      variant="outline"
+                      className="text-xs font-mono uppercase border-white/20 text-[#ccc] px-2 py-1"
+                    >
+                      {style}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {climb.failureReasons.length > 0 && (
+              <div>
+                <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
+                  {climb.outcome === 'Fail' ? 'Failure Reasons' : 'Imperfect Aspects'}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {climb.failureReasons.map((reason) => (
+                    <Badge
+                      key={reason}
+                      variant="outline"
+                      className="text-xs font-mono uppercase border-white/20 text-[#ccc] px-2 py-1"
+                    >
+                      {reason}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {climb.notes !== undefined && climb.notes.trim().length > 0 ? (
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
+                  Notes
+                </div>
+                <p className="text-sm text-[#bbb] leading-relaxed">{climb.notes}</p>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function Layout() {
+  const location = useLocation()
   const [loggerOpen, setLoggerOpen] = useState(false)
-  const { user, signOut } = useAuth()
+  const { signOut } = useAuth()
 
   return (
-    <ProtectedRoute>
+    <>
       <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4">
         <div className="mx-auto max-w-2xl">
           <div className="mb-8 border-b-2 border-white/20 pb-6 flex items-start justify-between gap-4">
@@ -86,12 +206,6 @@ export default function App() {
                 <p className="text-sm font-mono text-[#888] uppercase tracking-widest">
                   Track your climbing failures
                 </p>
-                {/* eslint-disable-next-line @typescript-eslint/strict-boolean-expressions, react/jsx-no-leaked-render */}
-                {user?.email && (
-                  <span className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                    {user.email}
-                  </span>
-                )}
               </div>
             </div>
             <Button
@@ -106,136 +220,66 @@ export default function App() {
             </Button>
           </div>
 
-          <div className="flex flex-col gap-4 mb-24">
-            {mockClimbs.map((climb) => (
-              <div
-                key={climb.id}
-                className="group bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200"
-              >
-                <div className="flex items-start justify-between mb-1">
-                  <div className="flex items-center gap-3 pt-2">
-                    <div className="flex flex-col">
-                      <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-1">
-                        {climb.date}
-                      </div>
-                      <div className="text-xs font-mono text-[#666] uppercase tracking-wider flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {climb.location}
-                      </div>
-                    </div>
-                  </div>
+          <nav className="flex gap-2 mb-8">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `flex-1 text-center px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all ${
+                  isActive
+                    ? 'bg-white/10 border-white/30 text-white'
+                    : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
+                }`
+              }
+            >
+              Climbs
+            </NavLink>
+            <NavLink
+              to="/analytics"
+              className={({ isActive }) =>
+                `flex-1 text-center px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all ${
+                  isActive
+                    ? 'bg-white/10 border-white/30 text-white'
+                    : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
+                }`
+              }
+            >
+              Analytics
+            </NavLink>
+          </nav>
 
-                  <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-mono text-[#666]">{climb.gradeScale}</span>
-                      {climb.gradeScale === 'Color' ? (
-                        (() => {
-                          const color = COLOR_CIRCUIT.find((c) => c.name === climb.grade)
-                          return color ? (
-                            <div
-                              key={color.name}
-                              className={`text-3xl font-black tracking-tight ${color.textColor}`}
-                            >
-                              {color.letter}
-                            </div>
-                          ) : null
-                        })()
-                      ) : (
-                        <div className="text-3xl font-black tracking-tight">{climb.grade}</div>
-                      )}
-                    </div>
-                    <div
-                      className={`flex items-center gap-1.5 px-3 py-1 border-2 ${
-                        climb.outcome === 'Sent'
-                          ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-                          : 'bg-red-500/10 border-red-500/50 text-red-400'
-                      }`}
-                    >
-                      {climb.outcome === 'Sent' ? (
-                        <TrendingUp className="h-4 w-4" />
-                      ) : (
-                        <TrendingDown className="h-4 w-4" />
-                      )}
-                      <span className="text-xs font-black uppercase tracking-wider">
-                        {climb.outcome}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+          <Outlet />
 
-                <div className="flex items-center gap-4 mb-4 text-xs font-mono text-[#666] uppercase tracking-wider">
-                  <div className="flex items-center gap-2">
-                    <Flame className="h-4 w-4" />
-                    <span>Awkwardness: {climb.awkwardness}/5</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  {climb.styles.length > 0 && (
-                    <div>
-                      <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
-                        Style
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {climb.styles.map((style) => (
-                          <Badge
-                            key={style}
-                            variant="outline"
-                            className="text-xs font-mono uppercase border-white/20 text-[#ccc] px-2 py-1"
-                          >
-                            {style}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {climb.failureReasons.length > 0 && (
-                    <div>
-                      <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
-                        {climb.outcome === 'Fail' ? 'Failure Reasons' : 'Imperfect Aspects'}
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {climb.failureReasons.map((reason) => (
-                          <Badge
-                            key={reason}
-                            variant="outline"
-                            className="text-xs font-mono uppercase border-white/20 text-[#ccc] px-2 py-1"
-                          >
-                            {reason}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {climb.notes !== undefined && climb.notes.trim().length > 0 ? (
-                    <div className="mt-4 pt-4 border-t border-white/10">
-                      <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
-                        Notes
-                      </div>
-                      <p className="text-sm text-[#bbb] leading-relaxed">{climb.notes}</p>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="fixed bottom-6 right-6">
-            <Logger open={loggerOpen} onOpenChange={setLoggerOpen} />
-            {!loggerOpen && (
-              <Button
-                size="lg"
-                className="rounded-none h-16 w-16 bg-white text-black hover:bg-white/90 font-black"
-                onClick={() => setLoggerOpen(true)}
-              >
-                <Plus className="h-8 w-8" />
-              </Button>
-            )}
-          </div>
+          {location.pathname === '/' && (
+            <div className="fixed bottom-6 right-6">
+              <Logger open={loggerOpen} onOpenChange={setLoggerOpen} />
+              {!loggerOpen && (
+                <Button
+                  size="lg"
+                  className="rounded-none h-16 w-16 bg-white text-black hover:bg-white/90 font-black"
+                  onClick={() => setLoggerOpen(true)}
+                >
+                  <Plus className="h-8 w-8" />
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
-    </ProtectedRoute>
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ProtectedRoute>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="analytics" element={<ChartsPage />} />
+          </Route>
+        </Routes>
+      </ProtectedRoute>
+    </BrowserRouter>
   )
 }
