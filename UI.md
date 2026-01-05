@@ -46,8 +46,9 @@ Scenka uses a dark, brutalist design language that prioritizes clarity, boldness
 
 #### Headings
 
-- **Page Title:** `text-4xl font-black tracking-tighter uppercase`
+- **Page Title:** `text-5xl md:text-6xl font-black tracking-tighter uppercase`
 - **Section Title:** `text-3xl font-black tracking-tighter uppercase`
+- **Subsection Title:** `text-2xl font-black tracking-tight uppercase`
 
 #### Labels
 
@@ -64,6 +65,26 @@ Scenka uses a dark, brutalist design language that prioritizes clarity, boldness
 
 - **Style Tags:** `text-xs font-mono uppercase`
 - **Outcome Tags:** `text-xs font-black uppercase tracking-wider`
+
+#### Buttons
+
+- **Primary Button:** `text-lg font-black tracking-wider`
+- **Secondary Button:** `text-sm font-black uppercase tracking-wider`
+
+#### Status Messages
+
+- **Success/Error Message:** `text-sm font-mono uppercase tracking-wide`
+- **Success Color:** `text-emerald-300` on `bg-emerald-950/30` with `border-emerald-500/20`
+- **Error Color:** `text-red-300` on `bg-red-950/30` with `border-red-500/20`
+
+### Typography Rules
+
+1. **Always uppercase** for headings, labels, and tags
+2. **Monospace + Uppercase + Tracking** for all technical/label text
+3. **Font-black + Uppercase + Tracking** for all headings and emphasized text
+4. **Consistent letter spacing:** `tracking-wider` for labels, `tracking-wide` for status messages
+5. **High contrast:** Use `text-[#666]` for muted labels, `text-[#888]` for secondary text, `text-[#f5f5f5]` for primary text
+6. **Status messages** always use monospace + uppercase + tracking for consistency
 
 ## Components
 
@@ -142,6 +163,43 @@ Uses `bg-white/10 border-white/30 text-white`
   Content
 </Badge>
 ```
+
+### Status/Alert Messages
+
+#### Success Message
+
+```tsx
+<div className="relative overflow-hidden bg-emerald-950/30 border-2 border-emerald-500/20 p-4">
+  <div className="flex items-center gap-3">
+    <CheckCircle className="h-6 w-6 text-emerald-400 flex-shrink-0" />
+    <p className="text-sm font-mono uppercase tracking-wide text-emerald-300">
+      Success message here
+    </p>
+  </div>
+</div>
+```
+
+#### Error Message
+
+```tsx
+<div className="relative overflow-hidden bg-red-950/30 border-2 border-red-500/20 p-4">
+  <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent pointer-events-none" />
+  <div className="flex items-center gap-3">
+    <XCircle className="h-6 w-6 text-red-400 flex-shrink-0" />
+    <p className="text-sm font-mono uppercase tracking-wide text-red-300">Error message here</p>
+  </div>
+</div>
+```
+
+**Status Message Rules:**
+
+- Always use `relative overflow-hidden` for gradient overlay capability
+- Use `bg-{color}-950/30` for dark semi-transparent background
+- Use `border-{color}-500/20` for subtle border
+- Use `text-{color}-300` for text color (one shade lighter than standard)
+- Always monospace + uppercase + tracking-wide for text
+- Error state includes gradient overlay for visual emphasis
+- Icons: `h-6 w-6` with appropriate color (`text-emerald-400` or `text-red-400`)
 
 ### Input Fields
 
