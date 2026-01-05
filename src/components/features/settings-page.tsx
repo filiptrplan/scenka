@@ -20,8 +20,12 @@ export function SettingsPage() {
   const { data: profile, isLoading } = useProfile()
   const updateProfile = useUpdateProfile()
 
-  const { handleSubmit, setValue, watch } = useForm<UpdateProfileInput>({
+  const { handleSubmit, setValue, watch, reset } = useForm<UpdateProfileInput>({
     resolver: zodResolver(profileSchema),
+    defaultValues: {
+      preferred_grade_scale: profile?.preferred_grade_scale || 'font',
+      preferred_discipline: profile?.preferred_discipline || 'boulder',
+    },
   })
 
   const gradeScale = watch('preferred_grade_scale')
@@ -29,10 +33,12 @@ export function SettingsPage() {
 
   useEffect(() => {
     if (profile) {
-      setValue('preferred_grade_scale', profile.preferred_grade_scale)
-      setValue('preferred_discipline', profile.preferred_discipline)
+      reset({
+        preferred_grade_scale: profile.preferred_grade_scale,
+        preferred_discipline: profile.preferred_discipline,
+      })
     }
-  }, [profile, setValue])
+  }, [profile, reset])
 
   const handleFormSubmit = (data: UpdateProfileInput) => {
     updateProfile.mutate(data, {

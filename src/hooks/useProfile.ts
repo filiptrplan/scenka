@@ -6,7 +6,6 @@ export function useProfile() {
   return useQuery({
     queryKey: profileKeys.current,
     queryFn: getProfile,
-    staleTime: 10 * 60 * 1000,
   })
 }
 
