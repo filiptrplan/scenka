@@ -165,6 +165,10 @@ Failure Reasons: Physical (Pumped, Finger Strength, Core, Power), Technical (Bad
 
 Mobile-first, standalone display, dark theme, 44px+ targets, offline support, <2s load
 
+## Screenshot Workflow
+
+Screenshots are located in `~/Pictures/Screenshots`. When asked to read an image of the UI or take a look at a problem, access the latest screenshot in that folder.
+
 ## Before Submitting Code
 
 1. `npm run lint` - fix all issues

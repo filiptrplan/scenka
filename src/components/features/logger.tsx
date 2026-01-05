@@ -304,10 +304,8 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                       key={style}
                       variant={selectedStyles.includes(style) ? 'default' : 'outline'}
                       className={cn(
-                        'cursor-pointer text-xs font-mono uppercase px-2 py-1',
-                        selectedStyles.includes(style)
-                          ? 'bg-white/10 border-white/30 text-white'
-                          : 'border-white/20 text-[#ccc]'
+                        'cursor-pointer text-xs font-mono uppercase',
+                        selectedStyles.includes(style) ? '' : 'border-white/20 text-[#ccc]'
                       )}
                       onClick={() => toggleStyle(style)}
                     >
@@ -328,10 +326,8 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                       key={reason}
                       variant={selectedReasons.includes(reason) ? 'default' : 'outline'}
                       className={cn(
-                        'cursor-pointer text-xs font-mono uppercase px-2 py-1',
-                        selectedReasons.includes(reason)
-                          ? 'bg-white/10 border-white/30 text-white'
-                          : 'border-white/20 text-[#ccc]'
+                        'cursor-pointer text-xs font-mono uppercase',
+                        selectedReasons.includes(reason) ? '' : 'border-white/20 text-[#ccc]'
                       )}
                       onClick={() => toggleReason(reason)}
                     >

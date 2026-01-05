@@ -100,7 +100,7 @@ BetaBreak uses a dark, brutalist design language that prioritizes clarity, boldn
     'flex-1 px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all',
     isActive
       ? 'bg-white/10 border-white/30 text-white'
-      : 'border-white/10 hover:border-white/30 bg-white/[0.02] text-[#888]'
+      : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
   )}
 >
   Label
@@ -115,7 +115,7 @@ BetaBreak uses a dark, brutalist design language that prioritizes clarity, boldn
     'flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 transition-all',
     outcome === 'Sent'
       ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-      : 'border-white/10 hover:border-white/30 bg-white/[0.02]'
+      : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
   )}
 >
   <TrendingUp className="h-4 w-4" />
@@ -125,16 +125,22 @@ BetaBreak uses a dark, brutalist design language that prioritizes clarity, boldn
 
 ### Badges
 
-#### Default Badge
+#### Default Badge (Selected)
 
 ```tsx
-<Badge className="text-xs font-mono uppercase border-white/20 text-[#ccc] px-2 py-1">Content</Badge>
+<Badge variant="default" className="text-xs font-mono uppercase">
+  Content
+</Badge>
 ```
 
-#### Active Badge
+Uses `bg-white/10 border-white/30 text-white`
+
+#### Outline Badge (Unselected)
 
 ```tsx
-<Badge className="cursor-pointer text-xs font-mono uppercase">Content</Badge>
+<Badge variant="outline" className="text-xs font-mono uppercase border-white/20 text-[#ccc]">
+  Content
+</Badge>
 ```
 
 ### Input Fields
@@ -153,8 +159,13 @@ BetaBreak uses a dark, brutalist design language that prioritizes clarity, boldn
   <SelectTrigger className="border-white/10 bg-white/[0.02] text-white hover:border-white/30">
     <SelectValue />
   </SelectTrigger>
+  <SelectContent className="bg-[#1a1a1a] text-white border-white/10">
+    <SelectItem className="focus:bg-white/10 focus:text-white">Option</SelectItem>
+  </SelectContent>
 </Select>
 ```
+
+**Note:** SelectContent uses `bg-[#1a1a1a]` for dark background, SelectItem hover state is `bg-white/10`
 
 ### Textarea
 
@@ -177,6 +188,12 @@ BetaBreak uses a dark, brutalist design language that prioritizes clarity, boldn
   className="py-4"
 />
 ```
+
+**Slider Styling:**
+
+- Track: `bg-white/10`
+- Range/Fill: `bg-white`
+- Thumb: `h-5 w-5 rounded-full border-2 border-white/30 bg-white` with shadow-lg
 
 ## Layout Patterns
 
