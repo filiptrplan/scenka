@@ -157,18 +157,24 @@ export function ChartsPage() {
   const sendsByGradeData = useMemo(() => {
     const gradeBuckets: Record<string, { sent: number; fail: number }> = {
       'Easy (T-P-G)': { sent: 0, fail: 0 },
-      'Mid (B-Y)': { sent: 0, fail: 0 },
-      'Hard (R-K)': { sent: 0, fail: 0 },
+      Blue: { sent: 0, fail: 0 },
+      Yellow: { sent: 0, fail: 0 },
+      Red: { sent: 0, fail: 0 },
+      Black: { sent: 0, fail: 0 },
     }
 
     mockClimbs.forEach((climb) => {
       let bucket: string | undefined
       if (['Teal', 'Pink', 'Green'].includes(climb.grade_value)) {
         bucket = 'Easy (T-P-G)'
-      } else if (['Blue', 'Yellow'].includes(climb.grade_value)) {
-        bucket = 'Mid (B-Y)'
-      } else if (['Red', 'Black'].includes(climb.grade_value)) {
-        bucket = 'Hard (R-K)'
+      } else if (climb.grade_value === 'Blue') {
+        bucket = 'Blue'
+      } else if (climb.grade_value === 'Yellow') {
+        bucket = 'Yellow'
+      } else if (climb.grade_value === 'Red') {
+        bucket = 'Red'
+      } else if (climb.grade_value === 'Black') {
+        bucket = 'Black'
       }
 
       if (bucket !== undefined && bucket !== '') {
@@ -236,8 +242,14 @@ export function ChartsPage() {
                     }}
                     itemStyle={{ color: '#f5f5f5' }}
                     labelStyle={{ color: '#888', textTransform: 'uppercase' }}
+                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                   />
-                  <Bar dataKey="value" fill="rgba(244, 63, 94, 0.8)" radius={[0, 0, 0, 0]} />
+                  <Bar
+                    dataKey="value"
+                    fill="rgba(244, 63, 94, 0.8)"
+                    activeBar={{ fill: 'rgba(244, 63, 94, 0.5)' }}
+                    radius={[0, 0, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -273,6 +285,8 @@ export function ChartsPage() {
                     name="Failures"
                     dataKey="value"
                     fill="rgba(245, 158, 11, 0.5)"
+                    fillOpacity={0.5}
+                    activeDot={{ fill: 'rgb(245, 158, 11)', stroke: 'none', r: 6 }}
                     stroke="rgb(245, 158, 11)"
                     strokeWidth={2}
                   />
@@ -320,16 +334,19 @@ export function ChartsPage() {
                     }}
                     itemStyle={{ color: '#f5f5f5' }}
                     labelStyle={{ color: '#888', textTransform: 'uppercase' }}
+                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                   />
                   <Bar
                     dataKey="sent"
                     fill="rgba(16, 185, 129, 0.8)"
+                    activeBar={{ fill: 'rgba(16, 185, 129, 0.5)' }}
                     radius={[0, 0, 0, 0]}
                     name="Sent"
                   />
                   <Bar
                     dataKey="fail"
                     fill="rgba(244, 63, 94, 0.8)"
+                    activeBar={{ fill: 'rgba(244, 63, 94, 0.5)' }}
                     radius={[0, 0, 0, 0]}
                     name="Fail"
                   />

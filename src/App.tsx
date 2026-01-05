@@ -196,76 +196,74 @@ function Layout() {
   const { signOut } = useAuth()
 
   return (
-    <>
-      <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4">
-        <div className="mx-auto max-w-2xl">
-          <div className="mb-8 border-b-2 border-white/20 pb-6 flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <h1 className="text-4xl font-black tracking-tighter uppercase mb-2">Scenka</h1>
-              <div className="flex items-center gap-3">
-                <p className="text-sm font-mono text-[#888] uppercase tracking-widest">
-                  Track your climbing failures
-                </p>
-              </div>
+    <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4">
+      <div className="mx-auto max-w-2xl">
+        <div className="mb-8 border-b-2 border-white/20 pb-6 flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-4xl font-black tracking-tighter uppercase mb-2">Scenka</h1>
+            <div className="flex items-center gap-3">
+              <p className="text-sm font-mono text-[#888] uppercase tracking-widest">
+                Track your climbing failures
+              </p>
             </div>
-            <Button
-              type="button"
-              onClick={() => {
-                void signOut()
-              }}
-              variant="outline"
-              className="border-white/20 hover:border-white/40 bg-white/[0.02] text-[#888] hover:text-black"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
           </div>
-
-          <nav className="flex gap-2 mb-8">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `flex-1 text-center px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all ${
-                  isActive
-                    ? 'bg-white/10 border-white/30 text-white'
-                    : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
-                }`
-              }
-            >
-              Climbs
-            </NavLink>
-            <NavLink
-              to="/analytics"
-              className={({ isActive }) =>
-                `flex-1 text-center px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all ${
-                  isActive
-                    ? 'bg-white/10 border-white/30 text-white'
-                    : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
-                }`
-              }
-            >
-              Analytics
-            </NavLink>
-          </nav>
-
-          <Outlet />
-
-          {location.pathname === '/' && (
-            <div className="fixed bottom-6 right-6">
-              <Logger open={loggerOpen} onOpenChange={setLoggerOpen} />
-              {!loggerOpen && (
-                <Button
-                  size="lg"
-                  className="rounded-none h-16 w-16 bg-white text-black hover:bg-white/90 font-black"
-                  onClick={() => setLoggerOpen(true)}
-                >
-                  <Plus className="h-8 w-8" />
-                </Button>
-              )}
-            </div>
-          )}
+          <Button
+            type="button"
+            onClick={() => {
+              void signOut()
+            }}
+            variant="outline"
+            className="border-white/20 hover:border-white/40 bg-white/[0.02] text-[#888] hover:text-black"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
+
+        <nav className="flex gap-2 mb-8">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `flex-1 text-center px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all ${
+                isActive
+                  ? 'bg-white/10 border-white/30 text-white'
+                  : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
+              }`
+            }
+          >
+            Climbs
+          </NavLink>
+          <NavLink
+            to="/analytics"
+            className={({ isActive }) =>
+              `flex-1 text-center px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all ${
+                isActive
+                  ? 'bg-white/10 border-white/30 text-white'
+                  : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
+              }`
+            }
+          >
+            Analytics
+          </NavLink>
+        </nav>
+
+        <Outlet />
+
+        {location.pathname === '/' && (
+          <div className="fixed bottom-6 right-6">
+            <Logger open={loggerOpen} onOpenChange={setLoggerOpen} />
+            {!loggerOpen && (
+              <Button
+                size="lg"
+                className="rounded-none h-16 w-16 bg-white text-black hover:bg-white/90 font-black"
+                onClick={() => setLoggerOpen(true)}
+              >
+                <Plus className="h-8 w-8" />
+              </Button>
+            )}
+          </div>
+        )}
       </div>
-    </>
+    </div>
   )
 }
 
