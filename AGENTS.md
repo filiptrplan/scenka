@@ -117,6 +117,7 @@ export function GradePicker({ scale, value, onChange }: GradePickerProps) {}
 
 ### Supabase Integration
 
+- Use `npx supabase` commands for CLI operations (migrations, types, DB changes)
 - All operations through Supabase client
 - RLS enabled (auth.uid() = user_id)
 - Type-safe queries with generated types
