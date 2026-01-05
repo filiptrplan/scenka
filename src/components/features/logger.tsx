@@ -43,10 +43,8 @@ type ClimbForm = z.infer<typeof climbSchema>
 
 interface LoggerProps {
   open?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onOpenChange?: (_open: boolean) => void
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onSubmit?: (_data: ClimbForm) => void
+  onOpenChange?: (open: boolean) => void // eslint-disable-line no-unused-vars
+  onSubmit?: (data: ClimbForm) => void // eslint-disable-line no-unused-vars
 }
 
 export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
@@ -154,7 +152,10 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
 
           <form
             id="climb-form"
-            onSubmit={handleSubmit(handleFormSubmit)}
+            onSubmit={(event) => {
+              event.preventDefault()
+              void handleSubmit(handleFormSubmit)(event)
+            }}
             className="flex-1 overflow-y-auto space-y-6 py-4 pb-24"
           >
             {/* Step 1: The Basics */}

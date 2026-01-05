@@ -184,7 +184,7 @@ export default function App() {
                   </div>
                 )}
 
-                {climb.notes && climb.notes.trim().length > 0 ? (
+                {climb.notes !== undefined && climb.notes.trim().length > 0 ? (
                   <div className="mt-4 pt-4 border-t border-white/10">
                     <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
                       Notes
