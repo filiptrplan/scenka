@@ -96,7 +96,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
   const renderGradePicker = () => {
     if (gradeScale === 'color_circuit') {
       return (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {COLOR_CIRCUIT.map((color) => (
             <button
               key={color.name}
