@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TrendingUp, TrendingDown } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Badge } from '@/components/ui/badge'
@@ -16,12 +16,8 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
-import {
-  STYLE_OPTIONS,
-  getFailureReasons,
-  getAwkwardnessLabel,
-  DEFAULT_LOCATION,
-} from '@/lib/constants'
+import { useProfile } from '@/hooks/useProfile'
+import { STYLE_OPTIONS, getFailureReasons, getAwkwardnessLabel } from '@/lib/constants'
 import { getGradesForScale, COLOR_CIRCUIT } from '@/lib/grades'
 import { cn } from '@/lib/utils'
 import { climbSchema, type CreateClimbInput } from '@/lib/validation'
@@ -37,6 +33,7 @@ interface LoggerProps {
 }
 
 export function Logger({ open, onOpenChange, onSubmit, isSaving }: LoggerProps) {
+  const { data: profile } = useProfile()
   const [gradeScale, setGradeScale] = useState<GradeScale>('color_circuit')
   const [discipline, setDiscipline] = useState<Discipline>('boulder')
   const [outcome, setOutcome] = useState<Outcome>('Fail')
@@ -59,9 +56,16 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving }: LoggerProps) 
       awkwardness: 3,
       style: [],
       failure_reasons: [],
-      location: DEFAULT_LOCATION,
+      location: profile?.home_gym ?? 'My Gym',
     },
   })
+
+  useEffect(() => {
+    const gym = profile?.home_gym
+    if (gym !== undefined && gym !== null && gym !== '') {
+      setValue('location', gym)
+    }
+  }, [profile, setValue])
 
   const selectedGrade = watch('grade_value')
 

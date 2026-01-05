@@ -67,6 +67,7 @@ export async function createProfile(userId: string): Promise<Profile> {
       id: userId,
       preferred_grade_scale: 'font',
       preferred_discipline: 'boulder',
+      home_gym: 'My Gym',
     } as TablesInsert<'profiles'>)
     .select()
     .single()

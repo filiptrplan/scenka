@@ -52,18 +52,21 @@ export interface Database {
           id: string
           preferred_discipline: string
           preferred_grade_scale: string
+          home_gym: string | null
           updated_at: string
         }
         Insert: {
           id: string
           preferred_discipline?: string
           preferred_grade_scale?: string
+          home_gym?: string | null
           updated_at?: string
         }
         Update: {
           id?: string
           preferred_discipline?: string
           preferred_grade_scale?: string
+          home_gym?: string | null
           updated_at?: string
         }
       }
@@ -101,5 +104,6 @@ export interface Profile {
   id: string
   preferred_grade_scale: GradeScale
   preferred_discipline: Discipline
+  home_gym: string | null
   updated_at: string
 }

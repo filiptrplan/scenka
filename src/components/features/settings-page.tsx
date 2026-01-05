@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -20,11 +21,12 @@ export function SettingsPage() {
   const { data: profile, isLoading } = useProfile()
   const updateProfile = useUpdateProfile()
 
-  const { handleSubmit, setValue, watch, reset } = useForm<UpdateProfileInput>({
+  const { handleSubmit, register, setValue, watch, reset } = useForm<UpdateProfileInput>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      preferred_grade_scale: profile?.preferred_grade_scale || 'font',
-      preferred_discipline: profile?.preferred_discipline || 'boulder',
+      preferred_grade_scale: profile?.preferred_grade_scale ?? 'font',
+      preferred_discipline: profile?.preferred_discipline ?? 'boulder',
+      home_gym: profile?.home_gym ?? '',
     },
   })
 
@@ -36,6 +38,7 @@ export function SettingsPage() {
       reset({
         preferred_grade_scale: profile.preferred_grade_scale,
         preferred_discipline: profile.preferred_discipline,
+        home_gym: profile.home_gym ?? '',
       })
     }
   }, [profile, reset])
@@ -69,6 +72,17 @@ export function SettingsPage() {
 
       <form onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)} className="space-y-6">
         <div className="bg-white/[0.02] border-2 border-white/10 p-6 space-y-6">
+          <div className="space-y-3">
+            <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
+              Home Gym
+            </label>
+            <Input
+              {...register('home_gym')}
+              placeholder="Enter your home gym name"
+              className="h-12 bg-[#1a1a1a] border-white/10 text-white placeholder:text-white/30 hover:border-white/30 focus:border-white/50 transition-colors"
+            />
+          </div>
+
           <div className="space-y-3">
             <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
               Default Grading System

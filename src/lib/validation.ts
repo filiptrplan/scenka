@@ -40,6 +40,7 @@ export type CreateClimbInput = z.infer<typeof climbSchema>
 export const profileSchema = z.object({
   preferred_grade_scale: z.enum(['font', 'v_scale', 'color_circuit']),
   preferred_discipline: z.enum(['boulder', 'sport']),
+  home_gym: z.string().optional(),
 })
 
 export type UpdateProfileInput = z.infer<typeof profileSchema>
