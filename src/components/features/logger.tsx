@@ -1,13 +1,12 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { TrendingUp, TrendingDown } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Slider } from '@/components/ui/slider'
-import { Badge } from '@/components/ui/badge'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import {
   Select,
   SelectContent,
@@ -15,17 +14,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
-import { cn } from '@/lib/utils'
-import { getGradesForScale, COLOR_CIRCUIT } from '@/lib/grades'
 import {
   STYLE_OPTIONS,
   getFailureReasons,
   getAwkwardnessLabel,
   DEFAULT_LOCATION,
 } from '@/lib/constants'
+import { getGradesForScale, COLOR_CIRCUIT } from '@/lib/grades'
+import { cn } from '@/lib/utils'
 import type { GradeScale, Discipline, Outcome, Style, FailureReason } from '@/types'
-import { TrendingUp, TrendingDown } from 'lucide-react'
 
 const climbSchema = z.object({
   discipline: z.enum(['boulder', 'sport']),
@@ -173,7 +173,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                       'flex-1 px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all',
                       discipline === 'boulder'
                         ? 'bg-white/10 border-white/30 text-white'
-                        : 'border-white/10 hover:border-white/30 bg-white/[0.02] text-[#888]'
+                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
                     )}
                   >
                     Boulder
@@ -188,7 +188,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                       'flex-1 px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all',
                       discipline === 'sport'
                         ? 'bg-white/10 border-white/30 text-white'
-                        : 'border-white/10 hover:border-white/30 bg-white/[0.02] text-[#888]'
+                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
                     )}
                   >
                     Sport
@@ -246,7 +246,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                       'flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 transition-all',
                       outcome === 'Sent'
                         ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-                        : 'border-white/10 hover:border-white/30 bg-white/[0.02]'
+                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
                     )}
                   >
                     <TrendingUp className="h-4 w-4" />
@@ -264,7 +264,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                       'flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 transition-all',
                       outcome === 'Fail'
                         ? 'bg-red-500/10 border-red-500/50 text-red-400'
-                        : 'border-white/10 hover:border-white/30 bg-white/[0.02]'
+                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
                     )}
                   >
                     <TrendingDown className="h-4 w-4" />
@@ -304,8 +304,10 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                       key={style}
                       variant={selectedStyles.includes(style) ? 'default' : 'outline'}
                       className={cn(
-                        'cursor-pointer text-xs font-mono uppercase',
-                        selectedStyles.includes(style) ? '' : 'border-white/20 text-[#ccc]'
+                        'cursor-pointer text-xs font-mono uppercase px-2 py-1',
+                        selectedStyles.includes(style)
+                          ? 'bg-white/10 border-white/30 text-white'
+                          : 'border-white/20 text-[#ccc]'
                       )}
                       onClick={() => toggleStyle(style)}
                     >
@@ -326,8 +328,10 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                       key={reason}
                       variant={selectedReasons.includes(reason) ? 'default' : 'outline'}
                       className={cn(
-                        'cursor-pointer text-xs font-mono uppercase',
-                        selectedReasons.includes(reason) ? '' : 'border-white/20 text-[#ccc]'
+                        'cursor-pointer text-xs font-mono uppercase px-2 py-1',
+                        selectedReasons.includes(reason)
+                          ? 'bg-white/10 border-white/30 text-white'
+                          : 'border-white/20 text-[#ccc]'
                       )}
                       onClick={() => toggleReason(reason)}
                     >
