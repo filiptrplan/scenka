@@ -4,7 +4,12 @@ export const climbSchema = z.object({
   location: z.string().min(1, 'Location is required'),
   climb_type: z.enum(['boulder', 'sport']),
   grade_scale: z.enum(['font', 'v_scale', 'color_circuit']),
-  grade_value: z.string().min(1, 'Grade is required'),
+  grade_value: z
+    .any()
+    .refine((val) => val !== undefined && val !== '', {
+      message: 'You must select a grade',
+    })
+    .pipe(z.string()),
   style: z
     .array(z.enum(['Slab', 'Vert', 'Overhang', 'Roof', 'Dyno', 'Crimp', 'Sloper', 'Pinch']))
     .min(0),

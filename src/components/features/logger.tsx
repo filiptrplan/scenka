@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -25,21 +24,10 @@ import {
 } from '@/lib/constants'
 import { getGradesForScale, COLOR_CIRCUIT } from '@/lib/grades'
 import { cn } from '@/lib/utils'
+import { climbSchema, type CreateClimbInput } from '@/lib/validation'
 import type { GradeScale, Discipline, Outcome, Style, FailureReason } from '@/types'
 
-const climbSchema = z.object({
-  discipline: z.enum(['boulder', 'sport']),
-  gradeScale: z.enum(['font', 'v_scale', 'color_circuit']),
-  grade: z.string().min(1),
-  location: z.string().min(1),
-  outcome: z.enum(['Sent', 'Fail']),
-  awkwardness: z.number().int().min(1).max(5),
-  style: z.array(z.string()).min(0),
-  failureReasons: z.array(z.string()).min(0),
-  notes: z.string().optional(),
-})
-
-type ClimbForm = z.infer<typeof climbSchema>
+type ClimbForm = CreateClimbInput
 
 interface LoggerProps {
   open?: boolean
@@ -55,20 +43,26 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
   const [selectedStyles, setSelectedStyles] = useState<Style[]>([])
   const [selectedReasons, setSelectedReasons] = useState<FailureReason[]>([])
 
-  const { register, handleSubmit, setValue, watch } = useForm<ClimbForm>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<ClimbForm>({
     resolver: zodResolver(climbSchema),
     defaultValues: {
-      discipline: 'boulder',
-      gradeScale: 'color_circuit',
+      climb_type: 'boulder',
+      grade_scale: 'color_circuit',
       outcome: 'Fail',
       awkwardness: 3,
       style: [],
-      failureReasons: [],
+      failure_reasons: [],
       location: DEFAULT_LOCATION,
     },
   })
 
-  const selectedGrade = watch('grade')
+  const selectedGrade = watch('grade_value')
 
   const toggleStyle = (style: Style) => {
     setSelectedStyles((prev) => {
@@ -83,13 +77,13 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
       const newReasons = prev.includes(reason)
         ? prev.filter((r) => r !== reason)
         : [...prev, reason]
-      setValue('failureReasons', newReasons)
+      setValue('failure_reasons', newReasons)
       return newReasons
     })
   }
 
-  const handleFormSubmit = (_data: ClimbForm): void => {
-    onSubmit?.(_data)
+  const handleFormSubmit = (data: ClimbForm): void => {
+    onSubmit?.(data)
   }
 
   const renderGradePicker = () => {
@@ -101,7 +95,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
               key={color.name}
               type="button"
               onClick={() => {
-                setValue('grade', color.name)
+                setValue('grade_value', color.name, { shouldValidate: true })
               }}
               className={cn(
                 'h-14 w-14 rounded-full flex items-center justify-center text-xs font-black uppercase tracking-wider transition-all',
@@ -125,7 +119,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
           <button
             key={grade}
             type="button"
-            onClick={() => setValue('grade', grade)}
+            onClick={() => setValue('grade_value', grade, { shouldValidate: true })}
             className={cn(
               'px-3 py-2 text-xs font-black uppercase tracking-wider rounded-md border-2 transition-all',
               selectedGrade === grade
@@ -158,7 +152,6 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
             }}
             className="flex-1 overflow-y-auto space-y-6 py-4 pb-24"
           >
-            {/* Step 1: The Basics */}
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
@@ -169,7 +162,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                     type="button"
                     onClick={() => {
                       setDiscipline('boulder')
-                      setValue('discipline', 'boulder')
+                      setValue('climb_type', 'boulder', { shouldValidate: true })
                     }}
                     className={cn(
                       'flex-1 px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all',
@@ -184,7 +177,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                     type="button"
                     onClick={() => {
                       setDiscipline('sport')
-                      setValue('discipline', 'sport')
+                      setValue('climb_type', 'sport', { shouldValidate: true })
                     }}
                     className={cn(
                       'flex-1 px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all',
@@ -206,8 +199,8 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                   value={gradeScale}
                   onValueChange={(value: GradeScale) => {
                     setGradeScale(value)
-                    setValue('gradeScale', value)
-                    setValue('grade', '')
+                    setValue('grade_scale', value, { shouldValidate: true })
+                    setValue('grade_value', '', { shouldValidate: true })
                   }}
                 >
                   <SelectTrigger className="border-white/10 bg-white/[0.02] text-white hover:border-white/30">
@@ -226,10 +219,12 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                   Grade
                 </label>
                 {renderGradePicker()}
+                {errors.grade_value !== undefined && (
+                  <p className="text-xs text-red-400 font-mono">{errors.grade_value.message}</p>
+                )}
               </div>
             </div>
 
-            {/* Step 2: The Result */}
             <div className="space-y-4 pt-4 border-t border-white/10">
               <div className="space-y-2">
                 <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
@@ -240,9 +235,9 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                     type="button"
                     onClick={() => {
                       setOutcome('Sent')
-                      setValue('outcome', 'Sent')
+                      setValue('outcome', 'Sent', { shouldValidate: true })
                       setSelectedReasons([])
-                      setValue('failureReasons', [])
+                      setValue('failure_reasons', [], { shouldValidate: true })
                     }}
                     className={cn(
                       'flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 transition-all',
@@ -258,9 +253,9 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                     type="button"
                     onClick={() => {
                       setOutcome('Fail')
-                      setValue('outcome', 'Fail')
+                      setValue('outcome', 'Fail', { shouldValidate: true })
                       setSelectedReasons([])
-                      setValue('failureReasons', [])
+                      setValue('failure_reasons', [], { shouldValidate: true })
                     }}
                     className={cn(
                       'flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 transition-all',
@@ -294,7 +289,6 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
               </div>
             </div>
 
-            {/* Step 3: The "Why" */}
             <div className="space-y-4 pt-4 border-t border-white/10">
               <div className="space-y-2">
                 <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
@@ -351,7 +345,6 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
               </div>
             </div>
 
-            {/* Step 4: Location */}
             <div className="space-y-4 pt-4 border-t border-white/10">
               <div className="space-y-2">
                 <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
@@ -362,6 +355,9 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                   placeholder="Gym or crag name"
                   className="border-white/10 bg-white/[0.02] text-white placeholder:text-white/30 hover:border-white/30 focus-visible:border-white/30"
                 />
+                {errors.location !== undefined && (
+                  <p className="text-xs text-red-400 font-mono">{errors.location.message}</p>
+                )}
               </div>
             </div>
           </form>
@@ -372,8 +368,9 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
               form="climb-form"
               className="w-full bg-white text-black hover:bg-white/90 font-black"
               size="lg"
+              disabled={isSubmitting}
             >
-              LOG CLIMB
+              {isSubmitting ? 'SAVING...' : 'LOG CLIMB'}
             </Button>
           </div>
         </div>

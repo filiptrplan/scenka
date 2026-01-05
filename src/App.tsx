@@ -14,9 +14,11 @@ import {
 import { ChartsPage, Logger, ProtectedRoute, SettingsPage } from '@/components/features'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { useClimbs } from '@/hooks/useClimbs'
+import { ErrorBanner } from '@/components/ui/error-banner'
+import { useClimbs, useCreateClimb } from '@/hooks/useClimbs'
 import { useAuth } from '@/lib/auth'
 import { COLOR_CIRCUIT } from '@/lib/grades'
+import type { CreateClimbInput } from '@/lib/validation'
 
 function Dashboard() {
   const { data: climbs = [], isLoading, error } = useClimbs()
@@ -180,10 +182,27 @@ function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
   const [loggerOpen, setLoggerOpen] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { signOut } = useAuth()
+  const createClimb = useCreateClimb()
+
+  const handleClimbSubmit = (data: CreateClimbInput) => {
+    createClimb.mutate(data, {
+      onSuccess: () => {
+        setLoggerOpen(false)
+      },
+      onError: (error) => {
+        console.error('Failed to create climb:', error)
+        setErrorMessage(error.message || 'Failed to save climb')
+      },
+    })
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4">
+      {errorMessage !== null && (
+        <ErrorBanner message={errorMessage} onDismiss={() => setErrorMessage(null)} />
+      )}
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 border-b-2 border-white/20 pb-6 flex items-start justify-between gap-4">
           <div className="flex-1">
@@ -249,7 +268,7 @@ function Layout() {
 
         {location.pathname === '/' && (
           <div className="fixed bottom-6 right-6">
-            <Logger open={loggerOpen} onOpenChange={setLoggerOpen} />
+            <Logger open={loggerOpen} onOpenChange={setLoggerOpen} onSubmit={handleClimbSubmit} />
             {!loggerOpen && (
               <Button
                 size="lg"
