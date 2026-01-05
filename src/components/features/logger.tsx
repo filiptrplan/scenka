@@ -344,7 +344,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                 <Textarea
                   {...register('notes')}
                   placeholder="Any additional thoughts..."
-                  className="border-white/10 bg-white/[0.02] text-white placeholder:text-white/30 hover:border-white/30"
+                  className="border-white/10 bg-white/[0.02] text-white placeholder:text-white/30 hover:border-white/30 focus-visible:border-white/30"
                 />
               </div>
             </div>
@@ -358,7 +358,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                 <Input
                   {...register('location')}
                   placeholder="Gym or crag name"
-                  className="border-white/10 bg-white/[0.02] text-white placeholder:text-white/30 hover:border-white/30"
+                  className="border-white/10 bg-white/[0.02] text-white placeholder:text-white/30 hover:border-white/30 focus-visible:border-white/30"
                 />
               </div>
             </div>
