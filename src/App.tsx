@@ -268,7 +268,12 @@ function Layout() {
 
         {location.pathname === '/' && (
           <div className="fixed bottom-6 right-6">
-            <Logger open={loggerOpen} onOpenChange={setLoggerOpen} onSubmit={handleClimbSubmit} />
+            <Logger
+              open={loggerOpen}
+              onOpenChange={setLoggerOpen}
+              onSubmit={handleClimbSubmit}
+              isSaving={createClimb.isPending}
+            />
             {!loggerOpen && (
               <Button
                 size="lg"

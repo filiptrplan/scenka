@@ -33,9 +33,10 @@ interface LoggerProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void // eslint-disable-line no-unused-vars
   onSubmit?: (data: ClimbForm) => void // eslint-disable-line no-unused-vars
+  isSaving?: boolean
 }
 
-export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
+export function Logger({ open, onOpenChange, onSubmit, isSaving }: LoggerProps) {
   const [gradeScale, setGradeScale] = useState<GradeScale>('color_circuit')
   const [discipline, setDiscipline] = useState<Discipline>('boulder')
   const [outcome, setOutcome] = useState<Outcome>('Fail')
@@ -368,9 +369,9 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
               form="climb-form"
               className="w-full bg-white text-black hover:bg-white/90 font-black"
               size="lg"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isSaving === true}
             >
-              {isSubmitting ? 'SAVING...' : 'LOG CLIMB'}
+              {isSubmitting || isSaving === true ? 'SAVING...' : 'LOG CLIMB'}
             </Button>
           </div>
         </div>
