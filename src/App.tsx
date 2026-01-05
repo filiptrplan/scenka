@@ -222,7 +222,7 @@ export default function App() {
             ))}
           </div>
 
-          <div className="fixed bottom-6 right-6 md:hidden">
+          <div className="fixed bottom-6 right-6">
             <Logger open={loggerOpen} onOpenChange={setLoggerOpen} />
             {!loggerOpen && (
               <Button
