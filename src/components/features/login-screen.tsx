@@ -1,4 +1,14 @@
-import { Fingerprint, Mail, ArrowRight, CheckCircle, XCircle } from 'lucide-react'
+import {
+  Mail,
+  Lock,
+  UserPlus,
+  LogIn,
+  ArrowRight,
+  CheckCircle,
+  XCircle,
+  Eye,
+  EyeOff,
+} from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -6,35 +16,32 @@ import { Input } from '@/components/ui/input'
 import { useAuth } from '@/lib/auth'
 
 export function LoginScreen() {
+  const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
-  const [showEmail, setShowEmail] = useState(false)
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [statusMessage, setStatusMessage] = useState('')
 
-  const { signInWithPasskey, signInWithEmail } = useAuth()
+  const { signUpWithEmail, signInWithPassword } = useAuth()
 
-  const handlePasskeyAuth = () => {
-    setIsLoading(true)
-    void signInWithPasskey().catch((error: unknown) => {
-      setStatus('error')
-      setStatusMessage(error instanceof Error ? error.message : 'Authentication failed')
-      setIsLoading(false)
-    })
-  }
-
-  const handleEmailAuth = (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     setStatus('idle')
     setIsLoading(true)
-    void signInWithEmail(email)
+
+    const authMethod = isSignUp ? signUpWithEmail : signInWithPassword
+    void authMethod(email, password)
       .then(() => {
         setStatus('success')
-        setStatusMessage('Magic link sent! Check your email.')
+        setStatusMessage(
+          isSignUp ? 'Account created! Check your email to confirm.' : 'Welcome back!'
+        )
       })
       .catch((error: unknown) => {
         setStatus('error')
-        setStatusMessage(error instanceof Error ? error.message : 'Failed to send magic link')
+        setStatusMessage(error instanceof Error ? error.message : 'Authentication failed')
       })
       .finally(() => {
         setIsLoading(false)
@@ -44,114 +51,116 @@ export function LoginScreen() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {!showEmail ? (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="space-y-4 text-center">
-              <h1 className="text-5xl md:text-6xl font-black tracking-tighter uppercase leading-none">
-                Scenka
-              </h1>
-              <p className="text-sm font-mono text-[#888] uppercase tracking-[0.2em]">
-                Track your technique failures
-              </p>
-            </div>
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="space-y-4 text-center">
+            <h1 className="text-5xl md:text-6xl font-black tracking-tighter uppercase leading-none">
+              Scenka
+            </h1>
+            <p className="text-sm font-mono text-[#888] uppercase tracking-[0.2em]">
+              Track your technique failures
+            </p>
+          </div>
 
-            <div className="space-y-4">
-              <Button
-                type="button"
-                onClick={() => handlePasskeyAuth()}
-                disabled={isLoading}
-                size="lg"
-                className="w-full h-20 bg-white text-black hover:bg-white/90 font-black text-lg tracking-wider transition-all duration-200 group"
-              >
-                <div className="flex items-center gap-4">
-                  <Fingerprint className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
-                  <span>Sign in with Passkey</span>
-                  {isLoading ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
-                  ) : null}
-                </div>
-              </Button>
-
+          <div className="bg-[#111] border-2 border-white/10 p-6 space-y-6">
+            <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setShowEmail(true)}
-                disabled={isLoading}
-                className="w-full h-20 border-2 border-white/20 hover:border-white/40 bg-white/[0.02] text-[#888] hover:text-white transition-all duration-200 group"
+                onClick={() => {
+                  setIsSignUp(false)
+                  setStatus('idle')
+                }}
+                className={`flex-1 py-3 text-sm font-black uppercase tracking-wider transition-all duration-200 ${
+                  !isSignUp ? 'bg-white text-black' : 'bg-transparent text-[#666] hover:text-white'
+                }`}
               >
-                <div className="flex items-center justify-center gap-4">
-                  <Mail className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
-                  <span className="text-sm font-black uppercase tracking-wider">
-                    Sign in with Email
-                  </span>
-                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
-                </div>
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignUp(true)
+                  setStatus('idle')
+                }}
+                className={`flex-1 py-3 text-sm font-black uppercase tracking-wider transition-all duration-200 ${
+                  isSignUp ? 'bg-white text-black' : 'bg-transparent text-[#666] hover:text-white'
+                }`}
+              >
+                Sign Up
               </button>
             </div>
 
-            {status !== 'idle' && (
-              <div className="flex items-center gap-3 p-4 border-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                {status === 'success' ? (
-                  <CheckCircle className="h-5 w-5 text-emerald-400 flex-shrink-0" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-red-400 flex-shrink-0" />
-                )}
-                <p
-                  className={`text-sm ${
-                    status === 'success' ? 'text-emerald-400' : 'text-red-400'
-                  }`}
-                >
-                  {statusMessage}
-                </p>
-              </div>
-            )}
-
-            <div className="text-center">
-              <p className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                Biometric authentication for secure access
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="space-y-4 text-center">
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
-                Enter Email
-              </h1>
-              <p className="text-sm font-mono text-[#888] uppercase tracking-[0.2em]">
-                We&apos;ll send you a magic link
-              </p>
-            </div>
-
-            <form onSubmit={handleEmailAuth} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
                   Email Address
                 </label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/30 hover:border-white/30 text-lg"
-                  required
-                  autoFocus
-                />
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#666]" />
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="h-12 bg-[#1a1a1a] border-white/10 text-white placeholder:text-white/20 pl-10 hover:border-white/30 focus:border-white/50 transition-colors"
+                    required
+                    autoComplete="email"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#666]" />
+                  <Input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="h-12 bg-[#1a1a1a] border-white/10 text-white placeholder:text-white/20 pl-10 pr-10 hover:border-white/30 focus:border-white/50 transition-colors"
+                    required
+                    autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] hover:text-white transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+                {isSignUp ? (
+                  <p className="text-xs text-[#666]">Must be at least 6 characters</p>
+                ) : null}
               </div>
 
               <Button
                 type="submit"
-                disabled={isLoading || !email}
+                disabled={isLoading || !email || !password}
                 size="lg"
-                className="w-full h-16 bg-white text-black hover:bg-white/90 font-black text-lg tracking-wider transition-all duration-200"
+                className="w-full h-14 bg-white text-black hover:bg-white/90 font-black text-lg tracking-wider transition-all duration-200"
               >
                 {isLoading ? (
                   <div className="flex items-center gap-3">
                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent" />
-                    <span>Sending...</span>
+                    <span>{isSignUp ? 'Creating...' : 'Signing In...'}</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <span>Send Magic Link</span>
+                  <div className="flex items-center justify-center gap-3">
+                    {isSignUp ? (
+                      <>
+                        <UserPlus className="h-5 w-5" />
+                        <span>Create Account</span>
+                      </>
+                    ) : (
+                      <>
+                        <LogIn className="h-5 w-5" />
+                        <span>Sign In</span>
+                      </>
+                    )}
                     <ArrowRight className="h-5 w-5" />
                   </div>
                 )}
@@ -159,35 +168,39 @@ export function LoginScreen() {
             </form>
 
             {status !== 'idle' && (
-              <div className="flex items-center gap-3 p-4 border-2 animate-in fade-in slide-in-from-right-2 duration-300">
-                {status === 'success' ? (
-                  <CheckCircle className="h-5 w-5 text-emerald-400 flex-shrink-0" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-red-400 flex-shrink-0" />
+              <div
+                className={`relative overflow-hidden p-4 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
+                  status === 'success'
+                    ? 'bg-emerald-950/30 border-2 border-emerald-500/20'
+                    : 'bg-red-950/30 border-2 border-red-500/20'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {status === 'success' && (
+                    <CheckCircle className="h-6 w-6 text-emerald-400 flex-shrink-0" />
+                  )}
+                  {status === 'error' && <XCircle className="h-6 w-6 text-red-400 flex-shrink-0" />}
+                  <p
+                    className={`text-sm font-mono uppercase tracking-wide ${
+                      status === 'success' ? 'text-emerald-300' : 'text-red-300'
+                    }`}
+                  >
+                    {statusMessage}
+                  </p>
+                </div>
+                {status === 'error' && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent pointer-events-none" />
                 )}
-                <p
-                  className={`text-sm ${
-                    status === 'success' ? 'text-emerald-400' : 'text-red-400'
-                  }`}
-                >
-                  {statusMessage}
-                </p>
               </div>
             )}
-
-            <button
-              type="button"
-              onClick={() => {
-                setShowEmail(false)
-                setStatus('idle')
-              }}
-              disabled={isLoading}
-              className="w-full text-center text-sm font-mono text-[#888] hover:text-white uppercase tracking-wider transition-colors duration-200"
-            >
-              Back to Passkey
-            </button>
           </div>
-        )}
+
+          <div className="text-center">
+            <p className="text-xs font-mono text-[#666] uppercase tracking-wider">
+              Secure authentication powered by Supabase
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )

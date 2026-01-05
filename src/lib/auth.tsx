@@ -8,9 +8,10 @@ interface AuthContextType {
   session: Session | null
   loading: boolean
   signOut: () => Promise<void>
-  signInWithPasskey: () => Promise<void>
   // eslint-disable-next-line no-unused-vars
-  signInWithEmail: (email: string) => Promise<void>
+  signUpWithEmail: (email: string, password: string) => Promise<void>
+  // eslint-disable-next-line no-unused-vars
+  signInWithPassword: (email: string, password: string) => Promise<void>
   isConfigured: boolean
 }
 
@@ -52,20 +53,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
   }
 
-  const signInWithPasskey = () => {
-    console.error('Passkey authentication not yet implemented')
-    return Promise.reject(new Error('Passkey authentication not yet implemented'))
-  }
-
-  const signInWithEmail = async (email: string) => {
+  const signUpWithEmail = async (email: string, password: string) => {
     if (!supabase) {
       return Promise.reject(new Error('Supabase is not configured'))
     }
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signUp({
       email,
+      password,
       options: {
         emailRedirectTo: window.location.origin,
       },
+    })
+
+    if (error) {
+      throw error
+    }
+  }
+
+  const signInWithPassword = async (email: string, password: string) => {
+    if (!supabase) {
+      return Promise.reject(new Error('Supabase is not configured'))
+    }
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     })
 
     if (error) {
@@ -80,8 +91,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         session,
         loading,
         signOut,
-        signInWithPasskey,
-        signInWithEmail,
+        signUpWithEmail,
+        signInWithPassword,
         isConfigured: supabase !== null,
       }}
     >
