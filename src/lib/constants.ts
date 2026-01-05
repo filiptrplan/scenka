@@ -1,0 +1,49 @@
+import type { Style, FailureReason, Outcome } from '@/types'
+
+export const STYLE_OPTIONS: Style[] = [
+  'Slab',
+  'Vert',
+  'Overhang',
+  'Roof',
+  'Dyno',
+  'Crimp',
+  'Sloper',
+  'Pinch',
+]
+
+export const PHYSICAL_REASONS: FailureReason[] = ['Pumped', 'Finger Strength', 'Core', 'Power']
+
+export const TECHNICAL_REASONS: FailureReason[] = [
+  'Bad Feet',
+  'Body Position',
+  'Beta Error',
+  'Precision',
+]
+
+export const MENTAL_REASONS: FailureReason[] = ['Fear', 'Commitment', 'Focus']
+
+export function getFailureReasons(outcome: Outcome): FailureReason[] {
+  if (outcome === 'Fail') {
+    return [...PHYSICAL_REASONS, ...TECHNICAL_REASONS, ...MENTAL_REASONS]
+  }
+  return ['Bad Feet', 'Body Position', 'Beta Error', 'Precision', 'Pumped', 'Focus', 'Commitment']
+}
+
+export function getAwkwardnessLabel(value: number): string {
+  switch (value) {
+    case 1:
+      return 'Flow State'
+    case 2:
+      return 'Smooth'
+    case 3:
+      return 'Normal'
+    case 4:
+      return 'Awkward'
+    case 5:
+      return 'Sketchy'
+    default:
+      return ''
+  }
+}
+
+export const DEFAULT_LOCATION = 'My Gym'
