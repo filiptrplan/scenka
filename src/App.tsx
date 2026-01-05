@@ -1,9 +1,17 @@
 import { formatDistanceToNow } from 'date-fns'
-import { LogOut, Plus, MapPin, TrendingDown, TrendingUp, Flame } from 'lucide-react'
+import { LogOut, Plus, MapPin, TrendingDown, TrendingUp, Flame, Settings } from 'lucide-react'
 import { useState } from 'react'
-import { BrowserRouter, NavLink, Outlet, useLocation, Routes, Route } from 'react-router-dom'
+import {
+  BrowserRouter,
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+  Routes,
+  Route,
+} from 'react-router-dom'
 
-import { ChartsPage, Logger, ProtectedRoute } from '@/components/features'
+import { ChartsPage, Logger, ProtectedRoute, SettingsPage } from '@/components/features'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useClimbs } from '@/hooks/useClimbs'
@@ -170,6 +178,7 @@ function Dashboard() {
 
 function Layout() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [loggerOpen, setLoggerOpen] = useState(false)
   const { signOut } = useAuth()
 
@@ -185,16 +194,28 @@ function Layout() {
               </p>
             </div>
           </div>
-          <Button
-            type="button"
-            onClick={() => {
-              void signOut()
-            }}
-            variant="outline"
-            className="border-white/20 hover:border-white/40 bg-white/[0.02] text-[#888] hover:text-black"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              onClick={() => {
+                void navigate('/settings')
+              }}
+              variant="outline"
+              className="border-white/20 hover:border-white/40 bg-white/[0.02] text-[#888] hover:text-black"
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                void signOut()
+              }}
+              variant="outline"
+              className="border-white/20 hover:border-white/40 bg-white/[0.02] text-[#888] hover:text-black"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         <nav className="flex gap-2 mb-8">
@@ -253,6 +274,7 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="analytics" element={<ChartsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Routes>
       </ProtectedRoute>
