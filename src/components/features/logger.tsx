@@ -43,8 +43,10 @@ type ClimbForm = z.infer<typeof climbSchema>
 
 interface LoggerProps {
   open?: boolean
-  onOpenChange?: (open: boolean) => void
-  onSubmit?: (data: ClimbForm) => void
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onOpenChange?: (_open: boolean) => void
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onSubmit?: (_data: ClimbForm) => void
 }
 
 export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
@@ -88,15 +90,14 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
     })
   }
 
-  const handleFormSubmit = (data: ClimbForm) => {
-    console.log('Climb logged:', data)
-    onSubmit?.(data)
+  const handleFormSubmit = (_data: ClimbForm): void => {
+    onSubmit?.(_data)
   }
 
   const renderGradePicker = () => {
     if (gradeScale === 'color_circuit') {
       return (
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto py-1 pb-2 scrollbar-hide px-1">
           {COLOR_CIRCUIT.map((color) => (
             <button
               key={color.name}
@@ -108,7 +109,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                 'h-14 w-14 rounded-full flex items-center justify-center text-xs font-black uppercase tracking-wider transition-all',
                 color.color,
                 selectedGrade === color.name
-                  ? 'ring-4 ring-white ring-offset-4 ring-offset-[#0a0a0a]'
+                  ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0a0a0a]'
                   : 'opacity-40 hover:opacity-70'
               )}
             >

@@ -184,12 +184,14 @@ export default function App() {
                   </div>
                 )}
 
-                {climb.notes ? <div className="mt-4 pt-4 border-t border-white/10">
+                {climb.notes && climb.notes.trim().length > 0 ? (
+                  <div className="mt-4 pt-4 border-t border-white/10">
                     <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
                       Notes
                     </div>
                     <p className="text-sm text-[#bbb] leading-relaxed">{climb.notes}</p>
-                  </div> : null}
+                  </div>
+                ) : null}
               </div>
             </div>
           ))}
