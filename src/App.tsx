@@ -100,7 +100,7 @@ export default function App() {
                 void signOut()
               }}
               variant="outline"
-              className="border-white/20 hover:border-white/40 bg-white/[0.02] text-[#888] hover:text-white"
+              className="border-white/20 hover:border-white/40 bg-white/[0.02] text-[#888] hover:text-black"
             >
               <LogOut className="h-4 w-4" />
             </Button>
