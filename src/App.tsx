@@ -89,8 +89,8 @@ export default function App() {
               key={climb.id}
               className="group bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200"
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
+              <div className="flex items-start justify-between mb-1">
+                <div className="flex items-center gap-3 pt-2">
                   <div className="flex flex-col">
                     <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-1">
                       {climb.date}
