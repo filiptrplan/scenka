@@ -1,4 +1,4 @@
-# BetaBreak Agent Guidelines
+# Scenka Agent Guidelines
 
 ## Project Overview
 
@@ -145,7 +145,7 @@ export function GradePicker({ scale, value, onChange }: GradePickerProps) {}
 
 ### Grading Systems
 
-Font (3-9c), V-Scale (VB-V17), Color Circuit (Teal→Black)
+Font (3-9c), V-Scale (VB-V17), Color (Teal→Black)
 Maintain mapping in `src/lib/grades.ts`
 
 ### Core Philosophy

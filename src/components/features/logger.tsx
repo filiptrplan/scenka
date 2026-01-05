@@ -214,7 +214,7 @@ export function Logger({ open, onOpenChange, onSubmit }: LoggerProps) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="color_circuit">Color Circuit</SelectItem>
+                    <SelectItem value="color_circuit">Color</SelectItem>
                     <SelectItem value="font">Font Scale</SelectItem>
                     <SelectItem value="v_scale">V-Scale</SelectItem>
                   </SelectContent>

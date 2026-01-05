@@ -1,8 +1,8 @@
-# BetaBreak UI Design System
+# Scenka UI Design System
 
 ## Design Philosophy
 
-BetaBreak uses a dark, brutalist design language that prioritizes clarity, boldness, and mobile-first usability. The design emphasizes high contrast, clear information hierarchy, and intentional use of whitespace.
+Scenka uses a dark, brutalist design language that prioritizes clarity, boldness, and mobile-first usability. The design emphasizes high contrast, clear information hierarchy, and intentional use of whitespace.
 
 ## Color Palette
 
@@ -280,9 +280,9 @@ The design is dark mode only. No light mode variants are needed.
 </div>
 ```
 
-## Color Circuit Grades
+## Color Grades
 
-When rendering color circuit grades, use the predefined colors from `lib/grades.ts`:
+When rendering color grades, use the predefined colors from `lib/grades.ts`:
 
 - Teal, Pink, Green, Blue, Yellow, Red, Black
 

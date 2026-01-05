@@ -1,12 +1,12 @@
-Here is the updated, complete **Design Document**. You can save this as `DESIGN.md` in your project root. This version includes the "Exception Logging" philosophy, the simplified Supabase architecture, and the specific Color Circuit grading logic.
+Here is the updated, complete **Design Document**. You can save this as `DESIGN.md` in your project root. This version includes the "Exception Logging" philosophy, the simplified Supabase architecture, and the specific Color grading logic.
 
 ---
 
-# Project Design Document: BetaBreak
+# Project Design Document: Scenka
 
 ## 1. Executive Summary
 
-**BetaBreak** is a mobile-first Progressive Web App (PWA) designed for rock climbers to track **technique failures** and **movement quality** rather than just success/failure counts.
+**Scenka** is a mobile-first Progressive Web App (PWA) designed for rock climbers to track **technique failures** and **movement quality** rather than just success/failure counts.
 
 **Core Philosophy:** "Exception Logging." Users do not log every warm-up. They only log climbs that were significant: projects they failed on, or sends that felt awkward/imperfect. The goal is to identify patterns in failure (e.g., "I always fail on Blue overhangs due to bad footwork").
 
@@ -65,7 +65,7 @@ The app must support three grading scales.
 
 **1. Font Scale:** (3 - 9c)
 **2. V-Scale:** (VB - V17)
-**3. Custom Color Circuit:**
+**3. Color:**
 
 - **Teal:** Up to 3
 - **Pink:** 3 to 5a
@@ -114,12 +114,12 @@ _Note: The frontend must maintain a mapping utility to allow approximate convers
 
 - **Chart 1:** "Anti-Style" (Bar chart: Which wall angle/hold type causes the most failures?).
 - **Chart 2:** "The Failure Radar" (Radar chart showing Physical vs. Technical vs. Mental).
-- **Chart 3:** "Sends by Grade" (Stacked bar chart, grouped by the rough difficulty buckets defined in the Color Circuit).
+- **Chart 3:** "Sends by Grade" (Stacked bar chart, grouped by the rough difficulty buckets defined in the Color scale).
 
 ## 6. PWA Specifications (`manifest.json`)
 
-- **Name:** BetaBreak
-- **Short Name:** BetaBreak
+- **Name:** Scenka
+- **Short Name:** Scenka
 - **Start URL:** `/`
 - **Display:** `standalone` (Hides browser URL bar)
 - **Background Color:** `#09090b` (Zinc-950)

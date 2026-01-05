@@ -49,7 +49,7 @@ const mockClimbs: ClimbSkeleton[] = [
     date: 'Jan 2',
     location: 'Stone Summit',
     grade: 'Yellow',
-    gradeScale: 'Color Circuit',
+    gradeScale: 'Color',
     outcome: 'Fail',
     awkwardness: 3,
     styles: ['Overhang', 'Crimp'],
@@ -77,7 +77,7 @@ export default function App() {
     <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 border-b-2 border-white/20 pb-6">
-          <h1 className="text-4xl font-black tracking-tighter uppercase mb-2">BetaBreak</h1>
+          <h1 className="text-4xl font-black tracking-tighter uppercase mb-2">Scenka</h1>
           <p className="text-sm font-mono text-[#888] uppercase tracking-widest">
             Track your climbing failures
           </p>
@@ -105,7 +105,7 @@ export default function App() {
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-mono text-[#666]">{climb.gradeScale}</span>
-                    {climb.gradeScale === 'Color Circuit' ? (
+                    {climb.gradeScale === 'Color' ? (
                       (() => {
                         const color = COLOR_CIRCUIT.find((c) => c.name === climb.grade)
                         return color ? (
