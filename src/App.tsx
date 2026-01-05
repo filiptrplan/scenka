@@ -3,6 +3,7 @@ import { Plus, MapPin, TrendingDown, TrendingUp, Flame } from 'lucide-react'
 import { Logger } from '@/components/features/logger'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { COLOR_CIRCUIT } from '@/lib/grades'
 
 interface ClimbSkeleton {
   id: string
@@ -46,6 +47,18 @@ const mockClimbs: ClimbSkeleton[] = [
     id: '3',
     date: 'Jan 2',
     location: 'Stone Summit',
+    grade: 'Yellow',
+    gradeScale: 'Color Circuit',
+    outcome: 'Fail',
+    awkwardness: 3,
+    styles: ['Overhang', 'Crimp'],
+    failureReasons: ['Pumped', 'Finger Strength'],
+    notes: 'Color circuit yellow is feeling good, almost there',
+  },
+  {
+    id: '4',
+    date: 'Dec 30',
+    location: 'Gravity Lab',
     grade: '6b+',
     gradeScale: 'Font',
     outcome: 'Fail',
@@ -91,7 +104,19 @@ export default function App() {
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-mono text-[#666]">{climb.gradeScale}</span>
-                    <div className="text-3xl font-black tracking-tight">{climb.grade}</div>
+                    {climb.gradeScale === 'Color Circuit' ? (
+                      (() => {
+                        const color = COLOR_CIRCUIT.find((c) => c.name === climb.grade)
+                        return color ? (
+                          <div
+                            key={color.name}
+                            className={`h-10 w-10 border-2 border-white/10 ${color.color}`}
+                          />
+                        ) : null
+                      })()
+                    ) : (
+                      <div className="text-3xl font-black tracking-tight">{climb.grade}</div>
+                    )}
                   </div>
                   <div
                     className={`flex items-center gap-1.5 px-3 py-1 border-2 ${
