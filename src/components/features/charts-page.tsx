@@ -14,107 +14,15 @@ import {
   YAxis,
 } from 'recharts'
 
-import type { Climb } from '@/types'
-
-const mockClimbs: Climb[] = [
-  {
-    id: '1',
-    user_id: 'mock',
-    created_at: '2024-01-04',
-    location: 'Gravity Lab',
-    climb_type: 'boulder',
-    grade_scale: 'v_scale',
-    grade_value: 'V6',
-    style: ['Overhang', 'Crimp'],
-    outcome: 'Fail',
-    awkwardness: 4,
-    failure_reasons: ['Finger Strength', 'Beta Error'],
-  },
-  {
-    id: '2',
-    user_id: 'mock',
-    created_at: '2024-01-03',
-    location: 'The Rock Club',
-    climb_type: 'boulder',
-    grade_scale: 'v_scale',
-    grade_value: 'V4',
-    style: ['Vert', 'Sloper'],
-    outcome: 'Sent',
-    awkwardness: 2,
-    failure_reasons: ['Bad Feet'],
-  },
-  {
-    id: '3',
-    user_id: 'mock',
-    created_at: '2024-01-02',
-    location: 'Stone Summit',
-    climb_type: 'boulder',
-    grade_scale: 'color_circuit',
-    grade_value: 'Yellow',
-    style: ['Overhang', 'Crimp'],
-    outcome: 'Fail',
-    awkwardness: 3,
-    failure_reasons: ['Pumped', 'Finger Strength'],
-  },
-  {
-    id: '4',
-    user_id: 'mock',
-    created_at: '2024-01-01',
-    location: 'Gravity Lab',
-    climb_type: 'boulder',
-    grade_scale: 'font',
-    grade_value: '6b+',
-    style: ['Slab', 'Vert'],
-    outcome: 'Fail',
-    awkwardness: 5,
-    failure_reasons: ['Fear', 'Commitment'],
-  },
-  {
-    id: '5',
-    user_id: 'mock',
-    created_at: '2024-01-05',
-    location: 'The Rock Club',
-    climb_type: 'boulder',
-    grade_scale: 'color_circuit',
-    grade_value: 'Blue',
-    style: ['Overhang', 'Dyno'],
-    outcome: 'Fail',
-    awkwardness: 3,
-    failure_reasons: ['Pumped', 'Power'],
-  },
-  {
-    id: '6',
-    user_id: 'mock',
-    created_at: '2024-01-06',
-    location: 'Gravity Lab',
-    climb_type: 'boulder',
-    grade_scale: 'v_scale',
-    grade_value: 'V5',
-    style: ['Roof', 'Pinch'],
-    outcome: 'Fail',
-    awkwardness: 4,
-    failure_reasons: ['Finger Strength', 'Core'],
-  },
-  {
-    id: '7',
-    user_id: 'mock',
-    created_at: '2024-01-07',
-    location: 'Stone Summit',
-    climb_type: 'boulder',
-    grade_scale: 'color_circuit',
-    grade_value: 'Green',
-    style: ['Sloper', 'Vert'],
-    outcome: 'Sent',
-    awkwardness: 1,
-    failure_reasons: ['Precision'],
-  },
-]
+import { useClimbs } from '@/hooks/useClimbs'
 
 export function ChartsPage() {
+  const { data: climbs = [], isLoading, error } = useClimbs()
+
   const antiStyleData = useMemo(() => {
     const styleCount = new Map<string, number>()
 
-    mockClimbs.forEach((climb) => {
+    climbs.forEach((climb) => {
       if (climb.outcome === 'Fail') {
         climb.style.forEach((s) => {
           const currentValue = styleCount.get(s) ?? 0
@@ -126,22 +34,22 @@ export function ChartsPage() {
     return Array.from(styleCount.entries())
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value)
-  }, [])
+  }, [climbs])
 
   const radarData = useMemo(() => {
-    const physical = mockClimbs.filter(
+    const physical = climbs.filter(
       (c) =>
         c.outcome === 'Fail' &&
         c.failure_reasons.some((r) => ['Pumped', 'Finger Strength', 'Core', 'Power'].includes(r))
     ).length
-    const technical = mockClimbs.filter(
+    const technical = climbs.filter(
       (c) =>
         c.outcome === 'Fail' &&
         c.failure_reasons.some((r) =>
           ['Bad Feet', 'Body Position', 'Beta Error', 'Precision'].includes(r)
         )
     ).length
-    const mental = mockClimbs.filter(
+    const mental = climbs.filter(
       (c) =>
         c.outcome === 'Fail' &&
         c.failure_reasons.some((r) => ['Fear', 'Commitment', 'Focus'].includes(r))
@@ -152,7 +60,7 @@ export function ChartsPage() {
       { category: 'Technical', value: technical },
       { category: 'Mental', value: mental },
     ]
-  }, [])
+  }, [climbs])
 
   const sendsByGradeData = useMemo(() => {
     const gradeBuckets: Record<string, { sent: number; fail: number }> = {
@@ -163,7 +71,7 @@ export function ChartsPage() {
       Black: { sent: 0, fail: 0 },
     }
 
-    mockClimbs.forEach((climb) => {
+    climbs.forEach((climb) => {
       let bucket: string | undefined
       if (['Teal', 'Pink', 'Green'].includes(climb.grade_value)) {
         bucket = 'Easy (T-P-G)'
@@ -189,7 +97,29 @@ export function ChartsPage() {
       sent: data.sent,
       fail: data.fail,
     }))
-  }, [])
+  }, [climbs])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4 pb-24">
+        <div className="mx-auto max-w-2xl">
+          <div className="text-center py-12 text-[#888]">Loading analytics...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4 pb-24">
+        <div className="mx-auto max-w-2xl">
+          <div className="text-center py-12 text-red-400">
+            Failed to load analytics: {error.message}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4 pb-24">
