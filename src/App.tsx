@@ -10,7 +10,7 @@ import {
   Edit,
   Trash2,
 } from 'lucide-react'
-import { createContext, useState, useContext } from 'react'
+import { createContext, useState, useContext, useEffect } from 'react'
 import {
   BrowserRouter,
   NavLink,
@@ -26,9 +26,11 @@ import { ChartsPage, Logger, ProtectedRoute, SettingsPage } from '@/components/f
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ErrorBanner } from '@/components/ui/error-banner'
+import { OfflineStatus } from '@/components/ui/offline-status'
 import { useClimbs, useCreateClimb, useUpdateClimb, useDeleteClimb } from '@/hooks/useClimbs'
 import { useAuth } from '@/lib/auth'
 import { COLOR_CIRCUIT } from '@/lib/grades'
+import { initSyncManager } from '@/lib/syncManager'
 import type { CreateClimbInput } from '@/lib/validation'
 import type { Climb } from '@/types'
 
@@ -229,6 +231,11 @@ function Layout() {
   const updateClimb = useUpdateClimb()
   const deleteClimb = useDeleteClimb()
 
+  // Initialize sync manager on mount
+  useEffect(() => {
+    initSyncManager()
+  }, [])
+
   const handleClimbSubmit = (data: CreateClimbInput) => {
     if (editingClimb) {
       updateClimb.mutate(
@@ -286,6 +293,7 @@ function Layout() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4">
+      <OfflineStatus />
       {errorMessage !== null && (
         <ErrorBanner message={errorMessage} onDismiss={() => setErrorMessage(null)} />
       )}

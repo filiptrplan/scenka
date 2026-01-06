@@ -15,6 +15,7 @@ import {
 } from 'recharts'
 
 import { useClimbs } from '@/hooks/useClimbs'
+import { getAllGradeBuckets, getDifficultyBucket, normalizeGrade } from '@/lib/grades'
 
 export function ChartsPage() {
   const { data: climbs = [], isLoading, error } = useClimbs()
@@ -63,40 +64,28 @@ export function ChartsPage() {
   }, [climbs])
 
   const sendsByGradeData = useMemo(() => {
-    const gradeBuckets: Record<string, { sent: number; fail: number }> = {
-      'Easy (T-P-G)': { sent: 0, fail: 0 },
-      Blue: { sent: 0, fail: 0 },
-      Yellow: { sent: 0, fail: 0 },
-      Red: { sent: 0, fail: 0 },
-      Black: { sent: 0, fail: 0 },
-    }
+    const buckets = getAllGradeBuckets()
+    const gradeBuckets: Record<string, { sent: number; fail: number }> = {}
 
+    // Initialize buckets
+    buckets.forEach((bucket) => {
+      gradeBuckets[bucket] = { sent: 0, fail: 0 }
+    })
+
+    // Process climbs
     climbs.forEach((climb) => {
-      let bucket: string | undefined
-      if (['Teal', 'Pink', 'Green'].includes(climb.grade_value)) {
-        bucket = 'Easy (T-P-G)'
-      } else if (climb.grade_value === 'Blue') {
-        bucket = 'Blue'
-      } else if (climb.grade_value === 'Yellow') {
-        bucket = 'Yellow'
-      } else if (climb.grade_value === 'Red') {
-        bucket = 'Red'
-      } else if (climb.grade_value === 'Black') {
-        bucket = 'Black'
-      }
+      const normalized = normalizeGrade(climb.grade_scale as any, climb.grade_value)
+      const bucket = getDifficultyBucket(normalized)
 
-      if (bucket !== undefined && bucket !== '') {
-        const bucketData = gradeBuckets[bucket] ?? { sent: 0, fail: 0 }
-        bucketData.sent += climb.outcome === 'Sent' ? 1 : 0
-        bucketData.fail += climb.outcome === 'Fail' ? 1 : 0
+      if (gradeBuckets[bucket]) {
+        gradeBuckets[bucket].sent += climb.outcome === 'Sent' ? 1 : 0
+        gradeBuckets[bucket].fail += climb.outcome === 'Fail' ? 1 : 0
       }
     })
 
-    return Object.entries(gradeBuckets).map(([name, data]) => ({
-      name,
-      sent: data.sent,
-      fail: data.fail,
-    }))
+    return Object.entries(gradeBuckets)
+      .map(([name, data]) => ({ name, sent: data.sent, fail: data.fail }))
+      .filter((item) => item.name !== 'Unknown')
   }, [climbs])
 
   if (isLoading) {

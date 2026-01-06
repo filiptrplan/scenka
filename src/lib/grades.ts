@@ -145,3 +145,37 @@ export const COLOR_MAPPINGS: Record<string, number> = {
   Red: 6,
   Black: 7,
 }
+
+// Convert any grade to a normalized 1-100 scale for comparison
+export function normalizeGrade(scale: GradeScale, grade: string): number {
+  const numericValue = getNumericValue(scale, grade)
+  if (numericValue === 0) return 0
+
+  switch (scale) {
+    case 'font':
+      // Font: 3 (1) → 9c (37) → normalize to 1-100
+      return Math.round((numericValue / FONT_GRADES.length) * 100)
+    case 'v_scale':
+      // V-Scale: VB (1) → V17 (18) → normalize to 1-100
+      return Math.round((numericValue / V_SCALE_GRADES.length) * 100)
+    case 'color_circuit':
+      // Color: Teal (1) → Black (7) → normalize to 1-100
+      return Math.round((numericValue / COLOR_CIRCUIT.length) * 100)
+    default:
+      return 0
+  }
+}
+
+// Convert normalized grade to difficulty bucket
+export function getDifficultyBucket(normalizedGrade: number): string {
+  if (normalizedGrade === 0) return 'Unknown'
+  if (normalizedGrade <= 25) return 'Beginner'
+  if (normalizedGrade <= 50) return 'Intermediate'
+  if (normalizedGrade <= 75) return 'Advanced'
+  return 'Elite'
+}
+
+// Get ordered list of all buckets
+export function getAllGradeBuckets(): string[] {
+  return ['Beginner', 'Intermediate', 'Advanced', 'Elite']
+}
