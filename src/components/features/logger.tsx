@@ -21,7 +21,7 @@ import { STYLE_OPTIONS, getFailureReasons, getAwkwardnessLabel } from '@/lib/con
 import { getGradesForScale, COLOR_CIRCUIT } from '@/lib/grades'
 import { cn } from '@/lib/utils'
 import { climbSchema, type CreateClimbInput } from '@/lib/validation'
-import type { GradeScale, Discipline, Outcome, Style, FailureReason } from '@/types'
+import type { GradeScale, Discipline, Outcome, Style, FailureReason, Climb } from '@/types'
 
 type ClimbForm = CreateClimbInput
 
@@ -30,9 +30,10 @@ interface LoggerProps {
   onOpenChange?: (open: boolean) => void // eslint-disable-line no-unused-vars
   onSubmit?: (data: ClimbForm) => void // eslint-disable-line no-unused-vars
   isSaving?: boolean
+  climb?: Climb | null
 }
 
-export function Logger({ open, onOpenChange, onSubmit, isSaving }: LoggerProps) {
+export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: LoggerProps) {
   const { data: profile } = useProfile()
   const [gradeScale, setGradeScale] = useState<GradeScale>('color_circuit')
   const [discipline, setDiscipline] = useState<Discipline>('boulder')
@@ -46,6 +47,7 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving }: LoggerProps) 
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<ClimbForm>({
     resolver: zodResolver(climbSchema),
@@ -66,6 +68,28 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving }: LoggerProps) 
       setValue('location', gym)
     }
   }, [profile, setValue])
+
+  useEffect(() => {
+    if (climb !== null && climb !== undefined) {
+      reset({
+        climb_type: climb.climb_type as Discipline,
+        grade_scale: climb.grade_scale as GradeScale,
+        grade_value: climb.grade_value,
+        outcome: climb.outcome as Outcome,
+        awkwardness: climb.awkwardness,
+        style: climb.style,
+        failure_reasons: climb.failure_reasons,
+        location: climb.location,
+        notes: climb.notes ?? '',
+      })
+      setGradeScale(climb.grade_scale as GradeScale)
+      setDiscipline(climb.climb_type as Discipline)
+      setOutcome(climb.outcome as Outcome)
+      setAwkwardness(climb.awkwardness)
+      setSelectedStyles(climb.style)
+      setSelectedReasons(climb.failure_reasons)
+    }
+  }, [climb, reset])
 
   const selectedGrade = watch('grade_value')
 
@@ -145,7 +169,7 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving }: LoggerProps) 
         <div className="h-full flex flex-col">
           <SheetHeader className="flex-shrink-0">
             <SheetTitle className="text-3xl font-black tracking-tighter uppercase">
-              Log Climb
+              {climb !== null && climb !== undefined ? 'Edit Climb' : 'Log Climb'}
             </SheetTitle>
           </SheetHeader>
 
@@ -375,7 +399,11 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving }: LoggerProps) 
               size="lg"
               disabled={isSubmitting || isSaving === true}
             >
-              {isSubmitting || isSaving === true ? 'SAVING...' : 'LOG CLIMB'}
+              {isSubmitting || isSaving === true
+                ? 'SAVING...'
+                : climb !== null && climb !== undefined
+                  ? 'SAVE CHANGES'
+                  : 'LOG CLIMB'}
             </Button>
           </div>
         </div>

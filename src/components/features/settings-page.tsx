@@ -3,6 +3,7 @@ import { Settings } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -46,6 +47,7 @@ export function SettingsPage() {
   const handleFormSubmit = (data: UpdateProfileInput) => {
     updateProfile.mutate(data, {
       onSuccess: () => {
+        toast.success('Settings saved successfully')
         void navigate('/')
       },
     })

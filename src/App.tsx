@@ -1,6 +1,16 @@
 import { formatDistanceToNow } from 'date-fns'
-import { LogOut, Plus, MapPin, TrendingDown, TrendingUp, Flame, Settings } from 'lucide-react'
-import { useState } from 'react'
+import {
+  LogOut,
+  Plus,
+  MapPin,
+  TrendingDown,
+  TrendingUp,
+  Flame,
+  Settings,
+  Edit,
+  Trash2,
+} from 'lucide-react'
+import { createContext, useState, useContext } from 'react'
 import {
   BrowserRouter,
   NavLink,
@@ -10,17 +20,34 @@ import {
   Routes,
   Route,
 } from 'react-router-dom'
+import { Toaster, toast } from 'sonner'
 
 import { ChartsPage, Logger, ProtectedRoute, SettingsPage } from '@/components/features'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ErrorBanner } from '@/components/ui/error-banner'
-import { useClimbs, useCreateClimb } from '@/hooks/useClimbs'
+import { useClimbs, useCreateClimb, useUpdateClimb, useDeleteClimb } from '@/hooks/useClimbs'
 import { useAuth } from '@/lib/auth'
 import { COLOR_CIRCUIT } from '@/lib/grades'
 import type { CreateClimbInput } from '@/lib/validation'
+import type { Climb } from '@/types'
+
+/* eslint-disable no-unused-vars */
+interface ClimbActionsContextType {
+  onEditClick: (climb: Climb) => void
+  onDeleteClick: (climb: Climb) => void
+}
+/* eslint-enable no-unused-vars */
+
+const ClimbActionsContext = createContext<ClimbActionsContextType | undefined>(undefined)
 
 function Dashboard() {
+  const context = useContext(ClimbActionsContext)
+  if (context === undefined) {
+    throw new Error('Dashboard must be used within a ClimbActionsProvider')
+  }
+
+  const { onEditClick, onDeleteClick } = context
   const { data: climbs = [], isLoading, error } = useClimbs()
 
   if (isLoading) {
@@ -59,7 +86,7 @@ function Dashboard() {
             key={climb.id}
             className="group bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200"
           >
-            <div className="flex items-start justify-between mb-1">
+            <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3 pt-2">
                 <div className="flex flex-col">
                   <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-1">
@@ -72,47 +99,60 @@ function Dashboard() {
                 </div>
               </div>
 
-              <div className="flex flex-col items-end gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-mono text-[#666]">
-                    {gradeScaleLabels[climb.grade_scale]}
-                  </span>
-                  {climb.grade_scale === 'color_circuit' ? (
-                    (() => {
-                      const color = COLOR_CIRCUIT.find((c) => c.name === climb.grade_value)
-                      return color ? (
-                        <div
-                          key={color.name}
-                          className={`text-3xl font-black tracking-tight ${color.textColor}`}
-                        >
-                          {color.letter}
-                        </div>
-                      ) : (
-                        <div className="text-3xl font-black tracking-tight">
-                          {climb.grade_value}
-                        </div>
-                      )
-                    })()
-                  ) : (
-                    <div className="text-3xl font-black tracking-tight">{climb.grade_value}</div>
-                  )}
-                </div>
-                <div
-                  className={`flex items-center gap-1.5 px-3 py-1 border-2 ${
-                    climb.outcome === 'Sent'
-                      ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
-                      : 'bg-red-500/10 border-red-500/50 text-red-400'
-                  }`}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => onEditClick(climb)}
+                  className="p-2 text-[#666] hover:text-white hover:bg-white/10 transition-all"
+                  aria-label="Edit climb"
                 >
-                  {climb.outcome === 'Sent' ? (
-                    <TrendingUp className="h-4 w-4" />
-                  ) : (
-                    <TrendingDown className="h-4 w-4" />
-                  )}
-                  <span className="text-xs font-black uppercase tracking-wider">
-                    {climb.outcome}
-                  </span>
-                </div>
+                  <Edit className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => onDeleteClick(climb)}
+                  className="p-2 text-[#666] hover:text-red-400 hover:bg-white/10 transition-all"
+                  aria-label="Delete climb"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 pt-2 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-mono text-[#666]">
+                  {gradeScaleLabels[climb.grade_scale]}
+                </span>
+                {climb.grade_scale === 'color_circuit' ? (
+                  (() => {
+                    const color = COLOR_CIRCUIT.find((c) => c.name === climb.grade_value)
+                    return color ? (
+                      <div
+                        key={color.name}
+                        className={`text-3xl font-black tracking-tight ${color.textColor}`}
+                      >
+                        {color.letter}
+                      </div>
+                    ) : (
+                      <div className="text-3xl font-black tracking-tight">{climb.grade_value}</div>
+                    )
+                  })()
+                ) : (
+                  <div className="text-3xl font-black tracking-tight">{climb.grade_value}</div>
+                )}
+              </div>
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1 border-2 ${
+                  climb.outcome === 'Sent'
+                    ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
+                    : 'bg-red-500/10 border-red-500/50 text-red-400'
+                }`}
+              >
+                {climb.outcome === 'Sent' ? (
+                  <TrendingUp className="h-4 w-4" />
+                ) : (
+                  <TrendingDown className="h-4 w-4" />
+                )}
+                <span className="text-xs font-black uppercase tracking-wider">{climb.outcome}</span>
               </div>
             </div>
 
@@ -182,20 +222,66 @@ function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
   const [loggerOpen, setLoggerOpen] = useState(false)
+  const [editingClimb, setEditingClimb] = useState<Climb | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { signOut } = useAuth()
   const createClimb = useCreateClimb()
+  const updateClimb = useUpdateClimb()
+  const deleteClimb = useDeleteClimb()
 
   const handleClimbSubmit = (data: CreateClimbInput) => {
-    createClimb.mutate(data, {
-      onSuccess: () => {
-        setLoggerOpen(false)
-      },
-      onError: (error) => {
-        console.error('Failed to create climb:', error)
-        setErrorMessage(error.message || 'Failed to save climb')
-      },
-    })
+    if (editingClimb) {
+      updateClimb.mutate(
+        { id: editingClimb.id, updates: data },
+        {
+          onSuccess: () => {
+            setLoggerOpen(false)
+            setEditingClimb(null)
+            toast.success('Climb updated successfully')
+          },
+          onError: (error) => {
+            console.error('Failed to update climb:', error)
+            setErrorMessage(error.message || 'Failed to update climb')
+          },
+        }
+      )
+    } else {
+      createClimb.mutate(data, {
+        onSuccess: () => {
+          setLoggerOpen(false)
+          toast.success('Climb logged successfully')
+        },
+        onError: (error) => {
+          console.error('Failed to create climb:', error)
+          setErrorMessage(error.message || 'Failed to save climb')
+        },
+      })
+    }
+  }
+
+  const handleEditClick = (climb: Climb) => {
+    setEditingClimb(climb)
+    setLoggerOpen(true)
+  }
+
+  const handleDeleteClick = (climb: Climb) => {
+    // eslint-disable-next-line no-alert
+    if (window.confirm('Are you sure you want to delete this climb?')) {
+      deleteClimb.mutate(climb.id, {
+        onSuccess: () => {
+          toast.success('Climb deleted successfully')
+        },
+        onError: (error) => {
+          console.error('Failed to delete climb:', error)
+          setErrorMessage(error.message || 'Failed to delete climb')
+        },
+      })
+    }
+  }
+
+  const handleLoggerClose = () => {
+    setLoggerOpen(false)
+    setEditingClimb(null)
   }
 
   return (
@@ -203,6 +289,16 @@ function Layout() {
       {errorMessage !== null && (
         <ErrorBanner message={errorMessage} onDismiss={() => setErrorMessage(null)} />
       )}
+      <Toaster
+        position="top-center"
+        richColors
+        duration={3000}
+        toastOptions={{
+          classNames: {
+            toast: 'text-sm',
+          },
+        }}
+      />
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 border-b-2 border-white/20 pb-6 flex items-start justify-between gap-4">
           <div className="flex-1">
@@ -264,15 +360,20 @@ function Layout() {
           </NavLink>
         </nav>
 
-        <Outlet />
+        <ClimbActionsContext.Provider
+          value={{ onEditClick: handleEditClick, onDeleteClick: handleDeleteClick }}
+        >
+          <Outlet />
+        </ClimbActionsContext.Provider>
 
         {location.pathname === '/' && (
           <div className="fixed bottom-6 right-6">
             <Logger
               open={loggerOpen}
-              onOpenChange={setLoggerOpen}
+              onOpenChange={handleLoggerClose}
               onSubmit={handleClimbSubmit}
-              isSaving={createClimb.isPending}
+              isSaving={createClimb.isPending || updateClimb.isPending}
+              climb={editingClimb}
             />
             {!loggerOpen && (
               <Button
@@ -290,13 +391,22 @@ function Layout() {
   )
 }
 
+function DashboardWrapper() {
+  const context = useContext(ClimbActionsContext)
+  if (context === undefined) {
+    throw new Error('DashboardWrapper must be used within a ClimbActionsProvider')
+  }
+
+  return <Dashboard />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <ProtectedRoute>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
+            <Route index element={<DashboardWrapper />} />
             <Route path="analytics" element={<ChartsPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
