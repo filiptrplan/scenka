@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react'
 
 import { LoginScreen } from './login-screen'
+import { OnboardingWizard } from './onboarding-wizard'
 
+import { useProfile } from '@/hooks/useProfile'
 import { useAuth } from '@/lib/auth'
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
   const { user, loading, isConfigured } = useAuth()
+  const { data: profile, isLoading: profileLoading } = useProfile()
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/30 border-t-white" />
@@ -44,6 +47,11 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
 
   if (!user) {
     return <LoginScreen />
+  }
+
+  // Check if onboarding is needed
+  if (profile && !profile.onboarding_completed) {
+    return <OnboardingWizard onComplete={() => window.location.reload()} />
   }
 
   return children

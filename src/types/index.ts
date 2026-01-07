@@ -53,6 +53,7 @@ export interface Database {
           preferred_discipline: string
           preferred_grade_scale: string
           home_gym: string | null
+          onboarding_completed: boolean
           updated_at: string
         }
         Insert: {
@@ -60,6 +61,7 @@ export interface Database {
           preferred_discipline?: string
           preferred_grade_scale?: string
           home_gym?: string | null
+          onboarding_completed?: boolean
           updated_at?: string
         }
         Update: {
@@ -67,6 +69,7 @@ export interface Database {
           preferred_discipline?: string
           preferred_grade_scale?: string
           home_gym?: string | null
+          onboarding_completed?: boolean
           updated_at?: string
         }
       }
@@ -105,5 +108,6 @@ export interface Profile {
   preferred_grade_scale: GradeScale
   preferred_discipline: Discipline
   home_gym: string | null
+  onboarding_completed: boolean
   updated_at: string
 }

@@ -68,6 +68,7 @@ export async function createProfile(userId: string): Promise<Profile> {
       preferred_grade_scale: 'font',
       preferred_discipline: 'boulder',
       home_gym: 'My Gym',
+      onboarding_completed: false,
     } as TablesInsert<'profiles'>)
     .select()
     .single()

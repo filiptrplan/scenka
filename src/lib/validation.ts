@@ -44,3 +44,11 @@ export const profileSchema = z.object({
 })
 
 export type UpdateProfileInput = z.infer<typeof profileSchema>
+
+export const onboardingSchema = z.object({
+  preferred_grade_scale: z.enum(['font', 'v_scale', 'color_circuit']),
+  preferred_discipline: z.enum(['boulder', 'sport']),
+  home_gym: z.string().min(1, 'Please enter your home gym name'),
+})
+
+export type OnboardingInput = z.infer<typeof onboardingSchema>
