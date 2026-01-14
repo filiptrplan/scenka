@@ -9,15 +9,45 @@ export const STYLE_OPTIONS: Style[] = [
   'Crimp',
   'Sloper',
   'Pinch',
+  'Compression',
+  'Tension',
 ]
 
-export const PHYSICAL_REASONS: FailureReason[] = ['Pumped', 'Finger Strength', 'Core', 'Power']
+export const PHYSICAL_REASONS: FailureReason[] = [
+  'Pumped',
+  'Finger Strength',
+  'Core',
+  'Power',
+  'Flexibility',
+  'Balance',
+  'Endurance',
+]
 
 export const TECHNICAL_REASONS: FailureReason[] = [
   'Bad Feet',
   'Body Position',
   'Beta Error',
   'Precision',
+  'Precision (Feet)',
+  'Precision (Hands)',
+  'Coordination (Hands)',
+  'Coordination (Feet)',
+  'Foot Swap',
+  'Heel Hook',
+  'Toe Hook',
+  'Rockover',
+  'Pistol Squat',
+  'Drop Knee',
+  'Twist Lock',
+  'Flagging',
+  'Dyno',
+  'Deadpoint',
+  'Latch',
+  'Mantle',
+  'Undercling',
+  'Gaston',
+  'Match',
+  'Cross',
 ]
 
 export const MENTAL_REASONS: FailureReason[] = ['Fear', 'Commitment', 'Focus']
@@ -26,7 +56,41 @@ export function getFailureReasons(outcome: Outcome): FailureReason[] {
   if (outcome === 'Fail') {
     return [...PHYSICAL_REASONS, ...TECHNICAL_REASONS, ...MENTAL_REASONS]
   }
-  return ['Bad Feet', 'Body Position', 'Beta Error', 'Precision', 'Pumped', 'Focus', 'Commitment']
+  return [
+    'Bad Feet',
+    'Body Position',
+    'Beta Error',
+    'Precision',
+    'Precision (Feet)',
+    'Precision (Hands)',
+    'Coordination (Hands)',
+    'Coordination (Feet)',
+    'Foot Swap',
+    'Heel Hook',
+    'Toe Hook',
+    'Rockover',
+    'Pistol Squat',
+    'Drop Knee',
+    'Twist Lock',
+    'Flagging',
+    'Dyno',
+    'Deadpoint',
+    'Latch',
+    'Mantle',
+    'Undercling',
+    'Gaston',
+    'Match',
+    'Cross',
+    'Pumped',
+    'Finger Strength',
+    'Core',
+    'Power',
+    'Flexibility',
+    'Balance',
+    'Endurance',
+    'Focus',
+    'Commitment',
+  ]
 }
 
 export function getAwkwardnessLabel(value: number): string {
