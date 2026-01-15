@@ -21,7 +21,7 @@ import { STYLE_OPTIONS, getFailureReasons, getAwkwardnessLabel } from '@/lib/con
 import { getGradesForScale, COLOR_CIRCUIT } from '@/lib/grades'
 import { cn } from '@/lib/utils'
 import { climbSchema, type CreateClimbInput } from '@/lib/validation'
-import type { GradeScale, Discipline, Outcome, Style, FailureReason, Climb } from '@/types'
+import type { GradeScale, Discipline, Outcome, Style, FailureReason, Climb, HoldColor } from '@/types'
 
 type ClimbForm = CreateClimbInput
 
@@ -41,6 +41,7 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
   const [awkwardness, setAwkwardness] = useState<number>(3)
   const [selectedStyles, setSelectedStyles] = useState<Style[]>([])
   const [selectedReasons, setSelectedReasons] = useState<FailureReason[]>([])
+  const [selectedColor, setSelectedColor] = useState<HoldColor | undefined>(undefined)
 
   const {
     register,
@@ -59,6 +60,7 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
       style: [],
       failure_reasons: [],
       location: profile?.home_gym ?? 'My Gym',
+      hold_color: undefined,
     },
   })
 
@@ -81,6 +83,7 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
         failure_reasons: climb.failure_reasons,
         location: climb.location,
         notes: climb.notes ?? '',
+        hold_color: climb.hold_color,
       })
       setGradeScale(climb.grade_scale as GradeScale)
       setDiscipline(climb.climb_type as Discipline)
@@ -88,10 +91,12 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
       setAwkwardness(climb.awkwardness)
       setSelectedStyles(climb.style)
       setSelectedReasons(climb.failure_reasons)
+      setSelectedColor(climb.hold_color)
     }
   }, [climb, reset])
 
   const selectedGrade = watch('grade_value')
+  const selectedHoldColor = watch('hold_color')
 
   const toggleStyle = (style: Style) => {
     setSelectedStyles((prev) => {
@@ -109,6 +114,11 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
       setValue('failure_reasons', newReasons)
       return newReasons
     })
+  }
+
+  const handleColorSelect = (color: HoldColor) => {
+    setSelectedColor(color)
+    setValue('hold_color', color, { shouldValidate: true })
   }
 
   const handleFormSubmit = (data: ClimbForm): void => {
