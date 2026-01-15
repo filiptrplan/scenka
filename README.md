@@ -10,25 +10,25 @@ Vibe-coded for personal enjoyment — use if helpful, but no SLA!
 
 Scenka follows an "exception logging" philosophy — only log significant climbs (failed projects, awkward sends) rather than every session. Less friction, more focus on what matters.
 
-- **Failure-focused tracking** — Emphasize what went wrong (technique failures) vs just tracking sends
+- **Failure-focused tracking** — Emphasize what went wrong (technique failures) vs just tracking sends 🧗
 - **Multiple grading scales** — Font, V-Scale, Color Circuit
 - **Detailed failure analysis** — Track style tags (Slab, Overhang, Dyno, etc.) and failure reasons (Physical, Technical, Mental)
-- **Privacy-first** — No social feeds, no public profiles, your data stays yours
-- **Offline-first PWA** — Works in gyms with zero signal, no app store required
+- **Privacy-first** — No social feeds, no public profiles, your data stays yours 🔒
+- **Offline-first PWA** — Works in gyms with zero signal, no app store required ⚡
 - **Hold color tracking** — Mark climbs by hold color to easily find them again
 
 ## Tech Stack
 
-- **React 18** + **TypeScript** + **Vite** — Fast, type-safe frontend
+- **React 18** + **TypeScript** + **Vite** — Fast, type-safe frontend ⚛️
 - **Supabase** — PostgreSQL database, authentication, and realtime sync
 - **shadcn/ui** — Beautiful, accessible UI components
 - **TanStack Query** — Server state management and caching
 - **Zod** — Schema validation and type safety
 - **react-hook-form** — Form state management
-- **Recharts** — Data visualization for analytics
+- **Recharts** — Data visualization for analytics 📊
 - **PWA** — Service worker for offline capability
 
-## Quick Start
+## Quick Start 🚀
 
 ```bash
 # Install dependencies
@@ -44,7 +44,7 @@ pnpm build
 pnpm preview
 ```
 
-## Available Scripts
+## Available Scripts ⚙️
 
 - `pnpm dev` — Start Vite dev server
 - `pnpm build` — Production build (includes TypeScript compilation)
@@ -54,7 +54,7 @@ pnpm preview
 - `pnpm typecheck` — TypeScript type checking
 - `pnpm test` — Run all tests
 
-## Screenshots
+## Screenshots 📱
 
 <!-- TODO: Capture screenshot from app -->
 ![Screenshot: Logger form with grade picker, outcome selection, and multi-select style tags](./docs/screenshots/logger-form.png)
