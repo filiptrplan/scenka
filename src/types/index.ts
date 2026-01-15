@@ -144,4 +144,5 @@ export interface Profile {
   onboarding_completed: boolean
   updated_at: string
   enabled_hold_colors: HoldColor[]
+  close_logger_after_add: boolean
 }

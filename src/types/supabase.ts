@@ -47,6 +47,7 @@ export type Database = {
           failure_reasons: string[]
           grade_scale: string
           grade_value: string
+          hold_color: string | null
           id: string
           location: string
           notes: string | null
@@ -61,6 +62,7 @@ export type Database = {
           failure_reasons?: string[]
           grade_scale: string
           grade_value: string
+          hold_color?: string | null
           id?: string
           location: string
           notes?: string | null
@@ -75,6 +77,7 @@ export type Database = {
           failure_reasons?: string[]
           grade_scale?: string
           grade_value?: string
+          hold_color?: string | null
           id?: string
           location?: string
           notes?: string | null
@@ -86,6 +89,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          close_logger_after_add: boolean
+          enabled_hold_colors: string[]
           home_gym: string | null
           id: string
           onboarding_completed: boolean
@@ -94,6 +99,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          close_logger_after_add?: boolean
+          enabled_hold_colors?: string[]
           home_gym?: string | null
           id: string
           onboarding_completed?: boolean
@@ -102,6 +109,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          close_logger_after_add?: boolean
+          enabled_hold_colors?: string[]
           home_gym?: string | null
           id?: string
           onboarding_completed?: boolean
