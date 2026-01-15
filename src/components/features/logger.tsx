@@ -1,6 +1,6 @@
+import { forwardRef, useImperativeHandle, useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TrendingUp, TrendingDown } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Badge } from '@/components/ui/badge'
@@ -25,6 +25,10 @@ import type { GradeScale, Discipline, Outcome, Style, FailureReason, Climb, Hold
 
 type ClimbForm = CreateClimbInput
 
+export interface LoggerHandle {
+  resetAllState: () => void
+}
+
 interface LoggerProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void // eslint-disable-line no-unused-vars
@@ -33,7 +37,8 @@ interface LoggerProps {
   climb?: Climb | null
 }
 
-export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: LoggerProps) {
+const Logger = forwardRef<LoggerHandle, LoggerProps>(
+  ({ open, onOpenChange, onSubmit, isSaving, climb }, ref) => {
   const { data: profile } = useProfile()
   const [gradeScale, setGradeScale] = useState<GradeScale>('color_circuit')
   const [discipline, setDiscipline] = useState<Discipline>('boulder')
@@ -92,6 +97,31 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
       setSelectedReasons(climb.failure_reasons)
     }
   }, [climb, reset])
+
+  const resetAllState = () => {
+    reset({
+      climb_type: 'boulder',
+      grade_scale: 'color_circuit',
+      outcome: 'Fail',
+      awkwardness: 3,
+      style: [],
+      failure_reasons: [],
+      location: profile?.home_gym ?? 'My Gym',
+      hold_color: undefined,
+      notes: '',
+      grade_value: '',
+    })
+    setGradeScale('color_circuit')
+    setDiscipline('boulder')
+    setOutcome('Fail')
+    setAwkwardness(3)
+    setSelectedStyles([])
+    setSelectedReasons([])
+  }
+
+  useImperativeHandle(ref, () => ({
+    resetAllState,
+  }))
 
   const selectedGrade = watch('grade_value')
   const selectedHoldColor = watch('hold_color')
@@ -457,4 +487,8 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
       </SheetContent>
     </Sheet>
   )
-}
+})
+
+Logger.displayName = 'Logger'
+
+export { Logger }

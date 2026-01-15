@@ -10,7 +10,7 @@ import {
   Edit,
   Trash2,
 } from 'lucide-react'
-import { createContext, useState, useContext, useEffect } from 'react'
+import { createContext, useState, useContext, useEffect, useRef } from 'react'
 import {
   BrowserRouter,
   NavLink,
@@ -23,6 +23,7 @@ import {
 import { Toaster, toast } from 'sonner'
 
 import { ChartsPage, Logger, ProtectedRoute, SettingsPage } from '@/components/features'
+import type { LoggerHandle } from '@/components/features/logger'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ErrorBanner } from '@/components/ui/error-banner'
@@ -253,6 +254,7 @@ function Layout() {
   const createClimb = useCreateClimb()
   const updateClimb = useUpdateClimb()
   const deleteClimb = useDeleteClimb()
+  const loggerRef = useRef<LoggerHandle>(null)
 
   // Initialize sync manager on mount
   useEffect(() => {
@@ -278,7 +280,7 @@ function Layout() {
     } else {
       createClimb.mutate(data, {
         onSuccess: () => {
-          setLoggerOpen(false)
+          loggerRef.current?.resetAllState()
           toast.success('Climb logged successfully')
         },
         onError: (error) => {
@@ -400,6 +402,7 @@ function Layout() {
         {location.pathname === '/' && (
           <div className="fixed bottom-6 right-6">
             <Logger
+              ref={loggerRef}
               open={loggerOpen}
               onOpenChange={handleLoggerClose}
               onSubmit={handleClimbSubmit}
