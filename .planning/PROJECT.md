@@ -35,14 +35,15 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 ✓ **Authentication** — Supabase Auth
 ✓ **Profile management** — User settings and preferences
 ✓ **Basic analytics** — Climb history visualization and charts
+✓ **Hold color settings page** — User can enable/disable colors from a wide variety of options — v1.0
+✓ **Hold color selection in logger** — Color picker field in climb logging form (from enabled colors only) — v1.0
+✓ **Color persistence** — Store selected color with climb data in Supabase — v1.0
+✓ **Color display in history** — Show hold color on logged climbs in climb list/detail views — v1.0
+✓ **Default color set** — Pre-populate settings with common climbing gym hold colors (red, green, blue, yellow, black, white, orange, purple, pink) — v1.0
 
-### Current Milestone: Hold Color Tracking
+### Active
 
-- [ ] **Hold color settings page** — User can enable/disable colors from a wide variety of options
-- [ ] **Hold color selection in logger** — Color picker field in climb logging form (from enabled colors only)
-- [ ] **Color persistence** — Store selected color with climb data in Supabase
-- [ ] **Color display in history** — Show hold color on logged climbs in climb list/detail views
-- [ ] **Default color set** — Pre-populate settings with common climbing gym hold colors (red, green, blue, yellow, black, white, orange, purple, pink)
+*Planning next milestone*
 
 ### Considered for Future
 
@@ -100,10 +101,13 @@ Settings page exists at `src/components/features/settings-page.tsx` for user pre
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Exception logging | Only log significant climbs, not every session | Reduces friction, focuses on what matters |
-| Failure-focused | Emphasize what went wrong, not just sends | Supports learning and technique improvement |
-| Privacy-first | No social features or public data | Reduces pressure, keeps data personal |
-| Hold colors feature | Help identify specific climbs in gym | Currently implementing |
+| Exception logging | Only log significant climbs, not every session | ✓ Reduces friction, focuses on what matters |
+| Failure-focused | Emphasize what went wrong, not just sends | ✓ Supports learning and technique improvement |
+| Privacy-first | No social features or public data | ✓ Reduces pressure, keeps data personal |
+| Hold colors feature | Help identify specific climbs in gym | ✓ Fully implemented with offline sync, mobile-responsive |
+| Nullable hold_color column | Allow existing climbs without color data | ✓ Backward compatible, no breaking changes |
+| Default colors exclude black/white | Less common as primary hold colors | ✓ 7-color default works well in practice |
+| Form state with watch() | Cleaner than separate component state | ✓ Pattern established for future form development |
 
 ---
-*Last updated: 2026-01-15 — Expanded from hold color feature to full product vision*
+*Last updated: 2026-01-15 after v1.0 milestone — Hold color feature shipped*

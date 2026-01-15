@@ -1,73 +1,24 @@
-# Roadmap: Scenka - Hold Color Feature
+# Roadmap: Scenka
 
-## Overview
+## Milestones
 
-Add a hold color selection feature to the climb logging flow. Users can configure their gym's hold colors in settings, select colors when logging climbs, and see colors displayed in their climb history. The feature integrates seamlessly into the existing offline-first PWA architecture.
-
-## Domain Expertise
-
-None
+- ✅ **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
+- 📋 **v1.1** — Planned (additional features and bugfixes)
 
 ## Phases
 
-- [x] **Phase 1: Database & Types** - Add hold color to schema and TypeScript types
-- [x] **Phase 2: Settings Page** - Build color palette management UI
-- [x] **Phase 3: Logger Integration** - Add color picker to climb logging form
-- [x] **Phase 4: Display & Polish** - Show colors in history and verify offline sync
+<details>
+<summary>✅ v1.0 Hold Color Feature (Phases 1-4) — SHIPPED 2026-01-15</summary>
 
-## Phase Details
+- [x] Phase 1: Database & Types (1/1 plans) — completed 2026-01-15
+- [x] Phase 2: Settings Page (2/2 plans) — completed 2026-01-15
+- [x] Phase 3: Logger Integration (1/1 plans) — completed 2026-01-15
+- [x] Phase 4: Display & Polish (2/2 plans) — completed 2026-01-15
 
-### Phase 1: Database & Types
-**Goal**: Store hold color data with each climb and track user's enabled colors
-**Depends on**: Nothing (first phase)
-**Research**: Unlikely (standard Supabase migration pattern)
-**Plans**: 1 plan
+**Full details:** [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
-Plans:
-- [x] 01-01: Add hold_color column to climbs table, create user_colors table for preferences
+</details>
 
-### Phase 2: Settings Page
-**Goal**: Users can enable/disable hold colors from a predefined palette
-**Depends on**: Phase 1 (database schema ready)
-**Research**: Likely (color picker UI component selection)
-**Research topics**: shadcn/ui color picker options, multi-select patterns, mobile touch targets
-**Plans**: 2 plans
+### 📋 v1.1 (Planned)
 
-Plans:
-- [x] 02-01: Create color settings component with predefined palette (red, green, blue, yellow, black, white, orange, purple, pink)
-- [x] 02-02: Integrate color settings into existing settings page with persistence
-
-### Phase 3: Logger Integration
-**Goal**: Add hold color picker field to climb logging form
-**Depends on**: Phase 2 (user's enabled colors available)
-**Research**: Unlikely (extends existing logger form patterns)
-**Plans**: 1 plan
-
-Plans:
-- [x] 03-01: Add color picker field to logger using enabled colors, validate and store with climb
-
-### Phase 4: Display & Polish
-**Goal**: Show hold colors in climb history and verify full offline sync
-**Depends on**: Phase 3 (climbs have color data)
-**Research**: Unlikely (follows existing history view patterns)
-**Plans**: 2 plans
-
-Plans:
-- [x] 04-01: Display hold color indicator in climb list and detail views
-- [x] 04-02: Test offline sync, mobile responsiveness, and accessibility
-
-## Progress
-
-**Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Database & Types | 1/1 | Complete | 2026-01-15 |
-| 2. Settings Page | 2/2 | Complete | 2026-01-15 |
-| 3. Logger Integration | 1/1 | Complete | 2026-01-15 |
-| 4. Display & Polish | 2/2 | Complete | 2026-01-15 |
-
-**Overall Progress: 6/6 plans complete (100%)**
-
-**Project Status: COMPLETE - Hold Color Feature fully implemented and verified**
+*Planning in progress*
