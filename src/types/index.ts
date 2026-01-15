@@ -58,6 +58,7 @@ export interface Database {
           home_gym: string | null
           onboarding_completed: boolean
           updated_at: string
+          enabled_hold_colors: string[]
         }
         Insert: {
           id: string
@@ -66,6 +67,7 @@ export interface Database {
           home_gym?: string | null
           onboarding_completed?: boolean
           updated_at?: string
+          enabled_hold_colors?: string[]
         }
         Update: {
           id?: string
@@ -74,6 +76,7 @@ export interface Database {
           home_gym?: string | null
           onboarding_completed?: boolean
           updated_at?: string
+          enabled_hold_colors?: string[]
         }
       }
     }
@@ -140,4 +143,5 @@ export interface Profile {
   home_gym: string | null
   onboarding_completed: boolean
   updated_at: string
+  enabled_hold_colors: HoldColor[]
 }
