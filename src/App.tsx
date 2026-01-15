@@ -29,6 +29,7 @@ import { Button } from '@/components/ui/button'
 import { ErrorBanner } from '@/components/ui/error-banner'
 import { OfflineStatus } from '@/components/ui/offline-status'
 import { useClimbs, useCreateClimb, useUpdateClimb, useDeleteClimb } from '@/hooks/useClimbs'
+import { useProfile } from '@/hooks/useProfile'
 import { useAuth } from '@/lib/auth'
 import { COLOR_CIRCUIT } from '@/lib/grades'
 import { initSyncManager } from '@/lib/syncManager'
@@ -251,6 +252,7 @@ function Layout() {
   const [editingClimb, setEditingClimb] = useState<Climb | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { signOut } = useAuth()
+  const { data: profile } = useProfile()
   const createClimb = useCreateClimb()
   const updateClimb = useUpdateClimb()
   const deleteClimb = useDeleteClimb()
@@ -281,6 +283,10 @@ function Layout() {
       createClimb.mutate(data, {
         onSuccess: () => {
           loggerRef.current?.resetAllState()
+          // Check user preference for closing logger after add
+          if (profile?.close_logger_after_add) {
+            setLoggerOpen(false)
+          }
           toast.success('Climb logged successfully')
         },
         onError: (error) => {
