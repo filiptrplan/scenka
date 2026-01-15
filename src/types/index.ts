@@ -11,6 +11,7 @@ export interface Database {
           failure_reasons: string[]
           grade_scale: string
           grade_value: string
+          hold_color: string | null
           id: string
           location: string
           notes: string | null
@@ -25,6 +26,7 @@ export interface Database {
           failure_reasons?: string[]
           grade_scale: string
           grade_value: string
+          hold_color?: string | null
           id?: string
           location: string
           notes?: string | null
@@ -39,6 +41,7 @@ export interface Database {
           failure_reasons?: string[]
           grade_scale?: string
           grade_value?: string
+          hold_color?: string | null
           id?: string
           location?: string
           notes?: string | null
@@ -122,9 +125,12 @@ export type MentalReason = 'Fear' | 'Commitment' | 'Focus'
 
 export type FailureReason = PhysicalReason | TechnicalReason | MentalReason
 
+export type HoldColor = 'red' | 'green' | 'blue' | 'yellow' | 'black' | 'white' | 'orange' | 'purple' | 'pink'
+
 export type Climb = TablesRow<'climbs'> & {
   style: Style[]
   failure_reasons: FailureReason[]
+  hold_color?: HoldColor
 }
 
 export interface Profile {

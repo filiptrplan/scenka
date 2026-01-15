@@ -10,6 +10,7 @@ export const climbSchema = z.object({
       message: 'You must select a grade',
     })
     .pipe(z.string()),
+  hold_color: z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink']).optional(),
   style: z
     .array(
       z.enum([
