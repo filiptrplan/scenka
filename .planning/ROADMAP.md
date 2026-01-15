@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
-- 🚧 **v1.1 UX & Analytics** — Phases 5-12 (in progress)
+- ✅ **v1.1 UX & Analytics** — Phases 5-12 (shipped 2026-01-15)
 
 ## Phases
 
@@ -19,7 +19,8 @@
 
 </details>
 
-### 🚧 v1.1 UX & Analytics (In Progress)
+<details>
+<summary>✅ v1.1 UX & Analytics (Phases 5-12) — SHIPPED 2026-01-15</summary>
 
 **Milestone Goal:** Improve user experience with form auto-reset and actionable analytics for training focus
 
@@ -56,10 +57,10 @@ Follows existing pattern for user preferences (home_gym, preferred_grade_scale, 
 **Depends on**: Phase 5.1
 **Research**: Likely (need to verify if redirect URL can be set programmatically)
 **Research topics**: Supabase auth redirect URL configuration options
-**Plans**: TBD
+**Status**: ✅ Completed 2026-01-15 (Manual configuration)
 
 Plans:
-- [ ] 06-01: TBD
+- [x] 06-01: Manual dashboard configuration - Set Site URL and Redirect URLs in Supabase dashboard
 
 #### Phase 7: Failure Analytics
 
@@ -139,7 +140,7 @@ To be added during planning
 | Phase         | Milestone | Plans | Status      | Completed |
 | 5. Logger Form Reset | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 5.1 Logger Window Close Setting | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
-| 6. Email Redirect Config | v1.1 | 0/? | Not started | - |
+| 6. Email Redirect Config | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 7. Failure Analytics | v1.1 | 0/? | Not started | - |
 | 8. Style Analytics | v1.1 | 0/? | Not started | - |
 | 9. Mark Failed as Succeeded | v1.1 | 0/? | Not started | - |
