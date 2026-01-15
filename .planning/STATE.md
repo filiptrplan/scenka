@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-14)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 3 — Logger Integration
+**Current focus:** Phase 4 — Display Polish
 
 ## Current Position
 
-Phase: 3 of 4 (Logger Integration)
-Plan: 01 of 1 (Hold Color Picker)
+Phase: 4 of 4 (Display Polish)
+Plan: 01 of 1 (Hold Color Display)
 Status: Plan complete
-Last activity: 2026-01-15 — Completed plan 03-01
+Last activity: 2026-01-15 — Completed plan 04-01
 
-Progress: ██████████ 100% (Phase 3)
+Progress: ██████████ 100% (Phase 4, Plan 1)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 15 min
-- Total execution time: 1.5 hours
+- Total plans completed: 7
+- Average duration: 14 min
+- Total execution time: 1.7 hours
 
 **By Phase:**
 
@@ -30,6 +30,7 @@ Progress: ██████████ 100% (Phase 3)
 | 01-database-types | 1 | 23 min | 23 min |
 | 02-settings-page | 2 | 38 min | 19 min |
 | 03-logger-integration | 1 | 12 min | 12 min |
+| 04-display-polish | 1 | 10 min | 10 min |
 | — | — | — | — |
 
 **Recent Trend:**
@@ -64,6 +65,14 @@ Recent decisions affecting current work:
 - Selection state with ring-2 ring-white ring-offset-2 for visibility
 - hold_color is optional in schema (backward compatible with existing climbs)
 
+**Plan 04-01 (2026-01-15):**
+- Use inline styles for backgroundColor when displaying hold colors (better accuracy than Tailwind)
+- Component-level constants for color mappings (efficiency)
+- Explicit null checks (`climb.hold_color !== null && climb.hold_color !== undefined`) to avoid ESLint warnings
+- Ring-1 ring-white/10 for subtle visibility enhancement
+- Border-2 border-white/20 for depth and consistency with other UI elements
+- 16px color badge (w-4 h-4) maintains design system consistency
+
 ### Pending Todos
 
 None yet.
@@ -75,5 +84,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Plan 03-01 complete, Phase 3 complete
+Stopped at: Plan 04-01 complete
 Resume file: None
