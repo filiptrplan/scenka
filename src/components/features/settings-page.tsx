@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import type { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,14 +16,16 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile'
-import { profileSchema, type UpdateProfileInput } from '@/lib/validation'
+import { profileSchema } from '@/lib/validation'
+
+type ProfileFormData = z.input<typeof profileSchema>
 
 export function SettingsPage() {
   const navigate = useNavigate()
   const { data: profile, isLoading } = useProfile()
   const updateProfile = useUpdateProfile()
 
-  const { handleSubmit, register, setValue, watch, reset } = useForm<UpdateProfileInput>({
+  const { handleSubmit, register, setValue, watch, reset } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       preferred_grade_scale: profile?.preferred_grade_scale ?? 'font',
@@ -44,7 +47,7 @@ export function SettingsPage() {
     }
   }, [profile, reset])
 
-  const handleFormSubmit = (data: UpdateProfileInput) => {
+  const handleFormSubmit = (data: ProfileFormData) => {
     updateProfile.mutate(data, {
       onSuccess: () => {
         toast.success('Settings saved successfully')

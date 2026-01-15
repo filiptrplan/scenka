@@ -1,4 +1,7 @@
 import { z } from 'zod'
+import type { HoldColor } from '@/types'
+
+const DEFAULT_COLORS: HoldColor[] = ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink']
 
 export const climbSchema = z.object({
   location: z.string().min(1, 'Location is required'),
@@ -78,6 +81,7 @@ export const profileSchema = z.object({
   preferred_grade_scale: z.enum(['font', 'v_scale', 'color_circuit']),
   preferred_discipline: z.enum(['boulder', 'sport']),
   home_gym: z.string().optional(),
+  enabled_hold_colors: z.array(z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink'])).default(DEFAULT_COLORS),
 })
 
 export type UpdateProfileInput = z.infer<typeof profileSchema>
