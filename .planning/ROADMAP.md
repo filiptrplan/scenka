@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
-- ✅ **v1.1 UX & Analytics** — Phases 5-12 (shipped 2026-01-15)
+- 🚧 **v1.1 UX & Analytics** — Phases 5-12 (in progress)
 
 ## Phases
 
@@ -19,8 +19,7 @@
 
 </details>
 
-<details>
-<summary>✅ v1.1 UX & Analytics (Phases 5-12) — SHIPPED 2026-01-15</summary>
+### 🚧 v1.1 UX & Analytics (In Progress)
 
 **Milestone Goal:** Improve user experience with form auto-reset and actionable analytics for training focus
 
@@ -125,13 +124,15 @@ Plans:
 **Goal**: Add a logo to README and enhance with tasteful emojis
 **Depends on**: Phase 11
 **Research**: Unlikely (documentation updates only)
-**Plans**: 0 plans
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-15
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 12 to break down)
+- [x] 12-01: Add logo image and strategic emojis to README
 
 **Details:**
-To be added during planning
+Added logo.png at top of README with proper alt text
+Added 1-2 strategic emojis per section: climbing (🧗), privacy (🔒), PWA offline (⚡), React (⚛️), analytics (📊), quick start (🚀), settings (⚙️), mobile (📱)
 
 ## Progress
 
@@ -146,4 +147,4 @@ To be added during planning
 | 9. Mark Failed as Succeeded | v1.1 | 0/? | Not started | - |
 | 10. Completed Climbs Analytics | v1.1 | 0/? | Not started | - |
 | 11. Make a Nice README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
-| 12. Add Logo and Emojis to README | v1.1 | 0/? | Not started | - |
+| 12. Add Logo and Emojis to README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
