@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 11 of 11 (Make a Nice README)
-Plan: 01 of 1 (Create polished README)
+Phase: 5.1 of 11.1 (Logger Window Close Setting)
+Plan: 01 of 1 (Logger close preference)
 Status: Plan 01 complete
-Last activity: 2026-01-15 — Created comprehensive README with casual tone and screenshot placeholders
+Last activity: 2026-01-15 — Completed logger window close preference implementation
 
-Progress: ███████████░ 100%
+Progress: ██████░░░░░░░ 55%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 11
-- Average duration: 12 min
-- Total execution time: 2.3 hours
+- Total plans completed: 12
+- Average duration: 13 min
+- Total execution time: 2.5 hours
 
 **By Phase:**
 
@@ -32,11 +32,12 @@ Progress: ███████████░ 100%
 | 03-logger-integration | 1 | 12 min | 12 min |
 | 04-display-polish | 2 | 20 min | 10 min |
 | 05-logger-form-reset | 1 | 15 min | 15 min |
+| 5.1-logger-window-close-setting | 1 | 18 min | 18 min |
 | 11-make-a-nice-readme | 1 | 5 min | 5 min |
 | — | — | — | — |
 
 **Recent Trend:**
-- Last 5 plans: 13 min
+- Last 5 plans: 14 min
 - Trend: Steady
 
 ## Accumulated Context
@@ -49,6 +50,10 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Used `useImperativeHandle` pattern to expose resetAllState method from Logger to parent App component - more React-idiomatic than callback props for imperative operations
 - Logger form auto-resets after successful NEW climb submission (sheet stays open)
 - Edit climb behavior preserved (sheet closes after save)
+
+**Phase 5.1 - Logger Window Close Setting:**
+- Default preference is true (close logger) - matches one-time entry pattern, user can opt-in to rapid entry
+- Edit climbs always close sheet regardless of preference - keeps existing behavior consistent
 
 **Phase 11 - Make a Nice README:**
 - Created comprehensive README.md with casual, fun tone that matches the vibe-coded personal use philosophy
@@ -70,9 +75,10 @@ None yet.
 - Phase 9 added: Mark Failed as Succeeded - ability to mark previously failed climbs as succeeded to track redemption rate
 - Phase 10 added: Completed Climbs Analytics - graph tracking redemption stats for how many failed climbs are eventually completed
 - Phase 11 added: Make a Nice README - create polished README with disclaimer that it's vibe coded for personal enjoyment, plus screenshot placeholders
+- Phase 12 added: Add Logo and Emojis to README - enhance README with logo and tasteful emojis
 
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Milestone v1.1 initialization
+Stopped at: Phase 5.1 plan 01 completion - logger window close preference
 Resume file: None
