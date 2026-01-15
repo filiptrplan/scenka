@@ -41,7 +41,6 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
   const [awkwardness, setAwkwardness] = useState<number>(3)
   const [selectedStyles, setSelectedStyles] = useState<Style[]>([])
   const [selectedReasons, setSelectedReasons] = useState<FailureReason[]>([])
-  const [selectedColor, setSelectedColor] = useState<HoldColor | undefined>(undefined)
 
   const {
     register,
@@ -91,7 +90,6 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
       setAwkwardness(climb.awkwardness)
       setSelectedStyles(climb.style)
       setSelectedReasons(climb.failure_reasons)
-      setSelectedColor(climb.hold_color)
     }
   }, [climb, reset])
 
@@ -117,7 +115,6 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
   }
 
   const handleColorSelect = (color: HoldColor) => {
-    setSelectedColor(color)
     setValue('hold_color', color, { shouldValidate: true })
   }
 
@@ -262,6 +259,46 @@ export function Logger({ open, onOpenChange, onSubmit, isSaving, climb }: Logger
                   <p className="text-xs text-red-400 font-mono">{errors.grade_value.message}</p>
                 )}
               </div>
+
+              {profile?.enabled_hold_colors !== undefined &&
+                profile.enabled_hold_colors.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
+                      Hold Color (optional)
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {profile.enabled_hold_colors.map((color) => {
+                        const colorMap: Record<HoldColor, string> = {
+                          red: '#ef4444',
+                          green: '#22c55e',
+                          blue: '#3b82f6',
+                          yellow: '#eab308',
+                          black: '#000000',
+                          white: '#ffffff',
+                          orange: '#f97316',
+                          purple: '#a855f7',
+                          pink: '#ec4899',
+                        }
+                        return (
+                          <button
+                            key={color}
+                            type="button"
+                            onClick={() => handleColorSelect(color)}
+                            className={cn(
+                              'h-14 w-full rounded-lg border-2 transition-all',
+                              selectedHoldColor === color
+                                ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0a0a0a]'
+                                : 'opacity-40 hover:opacity-70'
+                            )}
+                            style={{ backgroundColor: colorMap[color] }}
+                            aria-label={`Select ${color} color`}
+                            aria-pressed={selectedHoldColor === color}
+                          />
+                        )
+                      })}
+                    </div>
+                  </div>
+                )}
             </div>
 
             <div className="space-y-4 pt-4 border-t border-white/10">
