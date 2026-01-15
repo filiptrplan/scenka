@@ -32,7 +32,7 @@ import { useAuth } from '@/lib/auth'
 import { COLOR_CIRCUIT } from '@/lib/grades'
 import { initSyncManager } from '@/lib/syncManager'
 import type { CreateClimbInput } from '@/lib/validation'
-import type { Climb } from '@/types'
+import type { Climb, HoldColor } from '@/types'
 
 /* eslint-disable no-unused-vars */
 interface ClimbActionsContextType {
@@ -42,6 +42,19 @@ interface ClimbActionsContextType {
 /* eslint-enable no-unused-vars */
 
 const ClimbActionsContext = createContext<ClimbActionsContextType | undefined>(undefined)
+
+// Color mapping for hold colors (matches ColorSettings component)
+const HOLD_COLOR_MAP: Record<HoldColor, string> = {
+  red: '#ef4444',
+  green: '#22c55e',
+  blue: '#3b82f6',
+  yellow: '#eab308',
+  black: '#18181b',
+  white: '#fafafa',
+  orange: '#f97316',
+  purple: '#a855f7',
+  pink: '#ec4899',
+}
 
 function Dashboard() {
   const context = useContext(ClimbActionsContext)
@@ -98,6 +111,16 @@ function Dashboard() {
                     <MapPin className="h-3 w-3" />
                     {climb.location}
                   </div>
+                  {climb.hold_color !== null && climb.hold_color !== undefined && (
+                    <div className="text-xs font-mono text-[#666] uppercase tracking-wider flex items-center gap-2 mt-1">
+                      <span>Hold Color</span>
+                      <div
+                        className="w-4 h-4 rounded-full border-2 border-white/20"
+                        style={{ backgroundColor: HOLD_COLOR_MAP[climb.hold_color] }}
+                        aria-label={`Hold color: ${climb.hold_color}`}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
