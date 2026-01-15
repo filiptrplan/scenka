@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import type { z } from 'zod'
 
+import { ColorSettings } from '@/components/features/color-settings'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -17,8 +18,11 @@ import {
 } from '@/components/ui/select'
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile'
 import { profileSchema } from '@/lib/validation'
+import type { HoldColor } from '@/types'
 
 type ProfileFormData = z.input<typeof profileSchema>
+
+const DEFAULT_COLORS: HoldColor[] = ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink']
 
 export function SettingsPage() {
   const navigate = useNavigate()
@@ -31,11 +35,13 @@ export function SettingsPage() {
       preferred_grade_scale: profile?.preferred_grade_scale ?? 'font',
       preferred_discipline: profile?.preferred_discipline ?? 'boulder',
       home_gym: profile?.home_gym ?? '',
+      enabled_hold_colors: profile?.enabled_hold_colors ?? DEFAULT_COLORS,
     },
   })
 
   const gradeScale = watch('preferred_grade_scale')
   const discipline = watch('preferred_discipline')
+  const enabledColors = watch('enabled_hold_colors')
 
   useEffect(() => {
     if (profile) {
@@ -43,6 +49,7 @@ export function SettingsPage() {
         preferred_grade_scale: profile.preferred_grade_scale,
         preferred_discipline: profile.preferred_discipline,
         home_gym: profile.home_gym ?? '',
+        enabled_hold_colors: profile.enabled_hold_colors ?? DEFAULT_COLORS,
       })
     }
   }, [profile, reset])
@@ -128,6 +135,11 @@ export function SettingsPage() {
               </SelectContent>
             </Select>
           </div>
+
+          <ColorSettings
+            value={enabledColors ?? DEFAULT_COLORS}
+            onChange={(colors) => setValue('enabled_hold_colors', colors)}
+          />
         </div>
 
         <div className="flex gap-3">
