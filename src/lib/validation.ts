@@ -82,6 +82,7 @@ export const profileSchema = z.object({
   preferred_discipline: z.enum(['boulder', 'sport']),
   home_gym: z.string().optional(),
   enabled_hold_colors: z.array(z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink'])).default(DEFAULT_COLORS),
+  close_logger_after_add: z.boolean().default(true),
 })
 
 export type UpdateProfileInput = z.infer<typeof profileSchema>
