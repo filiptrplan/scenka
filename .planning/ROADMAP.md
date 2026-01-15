@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
-- 📋 **v1.1** — Planned (additional features and bugfixes)
+- 🚧 **v1.1 UX & Analytics** — Phases 5-8 (in progress)
 
 ## Phases
 
@@ -19,6 +19,58 @@
 
 </details>
 
-### 📋 v1.1 (Planned)
+### 🚧 v1.1 UX & Analytics (In Progress)
 
-*Planning in progress*
+**Milestone Goal:** Improve user experience with form auto-reset and actionable analytics for training focus
+
+#### Phase 5: Logger Form Reset
+
+**Goal**: Auto-reset logger form after successful climb submission to reduce friction
+**Depends on**: v1.0 complete
+**Research**: Unlikely (internal React state patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 05-01: TBD (run /gsd:plan-phase 5 to break down)
+
+#### Phase 6: Email Redirect Config
+
+**Goal**: Configure Supabase email confirmation to redirect to production URL (chat.trplan.si)
+**Depends on**: Phase 5
+**Research**: Likely (need to verify if redirect URL can be set programmatically)
+**Research topics**: Supabase auth redirect URL configuration options
+**Plans**: TBD
+
+Plans:
+- [ ] 06-01: TBD
+
+#### Phase 7: Failure Analytics
+
+**Goal**: Detailed breakdown of failure reasons by frequency to identify training focus areas
+**Depends on**: Phase 6
+**Research**: Unlikely (recharts already integrated, internal query patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 07-01: TBD
+
+#### Phase 8: Style Analytics
+
+**Goal**: Visualize most awkward climbing styles (not just failed)
+**Depends on**: Phase 7
+**Research**: Unlikely (same patterns as Phase 7)
+**Plans**: TBD
+
+Plans:
+- [ ] 08-01: TBD
+
+## Progress
+
+**Execution Order:** Phases execute in numeric order: 5 → 6 → 7 → 8
+
+| Phase         | Milestone | Plans | Status      | Completed |
+| ------------- | --------- | ----- | ----------- | --------- |
+| 5. Logger Form Reset | v1.1 | 0/? | Not started | - |
+| 6. Email Redirect Config | v1.1 | 0/? | Not started | - |
+| 7. Failure Analytics | v1.1 | 0/? | Not started | - |
+| 8. Style Analytics | v1.1 | 0/? | Not started | - |
