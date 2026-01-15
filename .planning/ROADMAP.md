@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
-- 🚧 **v1.1 UX & Analytics** — Phases 5-11 (in progress)
+- 🚧 **v1.1 UX & Analytics** — Phases 5-12 (in progress)
 
 ## Phases
 
@@ -39,10 +39,10 @@ Plans:
 **Depends on**: Phase 5
 **Research**: Likely (need to determine if user preferences already exist, and how to store them)
 **Plans**: 1 plan
-**Status**: ✅ Planned 2026-01-15
+**Status**: ✅ Completed 2026-01-15
 
 Plans:
-- [ ] 5.1-01: Add database field, settings toggle, and App.tsx integration
+- [x] 5.1-01: Add database field, settings toggle, and App.tsx integration
 
 **Details:**
 Follows existing pattern for user preferences (home_gym, preferred_grade_scale, enabled_hold_colors)
@@ -119,16 +119,30 @@ To be added during planning
 Plans:
 - [x] 11-01: Create comprehensive README with casual tone and screenshot placeholders
 
+#### Phase 12: Add Logo and Emojis to README
+
+**Goal**: Add a logo to README and enhance with tasteful emojis
+**Depends on**: Phase 11
+**Research**: Unlikely (documentation updates only)
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 12 to break down)
+
+**Details:**
+To be added during planning
+
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 11
+**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 11 → 12
 
 | Phase         | Milestone | Plans | Status      | Completed |
 | 5. Logger Form Reset | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
-| 5.1 Logger Window Close Setting | v1.1 | 1/1 | Planned | - |
+| 5.1 Logger Window Close Setting | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 6. Email Redirect Config | v1.1 | 0/? | Not started | - |
 | 7. Failure Analytics | v1.1 | 0/? | Not started | - |
 | 8. Style Analytics | v1.1 | 0/? | Not started | - |
 | 9. Mark Failed as Succeeded | v1.1 | 0/? | Not started | - |
 | 10. Completed Climbs Analytics | v1.1 | 0/? | Not started | - |
 | 11. Make a Nice README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
+| 12. Add Logo and Emojis to README | v1.1 | 0/? | Not started | - |
