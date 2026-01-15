@@ -10,7 +10,7 @@ None
 
 ## Phases
 
-- [ ] **Phase 1: Database & Types** - Add hold color to schema and TypeScript types
+- [x] **Phase 1: Database & Types** - Add hold color to schema and TypeScript types
 - [ ] **Phase 2: Settings Page** - Build color palette management UI
 - [ ] **Phase 3: Logger Integration** - Add color picker to climb logging form
 - [ ] **Phase 4: Display & Polish** - Show colors in history and verify offline sync
@@ -24,7 +24,7 @@ None
 **Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: Add hold_color column to climbs table, create user_colors table for preferences
+- [x] 01-01: Add hold_color column to climbs table, create user_colors table for preferences
 
 ### Phase 2: Settings Page
 **Goal**: Users can enable/disable hold colors from a predefined palette
@@ -63,7 +63,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Database & Types | 0/1 | Not started | - |
+| 1. Database & Types | 1/1 | Complete | 2026-01-15 |
 | 2. Settings Page | 0/2 | Not started | - |
 | 3. Logger Integration | 0/1 | Not started | - |
 | 4. Display & Polish | 0/2 | Not started | - |
