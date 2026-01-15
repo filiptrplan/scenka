@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile'
 import { profileSchema } from '@/lib/validation'
 import type { HoldColor } from '@/types'
@@ -36,12 +37,14 @@ export function SettingsPage() {
       preferred_discipline: profile?.preferred_discipline ?? 'boulder',
       home_gym: profile?.home_gym ?? '',
       enabled_hold_colors: profile?.enabled_hold_colors ?? DEFAULT_COLORS,
+      close_logger_after_add: profile?.close_logger_after_add ?? true,
     },
   })
 
   const gradeScale = watch('preferred_grade_scale')
   const discipline = watch('preferred_discipline')
   const enabledColors = watch('enabled_hold_colors')
+  const closeAfterAdd = watch('close_logger_after_add')
 
   useEffect(() => {
     if (profile) {
@@ -50,6 +53,7 @@ export function SettingsPage() {
         preferred_discipline: profile.preferred_discipline,
         home_gym: profile.home_gym ?? '',
         enabled_hold_colors: profile.enabled_hold_colors ?? DEFAULT_COLORS,
+        close_logger_after_add: profile.close_logger_after_add ?? true,
       })
     }
   }, [profile, reset])
@@ -140,6 +144,27 @@ export function SettingsPage() {
             value={enabledColors ?? DEFAULT_COLORS}
             onChange={(colors) => setValue('enabled_hold_colors', colors)}
           />
+
+          <div className="space-y-3">
+            <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
+              Close logger after adding climb
+            </label>
+            <div className="flex items-center justify-between bg-[#1a1a1a] border-2 border-white/10 p-4">
+              <div className="flex-1">
+                <p className="text-sm text-white mb-1">
+                  {closeAfterAdd ? 'Logger closes' : 'Logger stays open'}
+                </p>
+                <p className="text-xs text-[#666]">
+                  If enabled, the climb logger closes after logging a new climb. If disabled, it stays open for rapid entry.
+                </p>
+              </div>
+              <Switch
+                checked={closeAfterAdd ?? true}
+                onCheckedChange={(checked) => setValue('close_logger_after_add', checked)}
+                className="ml-4"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-3">
