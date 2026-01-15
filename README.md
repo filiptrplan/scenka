@@ -1,5 +1,7 @@
 # Scenka
 
+![Scenka logo](./logo.png)
+
 A personal climbing tracker built for climbers who want to get better, not just log sends. Exception logging, failure-focused, privacy-first, and offline-ready.
 
 Vibe-coded for personal enjoyment — use if helpful, but no SLA!
