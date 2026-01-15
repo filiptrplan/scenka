@@ -66,10 +66,11 @@ Plans:
 **Goal**: Detailed breakdown of failure reasons by frequency to identify training focus areas
 **Depends on**: Phase 6
 **Research**: Unlikely (recharts already integrated, internal query patterns)
-**Plans**: TBD
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-15
 
 Plans:
-- [ ] 07-01: TBD
+- [x] 07-01: Add Failure Reasons breakdown chart with rose-500 theme color, sorted by frequency
 
 #### Phase 8: Style Analytics
 
@@ -142,7 +143,7 @@ Added 1-2 strategic emojis per section: climbing (🧗), privacy (🔒), PWA off
 | 5. Logger Form Reset | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 5.1 Logger Window Close Setting | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 6. Email Redirect Config | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
-| 7. Failure Analytics | v1.1 | 0/? | Not started | - |
+| 7. Failure Analytics | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 8. Style Analytics | v1.1 | 0/? | Not started | - |
 | 9. Mark Failed as Succeeded | v1.1 | 0/? | Not started | - |
 | 10. Completed Climbs Analytics | v1.1 | 0/? | Not started | - |
