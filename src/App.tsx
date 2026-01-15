@@ -115,7 +115,7 @@ function Dashboard() {
                     <div className="text-xs font-mono text-[#666] uppercase tracking-wider flex items-center gap-2 mt-1">
                       <span>Hold Color</span>
                       <div
-                        className="w-4 h-4 rounded-full border-2 border-white/20"
+                        className="w-4 h-4 rounded-full border-2 border-white/20 ring-1 ring-white/10"
                         style={{ backgroundColor: HOLD_COLOR_MAP[climb.hold_color] }}
                         aria-label={`Hold color: ${climb.hold_color}`}
                       />
