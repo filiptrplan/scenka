@@ -34,24 +34,19 @@ const thumbVariants = cva(
   }
 )
 
-export interface ToggleProps
-  extends React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> {
-  checked?: boolean
-  onCheckedChange?: (checked: boolean) => void
-}
-
 const Toggle = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
-  ToggleProps
->(({ className, ...props }, ref) => {
-  const isChecked = props.checked ?? false
+  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
+>(({ className, checked = false, onCheckedChange, ...props }, ref) => {
   return (
     <SwitchPrimitives.Root
-      className={cn(toggleVariants({ checked: isChecked }), className)}
+      className={cn(toggleVariants({ checked }), className)}
+      checked={checked}
+      onCheckedChange={onCheckedChange}
       {...props}
       ref={ref}
     >
-      <SwitchPrimitives.Thumb className={thumbVariants({ checked: isChecked })} />
+      <SwitchPrimitives.Thumb className={thumbVariants({ checked })} />
     </SwitchPrimitives.Root>
   )
 })
