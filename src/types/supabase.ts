@@ -52,6 +52,7 @@ export type Database = {
           location: string
           notes: string | null
           outcome: string
+          redemption_at: string | null
           style: string[]
           user_id: string
         }
@@ -67,6 +68,7 @@ export type Database = {
           location: string
           notes?: string | null
           outcome: string
+          redemption_at?: string | null
           style?: string[]
           user_id: string
         }
@@ -82,6 +84,7 @@ export type Database = {
           location?: string
           notes?: string | null
           outcome?: string
+          redemption_at?: string | null
           style?: string[]
           user_id?: string
         }

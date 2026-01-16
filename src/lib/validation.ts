@@ -73,6 +73,7 @@ export const climbSchema = z.object({
     )
     .min(0),
   notes: z.string().optional(),
+  redemption_at: z.string().optional(),
 })
 
 export type CreateClimbInput = z.infer<typeof climbSchema>
