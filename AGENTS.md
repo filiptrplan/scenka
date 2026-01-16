@@ -166,19 +166,6 @@ Failure Reasons: Physical (Pumped, Finger Strength, Core, Power), Technical (Bad
 
 Mobile-first, standalone display, dark theme, 44px+ targets, offline support, <2s load
 
-## Screenshot Workflow
-
-Screenshots are located in `~/Pictures/Screenshots`. When asked to read an image of the UI or take a look at a problem, access the latest screenshot in that folder.
-
-**IMPORTANT: Always use the zai MCP tools when working with images/screenshots.** This includes:
-
-- `zai-mcp-server_ui_to_artifact` for UI screenshots (convert to code/prompts/specs)
-- `zai-mcp-server_extract_text_from_screenshot` for extracting text/code from screenshots
-- `zai-mcp-server_diagnose_error_screenshot` for error messages and stack traces
-- `zai-mcp-server_understand_technical_diagram` for architecture diagrams and flowcharts
-- `zai-mcp-server_analyze_data_visualization` for charts and graphs
-- `zai-mcp-server_ui_diff_check` for comparing two UI screenshots
-
 ## Before Submitting Code
 
 1. `npm run lint` - fix all issues
