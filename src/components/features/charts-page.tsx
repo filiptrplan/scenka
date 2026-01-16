@@ -120,6 +120,42 @@ export function ChartsPage() {
       .sort((a, b) => b.value - a.value)
   }, [climbs])
 
+  const redemptionRateData = useMemo(() => {
+    const buckets = getAllGradeBuckets()
+    const gradeBuckets: Record<string, { total_sent: number; redeems_sent: number }> = {}
+
+    // Initialize buckets
+    buckets.forEach((bucket) => {
+      gradeBuckets[bucket] = { total_sent: 0, redeems_sent: 0 }
+    })
+
+    // Process climbs
+    climbs.forEach((climb) => {
+      if (climb.outcome === 'Sent') {
+        const normalized = normalizeGrade(climb.grade_scale as any, climb.grade_value)
+        const bucket = getDifficultyBucket(normalized)
+
+        if (gradeBuckets[bucket]) {
+          gradeBuckets[bucket].total_sent += 1
+          // Check if redemption_at is not null/undefined
+          if (climb.redemption_at !== null && climb.redemption_at !== undefined) {
+            gradeBuckets[bucket].redeems_sent += 1
+          }
+        }
+      }
+    })
+
+    return Object.entries(gradeBuckets)
+      .map(([name, data]) => ({
+        name,
+        total_sent: data.total_sent,
+        redeems_sent: data.redeems_sent,
+        non_redeemed: data.total_sent - data.redeems_sent,
+        redemption_rate: data.total_sent > 0 ? (data.redeems_sent / data.total_sent) * 100 : 0,
+      }))
+      .filter((item) => item.name !== 'Unknown')
+  }, [climbs])
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4 pb-24">
@@ -416,6 +452,76 @@ export function ChartsPage() {
                     fill="rgba(168, 85, 247, 0.8)"
                     activeBar={{ fill: 'rgba(168, 85, 247, 0.5)' }}
                     radius={[0, 0, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-2">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="h-1 flex-1 bg-teal-500" />
+            <h2 className="text-3xl font-black tracking-tighter uppercase">REDEMPTION RATE</h2>
+            <div className="h-1 flex-1 bg-teal-500" />
+          </div>
+
+          <div className="bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200">
+            <p className="text-xs font-mono text-[#666] uppercase tracking-wider mb-6">
+              Redemption rate by difficulty bucket
+            </p>
+
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={redemptionRateData}
+                  margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+                >
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#888', fontSize: 10, fontFamily: 'monospace' }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#888', fontSize: 10, fontFamily: 'monospace' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1a1a1a',
+                      border: '2px solid rgba(255,255,255,0.2)',
+                      borderRadius: 0,
+                      fontFamily: 'monospace',
+                    }}
+                    itemStyle={{ color: '#f5f5f5' }}
+                    labelStyle={{ color: '#888', textTransform: 'uppercase' }}
+                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                  />
+                  <Bar
+                    dataKey="non_redeemed"
+                    fill="rgba(107, 114, 128, 0.8)"
+                    activeBar={{ fill: 'rgba(107, 114, 128, 0.5)' }}
+                    radius={[0, 0, 0, 0]}
+                    name="Sent (non-redeemed)"
+                  />
+                  <Bar
+                    dataKey="redeems_sent"
+                    fill="rgba(20, 184, 166, 0.8)"
+                    activeBar={{ fill: 'rgba(20, 184, 166, 0.5)' }}
+                    radius={[0, 0, 0, 0]}
+                    name="Redeemed"
+                  />
+                  <Legend
+                    verticalAlign="top"
+                    height={36}
+                    iconType="rect"
+                    wrapperStyle={{
+                      fontFamily: 'monospace',
+                      fontSize: 10,
+                      textTransform: 'uppercase',
+                    }}
                   />
                 </BarChart>
               </ResponsiveContainer>
