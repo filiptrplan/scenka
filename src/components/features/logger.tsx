@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { FormLabel } from '@/components/ui/form-label'
+import { FormSection } from '@/components/ui/form-section'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -13,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { SelectionButton } from '@/components/ui/selection-button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
@@ -218,49 +221,33 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
             }}
             className="flex-1 overflow-y-auto space-y-6 py-4 pb-24"
           >
-            <div className="space-y-4">
+            <FormSection className="space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                  Discipline
-                </label>
+                <FormLabel>Discipline</FormLabel>
                 <div className="flex gap-2">
-                  <button
-                    type="button"
+                  <SelectionButton
+                    selected={discipline === 'boulder'}
                     onClick={() => {
                       setDiscipline('boulder')
                       setValue('climb_type', 'boulder', { shouldValidate: true })
                     }}
-                    className={cn(
-                      'flex-1 px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all',
-                      discipline === 'boulder'
-                        ? 'bg-white/10 border-white/30 text-white'
-                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
-                    )}
                   >
                     Boulder
-                  </button>
-                  <button
-                    type="button"
+                  </SelectionButton>
+                  <SelectionButton
+                    selected={discipline === 'sport'}
                     onClick={() => {
                       setDiscipline('sport')
                       setValue('climb_type', 'sport', { shouldValidate: true })
                     }}
-                    className={cn(
-                      'flex-1 px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all',
-                      discipline === 'sport'
-                        ? 'bg-white/10 border-white/30 text-white'
-                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
-                    )}
                   >
                     Sport
-                  </button>
+                  </SelectionButton>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                  Grade Scale
-                </label>
+                <FormLabel>Grade Scale</FormLabel>
                 <Select
                   value={gradeScale}
                   onValueChange={(value: GradeScale) => {
@@ -281,9 +268,7 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                  Grade
-                </label>
+                <FormLabel>Grade</FormLabel>
                 {renderGradePicker()}
                 {errors.grade_value !== undefined && (
                   <p className="text-xs text-red-400 font-mono">{errors.grade_value.message}</p>
@@ -293,9 +278,7 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
               {profile?.enabled_hold_colors !== undefined &&
                 profile.enabled_hold_colors.length > 0 && (
                   <div className="space-y-2">
-                    <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                      Hold Color (optional)
-                    </label>
+                    <FormLabel>Hold Color (optional)</FormLabel>
                     <div className="grid grid-cols-3 gap-2">
                       {profile.enabled_hold_colors.map((color) => {
                         const colorMap: Record<HoldColor, string> = {
@@ -329,13 +312,11 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
                     </div>
                   </div>
                 )}
-            </div>
+            </FormSection>
 
             <div className="space-y-4 pt-4 border-t border-white/10">
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                  Outcome
-                </label>
+                <FormLabel>Outcome</FormLabel>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -377,9 +358,7 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                  Awkwardness: {getAwkwardnessLabel(awkwardness)}
-                </label>
+                <FormLabel>Awkwardness: {getAwkwardnessLabel(awkwardness)}</FormLabel>
                 <Slider
                   value={[awkwardness]}
                   onValueChange={(value) => {
@@ -397,9 +376,7 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
 
             <div className="space-y-4 pt-4 border-t border-white/10">
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                  Style (select all that apply)
-                </label>
+                <FormLabel>Style (select all that apply)</FormLabel>
                 <div className="flex flex-wrap gap-2">
                   {STYLE_OPTIONS.map((style) => (
                     <Badge
@@ -418,10 +395,10 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
+                <FormLabel>
                   {outcome === 'Fail' ? 'Failure Reasons' : 'Imperfect Aspects'} (select all that
                   apply)
-                </label>
+                </FormLabel>
                 <div className="flex flex-wrap gap-2">
                   {getFailureReasons(outcome).map((reason) => (
                     <Badge
@@ -440,9 +417,7 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                  Notes (optional)
-                </label>
+                <FormLabel>Notes (optional)</FormLabel>
                 <Textarea
                   {...register('notes')}
                   placeholder="Any additional thoughts..."
@@ -453,9 +428,7 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
 
             <div className="space-y-4 pt-4 border-t border-white/10">
               <div className="space-y-2">
-                <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-                  Location
-                </label>
+                <FormLabel>Location</FormLabel>
                 <Input
                   {...register('location')}
                   placeholder="Gym or crag name"
