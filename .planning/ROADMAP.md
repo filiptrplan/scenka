@@ -89,13 +89,14 @@ Plans:
 **Depends on**: Phase 8
 **Research**: Likely (need to understand current climb update flow and whether outcome change tracking exists)
 **Research topics**: Climb update API, outcome field constraints, data model changes for redemptions
-**Plans**: 0 plans
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 9 to break down)
+- [x] 09-01: Create ClimbCard component with Mark as Sent button and integrate into Dashboard
 
 **Details:**
-To be added during planning
+Created reusable ClimbCard component that renders climb details with conditional "Mark as Sent" button for failed climbs. Integrated into Dashboard replacing inline rendering.
 
 #### Phase 10: Completed Climbs Analytics
 
@@ -146,7 +147,7 @@ Added 1-2 strategic emojis per section: climbing (🧗), privacy (🔒), PWA off
 | 6. Email Redirect Config | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 7. Failure Analytics | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 8. Style Analytics | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
-| 9. Mark Failed as Succeeded | v1.1 | 0/? | Not started | - |
+| 9. Mark Failed as Succeeded | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 10. Completed Climbs Analytics | v1.1 | 0/? | Not started | - |
 | 11. Make a Nice README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 12. Add Logo and Emojis to README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
