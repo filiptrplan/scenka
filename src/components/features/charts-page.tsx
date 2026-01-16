@@ -111,23 +111,6 @@ export function ChartsPage() {
       .filter((item) => item.name !== 'Unknown')
   }, [climbs])
 
-  const failureReasonsData = useMemo(() => {
-    const reasonCount = new Map<string, number>()
-
-    climbs.forEach((climb) => {
-      if (climb.outcome === 'Fail') {
-        climb.failure_reasons.forEach((reason) => {
-          const currentValue = reasonCount.get(reason) ?? 0
-          reasonCount.set(reason, currentValue + 1)
-        })
-      }
-    })
-
-    return Array.from(reasonCount.entries())
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value)
-  }, [climbs])
-
   const redemptionRateData = useMemo(() => {
     const buckets = getAllGradeBuckets()
     const gradeBuckets: Record<string, { total_sent: number; redeems_sent: number }> = {}
@@ -414,59 +397,6 @@ export function ChartsPage() {
                       fontSize: 10,
                       textTransform: 'uppercase',
                     }}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-2">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="h-1 flex-1 bg-rose-500" />
-            <h2 className="text-3xl font-black tracking-tighter uppercase">Failure Reasons</h2>
-            <div className="h-1 flex-1 bg-rose-500" />
-          </div>
-
-          <div className="bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200">
-            <p className="text-xs font-mono text-[#666] uppercase tracking-wider mb-6">
-              Frequency of individual failure causes
-            </p>
-
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={failureReasonsData}
-                  margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
-                >
-                  <XAxis
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#888', fontSize: 10, fontFamily: 'monospace' }}
-                    tickFormatter={(value) => value.toUpperCase()}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#888', fontSize: 10, fontFamily: 'monospace' }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: '#1a1a1a',
-                      border: '2px solid rgba(255,255,255,0.2)',
-                      borderRadius: 0,
-                      fontFamily: 'monospace',
-                    }}
-                    itemStyle={{ color: '#f5f5f5' }}
-                    labelStyle={{ color: '#888', textTransform: 'uppercase' }}
-                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                  />
-                  <Bar
-                    dataKey="value"
-                    fill="rgba(244, 63, 94, 0.8)"
-                    activeBar={{ fill: 'rgba(244, 63, 94, 0.5)' }}
-                    radius={[0, 0, 0, 0]}
                   />
                 </BarChart>
               </ResponsiveContainer>
