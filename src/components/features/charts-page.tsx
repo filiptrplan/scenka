@@ -63,6 +63,29 @@ export function ChartsPage() {
     ]
   }, [climbs])
 
+  const trainingPrioritiesData = useMemo(() => {
+    const reasonCount = new Map<string, number>()
+
+    climbs.forEach((climb) => {
+      if (climb.outcome === 'Fail') {
+        climb.failure_reasons.forEach((reason) => {
+          const currentValue = reasonCount.get(reason) ?? 0
+          reasonCount.set(reason, currentValue + 1)
+        })
+      }
+    })
+
+    const totalFailures = Array.from(reasonCount.values()).reduce((sum, count) => sum + count, 0)
+
+    return Array.from(reasonCount.entries())
+      .map(([name, value]) => ({
+        name,
+        value,
+        percentage: totalFailures > 0 ? (value / totalFailures) * 100 : 0,
+      }))
+      .sort((a, b) => b.value - a.value)
+  }, [climbs])
+
   const sendsByGradeData = useMemo(() => {
     const buckets = getAllGradeBuckets()
     const gradeBuckets: Record<string, { sent: number; fail: number }> = {}
