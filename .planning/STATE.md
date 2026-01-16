@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 10 of 12 (Completed Climbs Analytics)
-Plan: 01 of 1 (Redemption analytics tracking and visualization)
+Phase: 10.1 of 13 (Fix Mark as Sent Button Styling)
+Plan: 01 of 1 (Fix button styling)
 Status: Plan 01 complete
-Last activity: 2026-01-16 — Added redemption_at column, updated ClimbCard to record redemption timestamp, created Redemption Rate chart
+Last activity: 2026-01-16 — Plan 01 completed: Removed custom className from "Mark as Sent" button to let shadcn/ui outline variant provide proper styling
 
-Progress: █████████░░ 75%
+Progress: ██████████░░ 92%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 17
+- Total plans completed: 18
 - Average duration: 11 min
-- Total execution time: 3.2 hours
+- Total execution time: 3.3 hours
 
 **By Phase:**
 
@@ -40,6 +40,7 @@ Progress: █████████░░ 75%
 | 10-completed-climbs-analytics | 1 | 0 min | 0 min |
 | 11-make-a-nice-readme | 1 | 5 min | 5 min |
 | 12-add-logo-and-emojis-to-readme | 1 | 8 min | 8 min |
+| 10.1-fix-mark-as-sent-button-styling | 1 | 3 min | 3 min |
 | — | — | — | — |
 
 **Recent Trend:**
@@ -103,6 +104,11 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Migration applied via `npx supabase db push` to both local and remote databases
 - TypeScript types regenerated from database schema to include `redemption_at` in Row/Insert/Update types
 
+**Phase 10.1 - Fix Mark as Sent Button Styling:**
+- Removed custom className from "Mark as Sent" button to let shadcn/ui outline variant provide proper styling
+- Button now conforms to app's design system without white background overrides
+- shadcn/ui outline variant handles emerald color theming correctly without manual overrides
+
 ### Pending Todos
 
 None yet.
@@ -119,6 +125,8 @@ None yet.
 - Phase 10 added: Completed Climbs Analytics - graph tracking redemption stats for how many failed climbs are eventually completed
 - Phase 11 added: Make a Nice README - create polished README with disclaimer that it's vibe coded for personal enjoyment, plus screenshot placeholders
 - Phase 12 added: Add Logo and Emojis to README - enhance README with logo and tasteful emojis
+- Phase 13 added: Revamp Analytics for More Insightful Graphs - address Style Distribution issues and improve overall analytics with more meaningful training metrics
+- Phase 10.1 inserted after Phase 10: Fix Mark as Sent Button Styling (URGENT) - white buttons don't conform to app style
 
 ## Session Continuity
 

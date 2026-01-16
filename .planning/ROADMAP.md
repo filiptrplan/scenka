@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
-- 🚧 **v1.1 UX & Analytics** — Phases 5-12 (in progress)
+- 🚧 **v1.1 UX & Analytics** — Phases 5-13 (in progress)
 
 ## Phases
 
@@ -103,13 +103,28 @@ Created reusable ClimbCard component that renders climb details with conditional
 **Goal**: Graph tracking redemption stats - how many failed climbs are eventually completed
 **Depends on**: Phase 9
 **Research**: Unlikely (recharts already integrated, redemption data will exist after Phase 9)
-**Plans**: 0 plans
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 10 to break down)
+- [x] 10-01: Create redemption_at column migration, update ClimbCard to record redemption timestamp, add Redemption Rate chart
 
 **Details:**
-To be added during planning
+Implemented redemption analytics tracking and visualization showing how many failed climbs are eventually completed. Created database migration for redemption tracking, updated ClimbCard to record redemption events, and added Redemption Rate chart to Analytics page.
+
+#### Phase 10.1: Fix Mark as Sent Button Styling (INSERTED)
+
+**Goal**: Fix white "Mark as Sent" buttons to conform to app style
+**Depends on**: Phase 10
+**Research**: Unlikely (UI styling fix)
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
+
+Plans:
+- [x] 10.1-01: Remove custom Button classes from Mark as Sent button (completed 2026-01-16)
+
+**Details:**
+Fixed button styling by removing custom Tailwind class overrides that created white background, allowing shadcn/ui Button's outline variant to properly handle emerald color theming.
 
 #### Phase 11: Make a Nice README
 
@@ -137,9 +152,32 @@ Plans:
 Added logo.png at top of README with proper alt text
 Added 1-2 strategic emojis per section: climbing (🧗), privacy (🔒), PWA offline (⚡), React (⚛️), analytics (📊), quick start (🚀), settings (⚙️), mobile (📱)
 
+#### Phase 13: Revamp Analytics for More Insightful Graphs
+
+**Goal**: Revamp analytics dashboard with more insightful graphs, addressing Style Distribution issues and improving overall data visualization
+**Depends on**: Phase 12
+**Research**: Likely (need to understand current analytics structure, identify most valuable metrics, determine best chart types)
+**Research topics**: Current analytics implementation, climbing training metrics, recharts advanced features
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 13 to break down)
+
+**Details:**
+Current issues to address:
+- Style Distribution graph is not very useful
+- Not all bar names are displayed (label overflow issue)
+- Overall need more insightful graphs for training focus
+
+May involve:
+- Removing or replacing existing charts
+- Adding new more meaningful metrics
+- Improving label visibility and chart layout
+- Better filtering and data grouping
+
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 11 → 12
+**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 10.1 → 11 → 12 → 13
 
 | Phase         | Milestone | Plans | Status      | Completed |
 | 5. Logger Form Reset | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
@@ -148,6 +186,8 @@ Added 1-2 strategic emojis per section: climbing (🧗), privacy (🔒), PWA off
 | 7. Failure Analytics | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 8. Style Analytics | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 9. Mark Failed as Succeeded | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
-| 10. Completed Climbs Analytics | v1.1 | 0/? | Not started | - |
+| 10. Completed Climbs Analytics | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
+| 10.1 Fix Mark as Sent Button Styling | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 11. Make a Nice README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 12. Add Logo and Emojis to README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
+| 13. Revamp Analytics for More Insightful Graphs | v1.1 | 0/? | Not started | - |
