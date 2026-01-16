@@ -211,26 +211,28 @@ Impact: Reduced inline className duplication by >200 occurrences, centralized UI
 **Goal**: Fix "Mark as Sent" button styling to conform to unified design guidelines
 **Depends on**: Phase 14
 **Research**: Unlikely (UI styling fix following established patterns)
-**Plans**: 0 plans
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 15 to break down)
+- [x] 15-01: Refactor Mark as Sent button to use SelectionButton component pattern
 
 **Details:**
-Apply unified UI style guidelines to "Mark as Sent" button in ClimbCard component.
+Refactored "Mark as Sent" button in ClimbCard to use consistent SelectionButton-like styling patterns. Button now uses outline variant with proper text-[#aaa] color and emerald-500 focus states matching the unified design system established in Phase 14.
 
 #### Phase 16: Add Version Number to Footer
 
 **Goal**: Display version number in application footer for user reference and debugging
 **Depends on**: Phase 15
 **Research**: Unlikely (simple UI component addition)
-**Plans**: 0 plans
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 16 to break down)
+- [x] 16-01: Create Footer component and integrate into App layout
 
 **Details:**
-Add version number display to the footer component to help users track which version they're using and assist with debugging.
+Created Footer component displaying version "v1.1.0" from package.json with fixed positioning at bottom of screen. Used z-40 to layer below OfflineStatus (z-50). Integrated into App.tsx Layout component for universal visibility across all pages.
 
 ## Progress
 
@@ -250,5 +252,5 @@ Add version number display to the footer component to help users track which ver
 | 12. Add Logo and Emojis to README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 13. Revamp Analytics for More Insightful Graphs | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 14. Unify UI Styles | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
-| 15. Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! | v1.1 | 0/? | Not started | - |
-| 16. Add Version Number to Footer | v1.1 | 0/? | Not started | - |
+| 15. Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
+| 16. Add Version Number to Footer | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
