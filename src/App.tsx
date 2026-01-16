@@ -15,6 +15,7 @@ import { ChartsPage, ClimbCard, Logger, ProtectedRoute, SettingsPage } from '@/c
 import type { LoggerHandle } from '@/components/features/logger'
 import { Button } from '@/components/ui/button'
 import { ErrorBanner } from '@/components/ui/error-banner'
+import { Footer } from '@/components/ui/footer'
 import { OfflineStatus } from '@/components/ui/offline-status'
 import { useClimbs, useCreateClimb, useUpdateClimb, useDeleteClimb } from '@/hooks/useClimbs'
 import { useProfile } from '@/hooks/useProfile'
@@ -228,6 +229,7 @@ function Layout() {
         >
           <Outlet />
         </ClimbActionsContext.Provider>
+        <Footer />
 
         {location.pathname === '/' && (
           <div className="fixed bottom-6 right-6">
