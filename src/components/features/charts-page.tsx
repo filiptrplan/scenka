@@ -14,6 +14,8 @@ import {
   YAxis,
 } from 'recharts'
 
+import { FormLabel } from '@/components/ui/form-label'
+import { FormSection } from '@/components/ui/form-section'
 import { useClimbs } from '@/hooks/useClimbs'
 import { getAllGradeBuckets, getDifficultyBucket, normalizeGrade } from '@/lib/grades'
 
@@ -188,10 +190,10 @@ export function ChartsPage() {
             <div className="h-1 flex-1 bg-orange-500" />
           </div>
 
-          <div className="bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200">
-            <p className="text-xs font-mono text-[#666] uppercase tracking-wider mb-6">
+          <FormSection>
+            <FormLabel className="mb-6 block">
               Work on these first
-            </p>
+            </FormLabel>
 
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -238,7 +240,7 @@ export function ChartsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </FormSection>
         </section>
 
         <section className="space-y-2">
@@ -248,10 +250,10 @@ export function ChartsPage() {
             <div className="h-1 flex-1 bg-rose-500" />
           </div>
 
-          <div className="bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200">
-            <p className="text-xs font-mono text-[#666] uppercase tracking-wider mb-6">
+          <FormSection>
+            <FormLabel className="mb-6 block">
               Failure rate by wall angle / hold type
-            </p>
+            </FormLabel>
 
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -291,7 +293,7 @@ export function ChartsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </FormSection>
         </section>
 
         <section className="space-y-2">
@@ -301,10 +303,10 @@ export function ChartsPage() {
             <div className="h-1 flex-1 bg-amber-500" />
           </div>
 
-          <div className="bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200">
-            <p className="text-xs font-mono text-[#666] uppercase tracking-wider mb-6">
+          <FormSection>
+            <FormLabel className="mb-6 block">
               Physical vs Technical vs Mental breakdown
-            </p>
+            </FormLabel>
 
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -331,7 +333,7 @@ export function ChartsPage() {
                 </RadarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </FormSection>
         </section>
 
         <section className="space-y-2">
@@ -341,10 +343,10 @@ export function ChartsPage() {
             <div className="h-1 flex-1 bg-emerald-500" />
           </div>
 
-          <div className="bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200">
-            <p className="text-xs font-mono text-[#666] uppercase tracking-wider mb-6">
+          <FormSection>
+            <FormLabel className="mb-6 block">
               Success rate by difficulty bucket
-            </p>
+            </FormLabel>
 
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -401,7 +403,7 @@ export function ChartsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </FormSection>
         </section>
 
         <section className="space-y-2">
@@ -411,10 +413,10 @@ export function ChartsPage() {
             <div className="h-1 flex-1 bg-teal-500" />
           </div>
 
-          <div className="bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200">
-            <p className="text-xs font-mono text-[#666] uppercase tracking-wider mb-6">
+          <FormSection>
+            <FormLabel className="mb-6 block">
               Redemption rate by difficulty bucket
-            </p>
+            </FormLabel>
 
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -471,13 +473,11 @@ export function ChartsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </FormSection>
         </section>
 
         <div className="text-center pt-8 border-t-2 border-white/10">
-          <p className="text-xs font-mono text-[#666] uppercase tracking-widest">
-            Data based on logged failures
-          </p>
+          <FormLabel>Data based on logged failures</FormLabel>
         </div>
       </div>
     </div>
