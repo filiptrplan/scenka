@@ -9,10 +9,10 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 10.1 of 13 (Fix Mark as Sent Button Styling)
-Plan: 01 of 1 (Fix button styling)
+Phase: 10.2 of 13 (Fix Mark as Sent Button Text Color)
+Plan: 01 of 1 (Fix button text color)
 Status: Plan 01 complete
-Last activity: 2026-01-16 — Plan 01 completed: Removed custom className from "Mark as Sent" button to let shadcn/ui outline variant provide proper styling
+Last activity: 2026-01-16 — Plan 01 completed: Added light gray text color (text-[#aaa]) to "Mark as Sent" button to match app's selection button pattern
 
 Progress: ██████████░░ 92%
 
@@ -109,6 +109,11 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Button now conforms to app's design system without white background overrides
 - shadcn/ui outline variant handles emerald color theming correctly without manual overrides
 
+**Phase 10.2 - Fix Mark as Sent Button Text Color:**
+- Added `text-[#aaa]` className to "Mark as Sent" button to override shadcn/ui outline variant's default white text
+- Matches text color pattern used by selection buttons in the app (Climbs/Analytics navigation, Boulder/Sport discipline toggles)
+- Light gray text provides better visual consistency across the app - selection buttons use light gray text, not white
+
 ### Pending Todos
 
 None yet.
@@ -127,6 +132,8 @@ None yet.
 - Phase 12 added: Add Logo and Emojis to README - enhance README with logo and tasteful emojis
 - Phase 13 added: Revamp Analytics for More Insightful Graphs - address Style Distribution issues and improve overall analytics with more meaningful training metrics
 - Phase 10.1 inserted after Phase 10: Fix Mark as Sent Button Styling (URGENT) - white buttons don't conform to app style
+- Phase 10.2 inserted after Phase 10.1: Fix Mark as Sent Button Text Color (URGENT) - white text color is jarring, should match selection buttons (analytics, climbs, sport/boulder in logger)
+- Phase 14 added: Unify UI Styles - create unified UI components and style guidelines to ensure consistent fonts, buttons, and visual elements across the app
 
 ## Session Continuity
 
