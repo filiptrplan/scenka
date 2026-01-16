@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 09 of 12 (Mark Failed as Succeeded)
-Plan: 01 of 1 (Mark as Sent functionality)
+Phase: 10 of 12 (Completed Climbs Analytics)
+Plan: 01 of 1 (Redemption analytics tracking and visualization)
 Status: Plan 01 complete
-Last activity: 2026-01-16 — ClimbCard component created with "Mark as Sent" button, integrated into Dashboard
+Last activity: 2026-01-16 — Added redemption_at column, updated ClimbCard to record redemption timestamp, created Redemption Rate chart
 
-Progress: ███████░░░░░ 66%
+Progress: █████████░░ 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 11 min
-- Total execution time: 3.0 hours
+- Total execution time: 3.2 hours
 
 **By Phase:**
 
@@ -37,6 +37,7 @@ Progress: ███████░░░░░ 66%
 | 06-email-redirect-config | 1 | 0 min | 0 min |
 | 08-style-analytics | 1 | 15 min | 15 min |
 | 09-mark-failed-as-succeeded | 1 | 6 min | 6 min |
+| 10-completed-climbs-analytics | 1 | 0 min | 0 min |
 | 11-make-a-nice-readme | 1 | 5 min | 5 min |
 | 12-add-logo-and-emojis-to-readme | 1 | 8 min | 8 min |
 | — | — | — | — |
@@ -91,6 +92,17 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Emerald-500 theme colors for "Mark as Sent" button to indicate success action, distinct from red-500 for failures
 - No changes to `ClimbActionsContext` - kept existing `onEditClick` and `onDeleteClick` handlers
 
+**Phase 10 - Completed Climbs Analytics:**
+- Added `redemption_at TIMESTAMPTZ` nullable column to climbs table via migration - tracks when failed climbs are marked as sent
+- ClimbCard updates `redemption_at` field with current ISO timestamp when marking climb as sent
+- Redemption Rate chart shows stacked bars: gray for non-redeemed sends, teal-500 for redeemed climbs
+- Teal-500 theme color for redemption data to distinguish from other analytics
+- Chart groups by difficulty bucket (Beginner/Intermediate/Advanced/Expert) to show redemption patterns across grades
+- Empty data case handled gracefully - chart displays with zero values when no redemption data exists
+- Update climb validation schema to include optional `redemption_at` field
+- Migration applied via `npx supabase db push` to both local and remote databases
+- TypeScript types regenerated from database schema to include `redemption_at` in Row/Insert/Update types
+
 ### Pending Todos
 
 None yet.
@@ -111,5 +123,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Phase 09 plan 01 completion - ClimbCard component created with "Mark as Sent" button
+Stopped at: Phase 10 plan 01 completion - Redemption analytics tracking and visualization complete
 Resume file: None
