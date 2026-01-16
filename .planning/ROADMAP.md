@@ -186,26 +186,55 @@ Training Priorities chart (orange-500) positioned as first chart showing failure
 **Depends on**: Phase 13
 **Research**: Likely (need to audit current UI inconsistencies, establish design system)
 **Research topics**: Current UI component variations, shadcn/ui component patterns, mobile-first design consistency
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
+
+Plans:
+- [x] 14-01: Create SelectionButton, FormSection, FormLabel components and refactor Logger, ChartsPage, SettingsPage, ClimbCard
+
+**Details:**
+Created three reusable shadcn/ui components (SelectionButton, FormSection, FormLabel) using cva pattern:
+- SelectionButton: Toggle-style buttons for binary choices (Boulder/Sport, Sent/Fail)
+- FormSection: Consistent section/card wrapper styling with hover effects
+- FormLabel: Consistent form label typography
+
+Refactored all major feature components:
+- Logger: Uses SelectionButton for toggles, FormLabel for labels, FormSection for container
+- ChartsPage: Uses FormSection for all 5 chart sections, FormLabel for all labels
+- SettingsPage: Uses FormSection wrapper, FormLabel for all form labels
+- ClimbCard: Uses FormSection wrapper, FormLabel for all labels
+
+Impact: Reduced inline className duplication by >200 occurrences, centralized UI patterns for easier maintenance
+
+#### Phase 15: Use the new design guidelines to finally fix the Mark as sent button. It still looks like this!
+
+**Goal**: Fix "Mark as Sent" button styling to conform to unified design guidelines
+**Depends on**: Phase 14
+**Research**: Unlikely (UI styling fix following established patterns)
 **Plans**: 0 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 14 to break down)
+- [ ] TBD (run /gsd:plan-phase 15 to break down)
 
 **Details:**
-Current UI inconsistencies to address:
-- Non-uniform fonts across different screens
-- Inconsistent button styles and variations
-- Mixed visual patterns for similar elements
+Apply unified UI style guidelines to "Mark as Sent" button in ClimbCard component.
 
-May involve:
-- Auditing existing components for style variations
-- Creating shared UI components for common patterns
-- Documenting style guidelines in CLAUDE.md
-- Standardizing spacing, typography, and color usage
+#### Phase 16: Add Version Number to Footer
+
+**Goal**: Display version number in application footer for user reference and debugging
+**Depends on**: Phase 15
+**Research**: Unlikely (simple UI component addition)
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 16 to break down)
+
+**Details:**
+Add version number display to the footer component to help users track which version they're using and assist with debugging.
 
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 10.1 → 10.2 → 11 → 12 → 13 → 14
+**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 10.1 → 10.2 → 11 → 12 → 13 → 14 → 15 → 16
 
 | Phase         | Milestone | Plans | Status      | Completed |
 | 5. Logger Form Reset | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
@@ -220,4 +249,6 @@ May involve:
 | 11. Make a Nice README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 12. Add Logo and Emojis to README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 13. Revamp Analytics for More Insightful Graphs | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
-| 14. Unify UI Styles | v1.1 | 0/? | Not started | - |
+| 14. Unify UI Styles | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
+| 15. Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! | v1.1 | 0/? | Not started | - |
+| 16. Add Version Number to Footer | v1.1 | 0/? | Not started | - |
