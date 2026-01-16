@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
+import { Toggle } from '@/components/ui/toggle'
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile'
 import { profileSchema } from '@/lib/validation'
 import type { HoldColor } from '@/types'
@@ -152,10 +152,9 @@ export function SettingsPage() {
                   If enabled, the climb logger closes after logging a new climb. If disabled, it stays open for rapid entry.
                 </p>
               </div>
-              <Switch
+              <Toggle
                 checked={closeAfterAdd ?? true}
                 onCheckedChange={(checked) => setValue('close_logger_after_add', checked)}
-                className="ml-4"
               />
             </div>
           </div>
