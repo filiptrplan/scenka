@@ -36,6 +36,7 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
         updates: {
           outcome: 'Sent',
           failure_reasons: [],
+          redemption_at: new Date().toISOString(),
         },
       },
       {
