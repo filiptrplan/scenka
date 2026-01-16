@@ -220,10 +220,22 @@ Plans:
 **Details:**
 Refactored "Mark as Sent" button in ClimbCard to use consistent SelectionButton-like styling patterns. Button now uses outline variant with proper text-[#aaa] color and emerald-500 focus states matching the unified design system established in Phase 14.
 
+#### Phase 15.1: Fix ugly Mark as Sent button styling (INSERTED)
+
+**Goal:** Fix "Mark as Sent" button styling to conform to unified design system patterns
+**Depends on:** Phase 15
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 15.1 to break down)
+
+**Details:**
+Button styling doesn't match unified design system - needs proper SelectionButton component integration with correct colors and styling patterns.
+
 #### Phase 16: Add Version Number to Footer
 
 **Goal**: Display version number in application footer for user reference and debugging
-**Depends on**: Phase 15
+**Depends on**: Phase 15.1
 **Research**: Unlikely (simple UI component addition)
 **Plans**: 1 plan
 **Status**: ✅ Completed 2026-01-16
@@ -234,9 +246,23 @@ Plans:
 **Details:**
 Created Footer component displaying version "v1.1.0" from package.json with fixed positioning at bottom of screen. Used z-40 to layer below OfflineStatus (z-50). Integrated into App.tsx Layout component for universal visibility across all pages.
 
+#### Phase 17: Use the New Design System to Fix the Ugly Toggle
+
+**Goal**: Fix toggle styling using the unified design system components
+**Depends on**: Phase 15.1
+**Research**: Unlikely (UI styling fix using established patterns)
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
+
+Plans:
+- [x] 17-01: Create Toggle component with cva pattern matching Phase 14 design system
+
+**Details:**
+Created minimal Toggle component with h-4 w-7 track size (smaller than standard Switch), using bg-white/[0.02] for unchecked state and bg-white/10 for checked state. Integrated into SettingsPage to replace "ugly" Switch component.
+
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 10.1 → 10.2 → 11 → 12 → 13 → 14 → 15 → 16
+**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 10.1 → 10.2 → 11 → 12 → 13 → 14 → 15 → 15.1 → 16 → 17
 
 | Phase         | Milestone | Plans | Status      | Completed |
 | 5. Logger Form Reset | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
@@ -254,3 +280,5 @@ Created Footer component displaying version "v1.1.0" from package.json with fixe
 | 14. Unify UI Styles | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 15. Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 16. Add Version Number to Footer | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
+| 17. Use the New Design System to Fix the Ugly Toggle | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
+| 15.1 Fix ugly Mark as Sent button styling | v1.1 | 0/? | Not started | - |
