@@ -3,6 +3,8 @@ import { MapPin, TrendingDown, TrendingUp, Flame, Edit, Trash2, Check } from 'lu
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { FormLabel } from '@/components/ui/form-label'
+import { FormSection } from '@/components/ui/form-section'
 import { useUpdateClimb } from '@/hooks/useClimbs'
 import { COLOR_CIRCUIT } from '@/lib/grades'
 import type { Climb, HoldColor } from '@/types'
@@ -57,20 +59,22 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
   }
 
   return (
-    <div className="group bg-white/[0.02] border-2 border-white/10 p-6 hover:border-white/30 transition-all duration-200">
+    <FormSection className="group">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3 pt-2">
           <div className="flex flex-col">
-            <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-1">
-              {dateLabel}
+            <div className="mb-1">
+              <FormLabel>{dateLabel}</FormLabel>
             </div>
-            <div className="text-xs font-mono text-[#666] uppercase tracking-wider flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {climb.location}
+            <div className="flex items-center gap-1">
+              <FormLabel>
+                <MapPin className="h-3 w-3" />
+                {climb.location}
+              </FormLabel>
             </div>
             {climb.hold_color !== null && climb.hold_color !== undefined && (
-              <div className="text-xs font-mono text-[#666] uppercase tracking-wider flex items-center gap-2 mt-1">
-                <span>Hold Color</span>
+              <div className="flex items-center gap-2 mt-1">
+                <FormLabel>Hold Color</FormLabel>
                 <div
                   className="w-4 h-4 rounded-full border-2 border-white/20 ring-1 ring-white/10"
                   style={{ backgroundColor: HOLD_COLOR_MAP[climb.hold_color] }}
@@ -135,18 +139,20 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mb-4 text-xs font-mono text-[#666] uppercase tracking-wider">
+      <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <Flame className="h-4 w-4" />
-          <span>Awkwardness: {climb.awkwardness}/5</span>
+          <FormLabel>
+            <Flame className="h-4 w-4" />
+            Awkwardness: {climb.awkwardness}/5
+          </FormLabel>
         </div>
       </div>
 
       <div className="space-y-3">
         {climb.style.length > 0 && (
           <div>
-            <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
-              Style
+            <div className="mb-2">
+              <FormLabel>Style</FormLabel>
             </div>
             <div className="flex flex-wrap gap-2">
               {climb.style.map((style) => (
@@ -164,8 +170,10 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
 
         {climb.failure_reasons.length > 0 && (
           <div>
-            <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
-              {climb.outcome === 'Fail' ? 'Failure Reasons' : 'Imperfect Aspects'}
+            <div className="mb-2">
+              <FormLabel>
+                {climb.outcome === 'Fail' ? 'Failure Reasons' : 'Imperfect Aspects'}
+              </FormLabel>
             </div>
             <div className="flex flex-wrap gap-2">
               {climb.failure_reasons.map((reason) => (
@@ -183,8 +191,8 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
 
         {climb.notes !== null && climb.notes.trim().length > 0 && (
           <div className="mt-4 pt-4 border-t border-white/10">
-            <div className="text-xs font-mono text-[#666] uppercase tracking-wider mb-2">
-              Notes
+            <div className="mb-2">
+              <FormLabel>Notes</FormLabel>
             </div>
             <p className="text-sm text-[#bbb] leading-relaxed">{climb.notes}</p>
           </div>
@@ -205,6 +213,6 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
           </Button>
         </div>
       )}
-    </div>
+    </FormSection>
   )
 }
