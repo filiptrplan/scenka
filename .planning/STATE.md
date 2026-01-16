@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 16 of 16 (Add Version Number to Footer)
-Plan: 01 of 1 (Add version display to footer)
+Phase: 17 of 17 (Use the New Design System to Fix the Ugly Toggle)
+Plan: 01 of 1 (Create custom Toggle component)
 Status: Plan 01 complete
-Last activity: 2026-01-16 — Plan 01 completed: Created Footer component displaying v1.1.0 with fixed positioning and z-index layering
+Last activity: 2026-01-16 — Plan 01 completed: Created Toggle component with cva pattern matching Phase 14 design system, integrated into SettingsPage
 
 Progress: ██████████ 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
+- Total plans completed: 22
 - Average duration: 11 min
-- Total execution time: 3.8 hours
+- Total execution time: 3.9 hours
 
 **By Phase:**
 
@@ -43,6 +43,7 @@ Progress: ██████████ 100%
 | 10.1-fix-mark-as-sent-button-styling | 1 | 3 min | 3 min |
 | 14-unify-ui-styles | 1 | 20 min | 20 min |
 | 16-add-version-number-to-footer | 1 | 8 min | 8 min |
+| 17-use-the-new-design-system-to-fix-the-ugly-toggle | 1 | 4 min | 4 min |
 | — | — | — | — |
 
 **Recent Trend:**
@@ -140,6 +141,16 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Removed border and margin from initial plan design for cleaner footer bar appearance
 - Used text-[#888] styling to match App.tsx subtitle pattern for consistency
 
+**Phase 17.01 - Use the New Design System to Fix the Ugly Toggle:**
+- Created Toggle component with cva pattern matching Phase 14 design system (SelectionButton, FormSection, FormLabel)
+- Applied minimal, unobtrusive styling: h-4 w-7 track (smaller than standard h-5 w-9), h-3 w-4 thumb
+- Color scheme: bg-white/[0.02] (unchecked) / bg-white/10 (checked) with border-2 in white/20 / white/30
+- Thumb colors: white/30 (unchecked) to white/60 (checked) for subtle visibility
+- 200ms transitions for smooth color and transform changes across all states
+- Focus ring: minimal white/20, not jarring, consistent with other Phase 14 components
+- Follows established patterns: cva variants, white opacity colors, border-2 for subtle definition
+- Kept Switch export for backward compatibility in ui/index.ts
+
 ### Pending Todos
 
 None yet.
@@ -162,9 +173,11 @@ None yet.
 - Phase 14 added: Unify UI Styles - create unified UI components and style guidelines to ensure consistent fonts, buttons, and visual elements across the app
 - Phase 15 added: Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! - apply unified UI style guidelines to "Mark as Sent" button in ClimbCard component
 - Phase 16 added: Add Version Number to Footer - display version number in application footer for user reference and debugging
+- Phase 17 added: Use the New Design System to Fix the Ugly Toggle - apply unified UI style guidelines to toggle components throughout the app to ensure consistent styling
+- Phase 15.1 inserted after Phase 15: Fix ugly Mark as Sent button styling (URGENT)
 
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Phase 16 plan 01 completion - Footer component created and integrated
+Stopped at: Phase 17 plan 01 completion - Toggle component created with cva pattern matching Phase 14 design system
 Resume file: None
