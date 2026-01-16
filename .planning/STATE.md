@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 13 of 14 (Revamp Analytics for More Insightful Graphs)
-Plan: 01 of 1 (Revamp analytics dashboard)
+Phase: 14 of 15 (Unify UI Styles)
+Plan: 01 of 1 (Extract common UI patterns into reusable components)
 Status: Plan 01 complete
-Last activity: 2026-01-16 — Plan 01 completed: Added Training Priorities chart as first chart, removed Style Distribution and Failure Reasons charts
+Last activity: 2026-01-16 — Plan 01 completed: Created SelectionButton, FormSection, FormLabel components and refactored Logger, ChartsPage, SettingsPage, ClimbCard
 
-Progress: ██████████░░ 93%
+Progress: ██████████ 93%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 19
+- Total plans completed: 20
 - Average duration: 11 min
-- Total execution time: 3.5 hours
+- Total execution time: 3.7 hours
 
 **By Phase:**
 
@@ -41,6 +41,7 @@ Progress: ██████████░░ 93%
 | 11-make-a-nice-readme | 1 | 5 min | 5 min |
 | 12-add-logo-and-emojis-to-readme | 1 | 8 min | 8 min |
 | 10.1-fix-mark-as-sent-button-styling | 1 | 3 min | 3 min |
+| 14-unify-ui-styles | 1 | 20 min | 20 min |
 | — | — | — | — |
 
 **Recent Trend:**
@@ -122,6 +123,16 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Orange-500 theme color indicates actionable priorities, distinct from rose-500 failure charts
 - Key insight: prescriptive analytics ("do this first") > descriptive analytics ("here's what you did")
 
+**Phase 14.01 - Unify UI Styles:**
+- Created three reusable UI components following shadcn/ui cva pattern: SelectionButton, FormSection, FormLabel
+- SelectionButton for toggle-style buttons (discipline/outcome) with selected/unselected variants
+- FormSection for consistent section/card wrapper styling (bg-white/[0.02] border-2 border-white/10 p-6)
+- FormLabel for consistent label typography (text-xs font-mono text-[#666] uppercase tracking-wider)
+- Refactored Logger, ChartsPage, SettingsPage, ClimbCard to use new components
+- Reduced inline className duplication by >200 occurrences across codebase
+- No visual changes - purely internal refactoring for maintainability
+- Components exported from src/components/ui/index.ts for convenient importing
+
 ### Pending Todos
 
 None yet.
@@ -142,9 +153,11 @@ None yet.
 - Phase 10.1 inserted after Phase 10: Fix Mark as Sent Button Styling (URGENT) - white buttons don't conform to app style
 - Phase 10.2 inserted after Phase 10.1: Fix Mark as Sent Button Text Color (URGENT) - white text color is jarring, should match selection buttons (analytics, climbs, sport/boulder in logger)
 - Phase 14 added: Unify UI Styles - create unified UI components and style guidelines to ensure consistent fonts, buttons, and visual elements across the app
+- Phase 15 added: Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! - apply unified UI style guidelines to "Mark as Sent" button in ClimbCard component
+- Phase 16 added: Add Version Number to Footer - display version number in application footer for user reference and debugging
 
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Phase 10 plan 01 completion - Redemption analytics tracking and visualization complete
+Stopped at: Phase 14 plan 01 completion - UI components created and refactored
 Resume file: None
