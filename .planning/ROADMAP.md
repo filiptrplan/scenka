@@ -126,6 +126,20 @@ Plans:
 **Details:**
 Fixed button styling by removing custom Tailwind class overrides that created white background, allowing shadcn/ui Button's outline variant to properly handle emerald color theming.
 
+#### Phase 10.2: Fix Mark as Sent Button Text Color (INSERTED)
+
+**Goal**: Fix white text color on "Mark as Sent" button to make it more like selection buttons (analytics, climbs, sport/boulder in logger)
+**Depends on**: Phase 10.1
+**Research**: Unlikely (UI styling fix - need to examine existing button patterns)
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
+
+Plans:
+- [x] 10.2-01: Add light gray text color to Mark as Sent button (completed 2026-01-16)
+
+**Details:**
+Added `text-[#aaa]` className to Button component to override shadcn/ui outline variant's default white text. Now matches the selection button pattern used throughout app (Climbs/Analytics navigation, Boulder/Sport discipline toggles).
+
 #### Phase 11: Make a Nice README
 
 **Goal**: Create a polished README with disclaimer and screenshot placeholders
@@ -175,9 +189,32 @@ May involve:
 - Improving label visibility and chart layout
 - Better filtering and data grouping
 
+#### Phase 14: Unify UI Styles
+
+**Goal**: Create unified UI components and style guidelines to ensure consistent fonts, buttons, and visual elements across the app
+**Depends on**: Phase 13
+**Research**: Likely (need to audit current UI inconsistencies, establish design system)
+**Research topics**: Current UI component variations, shadcn/ui component patterns, mobile-first design consistency
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 14 to break down)
+
+**Details:**
+Current UI inconsistencies to address:
+- Non-uniform fonts across different screens
+- Inconsistent button styles and variations
+- Mixed visual patterns for similar elements
+
+May involve:
+- Auditing existing components for style variations
+- Creating shared UI components for common patterns
+- Documenting style guidelines in CLAUDE.md
+- Standardizing spacing, typography, and color usage
+
 ## Progress
 
-**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 10.1 → 11 → 12 → 13
+**Execution Order:** Phases execute in numeric order: 5 → 5.1 → 6 → 7 → 8 → 9 → 10 → 10.1 → 10.2 → 11 → 12 → 13 → 14
 
 | Phase         | Milestone | Plans | Status      | Completed |
 | 5. Logger Form Reset | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
@@ -188,6 +225,8 @@ May involve:
 | 9. Mark Failed as Succeeded | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 10. Completed Climbs Analytics | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 10.1 Fix Mark as Sent Button Styling | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
+| 10.2 Fix Mark as Sent Button Text Color | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 11. Make a Nice README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 12. Add Logo and Emojis to README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 13. Revamp Analytics for More Insightful Graphs | v1.1 | 0/? | Not started | - |
+| 14. Unify UI Styles | v1.1 | 0/? | Not started | - |
