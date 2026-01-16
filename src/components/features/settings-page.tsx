@@ -8,6 +8,8 @@ import type { z } from 'zod'
 
 import { ColorSettings } from '@/components/features/color-settings'
 import { Button } from '@/components/ui/button'
+import { FormLabel } from '@/components/ui/form-label'
+import { FormSection } from '@/components/ui/form-section'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -87,11 +89,9 @@ export function SettingsPage() {
       </div>
 
       <form onSubmit={(e) => void handleSubmit(handleFormSubmit)(e)} className="space-y-6">
-        <div className="bg-white/[0.02] border-2 border-white/10 p-6 space-y-6">
+        <FormSection className="space-y-6">
           <div className="space-y-3">
-            <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-              Home Gym
-            </label>
+            <FormLabel>Home Gym</FormLabel>
             <Input
               {...register('home_gym')}
               placeholder="Enter your home gym name"
@@ -100,9 +100,7 @@ export function SettingsPage() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-              Default Grading System
-            </label>
+            <FormLabel>Default Grading System</FormLabel>
             <Select
               value={gradeScale}
               onValueChange={(value: 'font' | 'v_scale' | 'color_circuit') =>
@@ -121,9 +119,7 @@ export function SettingsPage() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-              Default Discipline
-            </label>
+            <FormLabel>Default Discipline</FormLabel>
             <Select
               value={discipline}
               onValueChange={(value: 'boulder' | 'sport') =>
@@ -146,9 +142,7 @@ export function SettingsPage() {
           />
 
           <div className="space-y-3">
-            <label className="text-xs font-mono text-[#666] uppercase tracking-wider">
-              Close logger after adding climb
-            </label>
+            <FormLabel>Close logger after adding climb</FormLabel>
             <div className="flex items-center justify-between bg-[#1a1a1a] border-2 border-white/10 p-4">
               <div className="flex-1">
                 <p className="text-sm text-white mb-1">
@@ -165,7 +159,7 @@ export function SettingsPage() {
               />
             </div>
           </div>
-        </div>
+        </FormSection>
 
         <div className="flex gap-3">
           <Button
