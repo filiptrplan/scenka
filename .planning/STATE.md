@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 10.2 of 13 (Fix Mark as Sent Button Text Color)
-Plan: 01 of 1 (Fix button text color)
+Phase: 13 of 14 (Revamp Analytics for More Insightful Graphs)
+Plan: 01 of 1 (Revamp analytics dashboard)
 Status: Plan 01 complete
-Last activity: 2026-01-16 — Plan 01 completed: Added light gray text color (text-[#aaa]) to "Mark as Sent" button to match app's selection button pattern
+Last activity: 2026-01-16 — Plan 01 completed: Added Training Priorities chart as first chart, removed Style Distribution and Failure Reasons charts
 
-Progress: ██████████░░ 92%
+Progress: ██████████░░ 93%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 18
+- Total plans completed: 19
 - Average duration: 11 min
-- Total execution time: 3.3 hours
+- Total execution time: 3.5 hours
 
 **By Phase:**
 
@@ -113,6 +113,14 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Added `text-[#aaa]` className to "Mark as Sent" button to override shadcn/ui outline variant's default white text
 - Matches text color pattern used by selection buttons in the app (Climbs/Analytics navigation, Boulder/Sport discipline toggles)
 - Light gray text provides better visual consistency across the app - selection buttons use light gray text, not white
+
+**Phase 13 - Revamp Analytics for More Insightful Graphs:**
+- Training Priorities chart (orange-500) positioned as FIRST chart in dashboard for immediate visibility into what to work on next
+- Chart displays failure reasons sorted by frequency with percentage context in tooltip (e.g., "Bad Feet: 8 failures (42% of total)")
+- Style Distribution chart removed - not useful for training decisions
+- Failure Reasons chart removed - redundant with Training Priorities (same data, different presentation)
+- Orange-500 theme color indicates actionable priorities, distinct from rose-500 failure charts
+- Key insight: prescriptive analytics ("do this first") > descriptive analytics ("here's what you did")
 
 ### Pending Todos
 

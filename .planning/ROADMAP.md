@@ -170,24 +170,15 @@ Added 1-2 strategic emojis per section: climbing (🧗), privacy (🔒), PWA off
 
 **Goal**: Revamp analytics dashboard with more insightful graphs, addressing Style Distribution issues and improving overall data visualization
 **Depends on**: Phase 12
-**Research**: Likely (need to understand current analytics structure, identify most valuable metrics, determine best chart types)
-**Research topics**: Current analytics implementation, climbing training metrics, recharts advanced features
-**Plans**: 0 plans
+**Research**: Unlikely (charts and data already understood)
+**Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-16
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 13 to break down)
+- [x] 13-01: Add Training Priorities chart, remove Style Distribution and Failure Reasons charts
 
 **Details:**
-Current issues to address:
-- Style Distribution graph is not very useful
-- Not all bar names are displayed (label overflow issue)
-- Overall need more insightful graphs for training focus
-
-May involve:
-- Removing or replacing existing charts
-- Adding new more meaningful metrics
-- Improving label visibility and chart layout
-- Better filtering and data grouping
+Training Priorities chart (orange-500) positioned as first chart showing failure reasons with percentages. Style Distribution and Failure Reasons charts removed to reduce redundancy and focus on actionable training insights.</think>
 
 #### Phase 14: Unify UI Styles
 
@@ -228,5 +219,5 @@ May involve:
 | 10.2 Fix Mark as Sent Button Text Color | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 11. Make a Nice README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
 | 12. Add Logo and Emojis to README | v1.1 | 1/1 | ✓ Complete | 2026-01-15 |
-| 13. Revamp Analytics for More Insightful Graphs | v1.1 | 0/? | Not started | - |
+| 13. Revamp Analytics for More Insightful Graphs | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 14. Unify UI Styles | v1.1 | 0/? | Not started | - |
