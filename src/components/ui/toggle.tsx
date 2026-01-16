@@ -1,5 +1,5 @@
 import * as SwitchPrimitives from '@radix-ui/react-switch'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
@@ -43,17 +43,18 @@ export interface ToggleProps
 const Toggle = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
   ToggleProps
->(({ className, checked = false, onCheckedChange, ...props }, ref) => (
-  <SwitchPrimitives.Root
-    className={cn(toggleVariants({ checked }), className)}
-    checked={checked}
-    onCheckedChange={onCheckedChange}
-    {...props}
-    ref={ref}
-  >
-    <SwitchPrimitives.Thumb className={thumbVariants({ checked })} />
-  </SwitchPrimitives.Root>
-))
+>(({ className, ...props }, ref) => {
+  const isChecked = props.checked ?? false
+  return (
+    <SwitchPrimitives.Root
+      className={cn(toggleVariants({ checked: isChecked }), className)}
+      {...props}
+      ref={ref}
+    >
+      <SwitchPrimitives.Thumb className={thumbVariants({ checked: isChecked })} />
+    </SwitchPrimitives.Root>
+  )
+})
 Toggle.displayName = SwitchPrimitives.Root.displayName
 
 export { Toggle, toggleVariants, thumbVariants }
