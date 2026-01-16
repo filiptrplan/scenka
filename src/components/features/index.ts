@@ -1,4 +1,5 @@
 export { ChartsPage } from './charts-page'
+export { ClimbCard } from './climb-card'
 export { Logger } from './logger'
 export { LoginScreen } from './login-screen'
 export { ProtectedRoute } from './protected-route'
