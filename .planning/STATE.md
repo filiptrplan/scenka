@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 08 of 12 (Style Analytics)
-Plan: 01 of 1 (Style Distribution chart)
+Phase: 09 of 12 (Mark Failed as Succeeded)
+Plan: 01 of 1 (Mark as Sent functionality)
 Status: Plan 01 complete
-Last activity: 2026-01-15 — Style Distribution chart added to Analytics page with purple-500 theme
+Last activity: 2026-01-16 — ClimbCard component created with "Mark as Sent" button, integrated into Dashboard
 
-Progress: ██████░░░░░░ 61%
+Progress: ███████░░░░░ 66%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
-- Average duration: 12 min
-- Total execution time: 2.9 hours
+- Total plans completed: 16
+- Average duration: 11 min
+- Total execution time: 3.0 hours
 
 **By Phase:**
 
@@ -36,6 +36,7 @@ Progress: ██████░░░░░░ 61%
 | 07-failure-analytics | 1 | 8 min | 8 min |
 | 06-email-redirect-config | 1 | 0 min | 0 min |
 | 08-style-analytics | 1 | 15 min | 15 min |
+| 09-mark-failed-as-succeeded | 1 | 6 min | 6 min |
 | 11-make-a-nice-readme | 1 | 5 min | 5 min |
 | 12-add-logo-and-emojis-to-readme | 1 | 8 min | 8 min |
 | — | — | — | — |
@@ -82,6 +83,14 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Purple-500 theme color for Style Distribution chart to visually distinguish from rose-500 failure charts
 - No outcome filter on allStylesData (counts all climbs, not just failures) - provides complete picture of climbing style patterns
 
+**Phase 09 - Mark Failed as Succeeded:**
+- Used existing `useUpdateClimb()` hook for mutation - no custom mutation logic needed, follows codebase patterns from RESEARCH.md
+- ClimbCard component extracts climb display logic from Dashboard into reusable component - reduced Dashboard from 250+ lines to ~70 lines
+- "Mark as Sent" button only displays for failed climbs (`climb.outcome === 'Fail'`) - conditional rendering hides button for already-sent climbs
+- When marking climb as sent, clears `failure_reasons` array to prevent analytics pollution
+- Emerald-500 theme colors for "Mark as Sent" button to indicate success action, distinct from red-500 for failures
+- No changes to `ClimbActionsContext` - kept existing `onEditClick` and `onDeleteClick` handlers
+
 ### Pending Todos
 
 None yet.
@@ -101,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-15
-Stopped at: Phase 12 plan 01 completion - README enhanced with logo and emojis
+Last session: 2026-01-16
+Stopped at: Phase 09 plan 01 completion - ClimbCard component created with "Mark as Sent" button
 Resume file: None
