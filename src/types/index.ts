@@ -82,6 +82,99 @@ export interface Database {
           enabled_hold_colors?: string[]
         }
       }
+      coach_recommendations: {
+        Row: {
+          id: string
+          user_id: string
+          created_at: string
+          generation_date: string
+          content: Json
+          is_cached: boolean
+          error_message: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          created_at?: string
+          generation_date?: string
+          content?: Json
+          is_cached?: boolean
+          error_message?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          created_at?: string
+          generation_date?: string
+          content?: Json
+          is_cached?: boolean
+          error_message?: string | null
+        }
+      }
+      coach_messages: {
+        Row: {
+          id: string
+          user_id: string
+          created_at: string
+          role: 'user' | 'assistant'
+          content: string
+          context: Json
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          created_at?: string
+          role: 'user' | 'assistant'
+          content: string
+          context?: Json
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          created_at?: string
+          role?: 'user' | 'assistant'
+          content?: string
+          context?: Json
+        }
+      }
+      coach_api_usage: {
+        Row: {
+          id: string
+          user_id: string
+          created_at: string
+          prompt_tokens: number
+          completion_tokens: number
+          total_tokens: number
+          cost_usd: number
+          model: string
+          endpoint: string
+          time_window_start: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          created_at?: string
+          prompt_tokens: number
+          completion_tokens: number
+          total_tokens: number
+          cost_usd: number
+          model: string
+          endpoint: string
+          time_window_start?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          created_at?: string
+          prompt_tokens?: number
+          completion_tokens?: number
+          total_tokens?: number
+          cost_usd?: number
+          model?: string
+          endpoint?: string
+          time_window_start?: string
+        }
+      }
     }
   }
 }
@@ -132,6 +225,61 @@ export type MentalReason = 'Fear' | 'Commitment' | 'Focus'
 export type FailureReason = PhysicalReason | TechnicalReason | MentalReason
 
 export type HoldColor = 'red' | 'green' | 'blue' | 'yellow' | 'black' | 'white' | 'orange' | 'purple' | 'pink'
+
+// Pattern Analysis Types (for AI Coach)
+export interface FailurePatterns {
+  most_common_failure_reasons: Array<{
+    reason: string
+    count: number
+    percentage: number
+  }>
+}
+
+export interface StyleWeaknesses {
+  struggling_styles: Array<{
+    style: string
+    fail_count: number
+    total_attempts: number
+    fail_rate: number
+  }>
+}
+
+export interface ClimbingFrequency {
+  climbs_per_week: Array<{
+    week: string
+    count: number
+  }>
+  climbs_per_month: number
+  avg_climbs_per_session: number
+}
+
+export interface RecentSuccesses {
+  recent_sends: Climb[]
+  grade_progression: Array<{
+    grade: string
+    date: string
+  }>
+  redemption_count: number
+}
+
+export interface PatternAnalysis {
+  failure_patterns: FailurePatterns
+  style_weaknesses: StyleWeaknesses
+  climbing_frequency: ClimbingFrequency
+  recent_successes: RecentSuccesses
+}
+
+// AI Coach Types (Privacy-Safe for External APIs)
+export interface AnonymizedClimb {
+  location: string
+  grade_scale: string
+  grade_value: string
+  climb_type: string
+  style: Style[]
+  outcome: string
+  awkwardness: number
+  failure_reasons: FailureReason[]
+}
 
 export type Climb = TablesRow<'climbs'> & {
   style: Style[]
