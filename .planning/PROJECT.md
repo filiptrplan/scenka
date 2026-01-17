@@ -51,11 +51,21 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 
 ### Active
 
-*Planning next milestone*
+**v2.0 - AI Coach Milestone**
+
+## Current Milestone: v2.0 AI Coach
+
+**Goal:** Build AI-powered climbing coach that analyzes logged data and provides actionable training guidance through dashboard recommendations and free-form chat.
+
+**Target features:**
+- AI-driven dashboard with weekly focus areas
+- Free-form coach chat for questions and analysis
+- Hybrid knowledge approach (LLM general training + biomechanical concepts)
+- Persistent recommendations (saved to profile, no regeneration)
+- Pre-processed climbing patterns (failure reasons, grade progression, style strengths/weaknesses)
 
 ### Considered for Future
 
-- **Advanced analytics** — Deeper insights into patterns, weaknesses, improvement over time
 - **Gym map integration** — Mark climb locations on a visual map of your gym
 
 ### Permanently Out of Scope
