@@ -178,7 +178,7 @@ Plans:
 - [x] 13-01: Add Training Priorities chart, remove Style Distribution and Failure Reasons charts
 
 **Details:**
-Training Priorities chart (orange-500) positioned as first chart showing failure reasons with percentages. Style Distribution and Failure Reasons charts removed to reduce redundancy and focus on actionable training insights.</think>
+Training Priorities chart (orange-500) positioned as first chart showing failure reasons with percentages. Style Distribution and Failure Reasons charts removed to reduce redundancy and focus on actionable training insights.
 
 #### Phase 14: Unify UI Styles
 
@@ -222,15 +222,16 @@ Refactored "Mark as Sent" button in ClimbCard to use consistent SelectionButton-
 
 #### Phase 15.1: Fix ugly Mark as Sent button styling (INSERTED)
 
-**Goal:** Fix "Mark as Sent" button styling to conform to unified design system patterns
-**Depends on:** Phase 15
-**Plans:** 0 plans
+**Goal**: Fix "Mark as Sent" button styling to conform to unified design system patterns by adding a proper ghost variant to the Button component
+**Depends on**: Phase 15
+**Research**: Unlikely (UI styling fix following established patterns)
+**Plans**: 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 15.1 to break down)
+- [ ] 15.1-01: Update Button component with unified ghost variant and update ClimbCard to use it
 
 **Details:**
-Button styling doesn't match unified design system - needs proper SelectionButton component integration with correct colors and styling patterns.
+Button styling still uses className hacks (text-[#aaa]) instead of proper variant. Needs ghost variant with white opacity colors (bg-white/[0.02], border-white/20) matching Phase 14 design system patterns.
 
 #### Phase 16: Add Version Number to Footer
 
@@ -281,4 +282,4 @@ Created minimal Toggle component with h-4 w-7 track size (smaller than standard 
 | 15. Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 16. Add Version Number to Footer | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 17. Use the New Design System to Fix the Ugly Toggle | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
-| 15.1 Fix ugly Mark as Sent button styling | v1.1 | 0/? | Not started | - |
+| 15.1 Fix ugly Mark as Sent button styling | v1.1 | 1/1 | Not started | - |
