@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 18 of 21 (AI Coach Foundation)
-Plan: 3 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-17 — Completed 18-03: Coach Service with API Abstraction
+Last activity: 2026-01-17 — Completed 18-05: TanStack Query Hooks for Coach Features
 
-Progress: [████░░░░░░] 80%
+Progress: [████░░░░░░] 85%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 29 (v1.0 + v1.1 + 18-01, 18-02, 18-03, 18-04)
+- Total plans completed: 30 (v1.0 + v1.1 + 18-01, 18-02, 18-03, 18-04, 18-05)
 - Average duration: 9 min
-- Total execution time: 4.5 hours
+- Total execution time: 4.6 hours
 
 **By Phase:**
 
@@ -29,7 +29,7 @@ Progress: [████░░░░░░] 80%
 |-------|-------|-------|----------|
 | 01-04 (v1.0) | 6 | 93 min | 16 min |
 | 05-17 (v1.1) | 19 | 147 min | 8 min |
-| 18 (AI Coach) | 4 | 27 min | 7 min |
+| 18 (AI Coach) | 5 | 33 min | 7 min |
 
 **Recent Trend:**
 - Last 5 plans: 7 min
@@ -59,6 +59,9 @@ Recent decisions affecting current work:
 - Phase 18-04: Anonymize data at the source before any external API calls
 - Phase 18-04: Map specific gym/crag names to generic "indoor_gym" or "outdoor_crags"
 - Phase 18-04: Add validateAnonymizedData() for runtime PII detection as defensive programming
+- Phase 18-05: 24h stale time for recommendations enables offline support
+- Phase 18-05: 5min stale time for rate limit balances freshness with API efficiency
+- Phase 18-05: 1h stale time for chat messages - infrequent refresh is acceptable
 - Phase 18: Database schema for coach tables with JSONB flexibility
 - Phase 18: Cost tracking and rate limiting implemented from day one
 - Phase 19: UI built with mock data before LLM integration for faster iteration
@@ -76,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed 18-03: Coach Service with API Abstraction
+Stopped at: Completed 18-05: TanStack Query Hooks for Coach Features
 Resume file: None
