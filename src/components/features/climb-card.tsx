@@ -112,7 +112,10 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
             (() => {
               const color = COLOR_CIRCUIT.find((c) => c.name === climb.grade_value)
               return color ? (
-                <div key={color.name} className={`text-3xl font-black tracking-tight ${color.textColor}`}>
+                <div
+                  key={color.name}
+                  className={`text-3xl font-black tracking-tight ${color.textColor}`}
+                >
                   {color.letter}
                 </div>
               ) : (
