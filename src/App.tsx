@@ -11,7 +11,7 @@ import {
 } from 'react-router-dom'
 import { Toaster, toast } from 'sonner'
 
-import { ChartsPage, ClimbCard, Logger, ProtectedRoute, SettingsPage } from '@/components/features'
+import { ChartsPage, ClimbCard, CoachPage, Logger, ProtectedRoute, SettingsPage } from '@/components/features'
 import type { LoggerHandle } from '@/components/features/logger'
 import { Button } from '@/components/ui/button'
 import { ErrorBanner } from '@/components/ui/error-banner'
@@ -222,6 +222,18 @@ function Layout() {
           >
             Analytics
           </NavLink>
+          <NavLink
+            to="/coach"
+            className={({ isActive }) =>
+              `flex-1 text-center px-4 py-3 border-2 text-xs font-black uppercase tracking-wider transition-all ${
+                isActive
+                  ? 'bg-white/10 border-white/30 text-white'
+                  : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
+              }`
+            }
+          >
+            Coach
+          </NavLink>
         </nav>
 
         <ClimbActionsContext.Provider
@@ -274,6 +286,8 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<DashboardWrapper />} />
             <Route path="analytics" element={<ChartsPage />} />
+            <Route path="coach" element={<CoachPage />} />
+            <Route path="coach/chat" element={<div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4 pb-24"><div className="mx-auto max-w-2xl"><p className="text-center py-12 text-[#888]">Chat feature coming in Phase 21</p></div></div>} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
         </Routes>
