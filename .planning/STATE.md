@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 18 of 21 (AI Coach Foundation)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-17 — Completed 18-01: Database Schema for AI Coach
+Last activity: 2026-01-17 — Completed 18-02: Pattern Extraction Service
 
-Progress: [██░░░░░░░░] 20%
+Progress: [████░░░░░░] 40%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 26 (v1.0 + v1.1 + 18-01)
+- Total plans completed: 27 (v1.0 + v1.1 + 18-01 + 18-02)
 - Average duration: 10 min
-- Total execution time: 4.1 hours
+- Total execution time: 4.3 hours
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [██░░░░░░░░] 20%
 |-------|-------|-------|----------|
 | 01-04 (v1.0) | 6 | 93 min | 16 min |
 | 05-17 (v1.1) | 19 | 147 min | 8 min |
-| 18 (AI Coach) | 1 | 9 min | 9 min |
+| 18 (AI Coach) | 2 | 20 min | 10 min |
 
 **Recent Trend:**
-- Last 5 plans: 9 min
+- Last 5 plans: 10 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -48,6 +48,11 @@ Recent decisions affecting current work:
 - Phase 18-01: Added separate columns (generation_date, time_window_start) for frequently queried fields
 - Phase 18-01: Created GIN indexes on JSONB columns using jsonb_path_ops operator class
 - Phase 18-01: Followed existing climbs table migration pattern for consistency
+- Phase 18-02: Filter styles with <3 attempts to avoid noise from insufficient data
+- Phase 18-02: Use ISO 8601 week numbering for consistent week calculation across timezones
+- Phase 18-02: Group climbs by day to approximate session count (simpler than explicit session tracking)
+- Phase 18-02: Normalize grades across Font/V-Scale/Color scales to 1-100 for comparison
+- Phase 18-02: Return empty patterns object when no climbs exist (no crashes)
 - Phase 18: Database schema for coach tables with JSONB flexibility
 - Phase 18: Cost tracking and rate limiting implemented from day one
 - Phase 19: UI built with mock data before LLM integration for faster iteration
@@ -65,5 +70,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed 18-01: Database Schema for AI Coach
+Stopped at: Completed 18-02: Pattern Extraction Service
 Resume file: None
