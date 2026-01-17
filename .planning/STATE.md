@@ -2,17 +2,17 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-15)
+See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** v1.1 UX & Analytics
+**Current focus:** Planning next milestone
 
 ## Current Position
 
 Phase: v1.1 Complete (All 17 phases executed and verified)
-Last activity: 2026-01-17 — Phase 15.1 verified: Mark as Sent button now uses ghost variant with white opacity pattern matching Phase 14 design system
+Last activity: 2026-01-17 — v1.1 milestone complete, ready to plan next milestone
 
-Progress: ██████████ 100%
+Progress: [░░░░░░░░] 0% (planning next milestone)
 
 ## Performance Metrics
 
@@ -43,6 +43,9 @@ Progress: ██████████ 100%
 | 15.1-fix-ugly-mark-as-sent-button-styling-urgent | 1 | 9 min | 9 min |
 | 16-add-version-number-to-footer | 1 | 8 min | 8 min |
 | 17-use-the-new-design-system-to-fix-the-ugly-toggle | 1 | 4 min | 4 min |
+| 10.2-fix-mark-as-sent-button-text-color | 1 | 3 min | 3 min |
+| 13-revamp-analytics-for-more-insightful-graphs | 1 | 15 min | 15 min |
+| 15-use-the-new-design-guidelines-to-finally-fix-the-mark-as-sent-button | 1 | 9 min | 9 min |
 | — | — | — | — |
 
 **Recent Trend:**
@@ -53,110 +56,7 @@ Progress: ██████████ 100%
 
 ### Decisions
 
-All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
-
-**Phase 5 - Logger Form Reset:**
-- Used `useImperativeHandle` pattern to expose resetAllState method from Logger to parent App component - more React-idiomatic than callback props for imperative operations
-- Logger form auto-resets after successful NEW climb submission (sheet stays open)
-- Edit climb behavior preserved (sheet closes after save)
-
-**Phase 5.1 - Logger Window Close Setting:**
-- Default preference is true (close logger) - matches one-time entry pattern, user can opt-in to rapid entry
-- Edit climbs always close sheet regardless of preference - keeps existing behavior consistent
-
-**Phase 11 - Make a Nice README:**
-- Created comprehensive README.md with casual, fun tone that matches the vibe-coded personal use philosophy
-- Included prominent but apologetic-free disclaimer about personal use nature
-- Added 5 descriptive screenshot placeholders with TODO comments and clear capture instructions for future image addition
-
-**Phase 12 - Add Logo and Emojis to README:**
-- Logo placement: After main title (# Scenka) and before introduction paragraph for immediate visual branding
-- Emoji density: Maximum 1-2 emojis per section, strategically placed on key items rather than every bullet
-- Emoji selection: Used climbing/theme-appropriate emojis (climber, privacy, offline PWA, mobile, analytics, settings)
-- Alt text: "Scenka logo" for accessibility compliance
-
-**Phase 07 - Failure Analytics:**
-- Used rose-500 theme color matching Anti-Style chart for visual consistency across failure-focused analytics
-- Sorted data descending by frequency to surface most common failure reasons first, enabling climbers to quickly identify training priorities
-
-**Phase 06 - Email Redirect Config:**
-- Manual dashboard configuration approach - simpler than Management API for single setup
-- No code changes required - existing implementation already production-ready with emailRedirectTo: window.location.origin
-
-**Phase 08 - Style Analytics:**
-- Purple-500 theme color for Style Distribution chart to visually distinguish from rose-500 failure charts
-- No outcome filter on allStylesData (counts all climbs, not just failures) - provides complete picture of climbing style patterns
-
-**Phase 09 - Mark Failed as Succeeded:**
-- Used existing `useUpdateClimb()` hook for mutation - no custom mutation logic needed, follows codebase patterns from RESEARCH.md
-- ClimbCard component extracts climb display logic from Dashboard into reusable component - reduced Dashboard from 250+ lines to ~70 lines
-- "Mark as Sent" button only displays for failed climbs (`climb.outcome === 'Fail'`) - conditional rendering hides button for already-sent climbs
-- When marking climb as sent, clears `failure_reasons` array to prevent analytics pollution
-- Emerald-500 theme colors for "Mark as Sent" button to indicate success action, distinct from red-500 for failures
-- No changes to `ClimbActionsContext` - kept existing `onEditClick` and `onDeleteClick` handlers
-
-**Phase 10 - Completed Climbs Analytics:**
-- Added `redemption_at TIMESTAMPTZ` nullable column to climbs table via migration - tracks when failed climbs are marked as sent
-- ClimbCard updates `redemption_at` field with current ISO timestamp when marking climb as sent
-- Redemption Rate chart shows stacked bars: gray for non-redeemed sends, teal-500 for redeemed climbs
-- Teal-500 theme color for redemption data to distinguish from other analytics
-- Chart groups by difficulty bucket (Beginner/Intermediate/Advanced/Expert) to show redemption patterns across grades
-- Empty data case handled gracefully - chart displays with zero values when no redemption data exists
-- Update climb validation schema to include optional `redemption_at` field
-- Migration applied via `npx supabase db push` to both local and remote databases
-- TypeScript types regenerated from database schema to include `redemption_at` in Row/Insert/Update types
-
-**Phase 10.1 - Fix Mark as Sent Button Styling:**
-- Removed custom className from "Mark as Sent" button to let shadcn/ui outline variant provide proper styling
-- Button now conforms to app's design system without white background overrides
-- shadcn/ui outline variant handles emerald color theming correctly without manual overrides
-
-**Phase 10.2 - Fix Mark as Sent Button Text Color:**
-- Added `text-[#aaa]` className to "Mark as Sent" button to override shadcn/ui outline variant's default white text
-- Matches text color pattern used by selection buttons in the app (Climbs/Analytics navigation, Boulder/Sport discipline toggles)
-- Light gray text provides better visual consistency across the app - selection buttons use light gray text, not white
-
-**Phase 13 - Revamp Analytics for More Insightful Graphs:**
-- Training Priorities chart (orange-500) positioned as FIRST chart in dashboard for immediate visibility into what to work on next
-- Chart displays failure reasons sorted by frequency with percentage context in tooltip (e.g., "Bad Feet: 8 failures (42% of total)")
-- Style Distribution chart removed - not useful for training decisions
-- Failure Reasons chart removed - redundant with Training Priorities (same data, different presentation)
-- Orange-500 theme color indicates actionable priorities, distinct from rose-500 failure charts
-- Key insight: prescriptive analytics ("do this first") > descriptive analytics ("here's what you did")
-
-**Phase 14.01 - Unify UI Styles:**
-- Created three reusable UI components following shadcn/ui cva pattern: SelectionButton, FormSection, FormLabel
-- SelectionButton for toggle-style buttons (discipline/outcome) with selected/unselected variants
-- FormSection for consistent section/card wrapper styling (bg-white/[0.02] border-2 border-white/10 p-6)
-- FormLabel for consistent label typography (text-xs font-mono text-[#666] uppercase tracking-wider)
-- Refactored Logger, ChartsPage, SettingsPage, ClimbCard to use new components
-- Reduced inline className duplication by >200 occurrences across codebase
-- No visual changes - purely internal refactoring for maintainability
-- Components exported from src/components/ui/index.ts for convenient importing
-
-**Phase 16.01 - Add Version Number to Footer:**
-- Used fixed positioning (fixed bottom-0) instead of static positioning to ensure footer always visible regardless of page content
-- Set z-index to 40 to layer below OfflineStatus (z-50) but above page content
-- Removed border and margin from initial plan design for cleaner footer bar appearance
-- Used text-[#888] styling to match App.tsx subtitle pattern for consistency
-
-**Phase 17.01 - Use the New Design System to Fix the Ugly Toggle:**
-- Created Toggle component with cva pattern matching Phase 14 design system (SelectionButton, FormSection, FormLabel)
-- Applied minimal, unobtrusive styling: h-4 w-7 track (smaller than standard h-5 w-9), h-3 w-4 thumb
-- Color scheme: bg-white/[0.02] (unchecked) / bg-white/10 (checked) with border-2 in white/20 / white/30
-- Thumb colors: white/30 (unchecked) to white/60 (checked) for subtle visibility
-- 200ms transitions for smooth color and transform changes across all states
-- Focus ring: minimal white/20, not jarring, consistent with other Phase 14 components
-- Follows established patterns: cva variants, white opacity colors, border-2 for subtle definition
-- Kept Switch export for backward compatibility in ui/index.ts
-
-**Phase 15.1.01 - Fix Ugly Mark as Sent Button Styling:**
-- Updated Button component ghost variant from shadcn/ui default to white opacity pattern (bg-white/[0.02], border-white/20, hover:border-white/40, text-[#888] hover:text-white)
-- Extended existing Button component with custom ghost variant instead of creating separate GhostButton component - maintains single source of truth
-- Used white opacity colors directly instead of CSS variables - matches design system patterns from Phase 14
-- Applied SelectionButton typography (text-xs font-black uppercase tracking-wider) to Mark as Sent button for consistent visual hierarchy
-- Removed className color hack (text-[#aaa]) from ClimbCard, now uses proper variant="ghost"
-- Mark as Sent button now conforms to unified design system established in Phase 14
+All decisions from v1.0 and v1.1 are logged in PROJECT.md Key Decisions table.
 
 ### Pending Todos
 
@@ -168,23 +68,12 @@ None yet.
 
 ### Roadmap Evolution
 
-- Milestone v1.1 created: UX & Analytics, 4 phases (Phase 5-8)
-- Phase 5.1 inserted after Phase 5: Logger Window Close Setting (URGENT) - user preference for logger close behavior after adding climbs
-- Phase 9 added: Mark Failed as Succeeded - ability to mark previously failed climbs as succeeded to track redemption rate
-- Phase 10 added: Completed Climbs Analytics - graph tracking redemption stats for how many failed climbs are eventually completed
-- Phase 11 added: Make a Nice README - create polished README with disclaimer that it's vibe coded for personal enjoyment, plus screenshot placeholders
-- Phase 12 added: Add Logo and Emojis to README - enhance README with logo and tasteful emojis
-- Phase 13 added: Revamp Analytics for More Insightful Graphs - address Style Distribution issues and improve overall analytics with more meaningful training metrics
-- Phase 10.1 inserted after Phase 10: Fix Mark as Sent Button Styling (URGENT) - white buttons don't conform to app style
-- Phase 10.2 inserted after Phase 10.1: Fix Mark as Sent Button Text Color (URGENT) - white text color is jarring, should match selection buttons (analytics, climbs, sport/boulder in logger)
-- Phase 14 added: Unify UI Styles - create unified UI components and style guidelines to ensure consistent fonts, buttons, and visual elements across the app
-- Phase 15 added: Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! - apply unified UI style guidelines to "Mark as Sent" button in ClimbCard component
-- Phase 16 added: Add Version Number to Footer - display version number in application footer for user reference and debugging
-- Phase 17 added: Use the New Design System to Fix the Ugly Toggle - apply unified UI style guidelines to toggle components throughout the app to ensure consistent styling
-- Phase 15.1 inserted after Phase 15: Fix ugly Mark as Sent button styling (URGENT)
+- Milestone v1.0 completed: Hold Color Feature, 4 phases (shipped 2026-01-15)
+- Milestone v1.1 completed: UX & Analytics, 17 phases (shipped 2026-01-17)
+- Next milestone: Planning required
 
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed Phase 15.1 plan 01 - Button ghost variant with white opacity pattern matching Phase 14 design system
+Stopped at: v1.1 milestone complete, ready for next milestone planning
 Resume file: None

@@ -40,6 +40,14 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 ✓ **Color persistence** — Store selected color with climb data in Supabase — v1.0
 ✓ **Color display in history** — Show hold color on logged climbs in climb list/detail views — v1.0
 ✓ **Default color set** — Pre-populate settings with common climbing gym hold colors (red, green, blue, yellow, black, white, orange, purple, pink) — v1.0
+✓ **Logger form auto-reset** — Form automatically clears after successful submission for rapid logging — v1.1
+✓ **Logger window close preference** — User can choose if logger closes after adding climbs — v1.1
+✓ **Training Priorities analytics** — Failure breakdown chart with percentages, positioned first for actionable insights — v1.1
+✓ **Mark as Sent functionality** — Ability to mark failed climbs as succeeded, tracking redemption rate — v1.1
+✓ **Redemption Rate analytics** — Chart showing redemption patterns by difficulty bucket — v1.1
+✓ **Unified UI components** — SelectionButton, FormSection, FormLabel with cva pattern for consistency — v1.1
+✓ **Version footer** — Footer displaying version number for reference — v1.1
+✓ **README documentation** — Polished README with logo and emojis — v1.1
 
 ### Active
 
@@ -49,7 +57,6 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 
 - **Advanced analytics** — Deeper insights into patterns, weaknesses, improvement over time
 - **Gym map integration** — Mark climb locations on a visual map of your gym
-- **Mobile analytics improvements** — Better mobile experience for viewing charts and data
 
 ### Permanently Out of Scope
 
@@ -108,6 +115,12 @@ Settings page exists at `src/components/features/settings-page.tsx` for user pre
 | Nullable hold_color column | Allow existing climbs without color data | ✓ Backward compatible, no breaking changes |
 | Default colors exclude black/white | Less common as primary hold colors | ✓ 7-color default works well in practice |
 | Form state with watch() | Cleaner than separate component state | ✓ Pattern established for future form development |
+| useImperativeHandle pattern | Expose imperative methods from child to parent via ref | ✓ React-idiomatic for form reset operations (v1.1) |
+| Logger window close default: true | Matches one-time entry pattern, user can opt-in to rapid entry | ✓ Balances friction reduction with user preference (v1.1) |
+| Training Priorities chart positioning | First position, prescriptive over descriptive analytics | ✓ Actionable insights > data dumps (v1.1) |
+| Unified UI components (SelectionButton, FormSection, FormLabel) | Centralize styling patterns using cva, reduce duplication | ✓ Reduced className duplication by >200 occurrences (v1.1) |
+| Ghost variant in Button component | Extend existing component vs create separate GhostButton | ✓ Single source of truth for Button styling (v1.1) |
+| Minimal Toggle component size (h-4 w-7) | Smaller than standard Switch, less jarring UI | ✓ Better visual hierarchy, unobtrusive (v1.1) |
 
 ---
-*Last updated: 2026-01-15 after v1.0 milestone — Hold color feature shipped*
+*Last updated: 2026-01-17 after v1.1 milestone — UX & Analytics shipped*

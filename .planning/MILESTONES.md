@@ -1,5 +1,34 @@
 # Project Milestones: Scenka
 
+## v1.1 UX & Analytics (Shipped: 2026-01-17)
+
+**Delivered:** Improved user experience with form auto-reset, redemption tracking, and unified design system.
+
+**Phases completed:** 5-17, plus decimal phases 5.1, 10.1, 10.2, 15.1 (17 phases, 23 plans total)
+
+**Key accomplishments:**
+
+- Logger form auto-resets after submission with user preference for close behavior
+- Training Priorities chart positioned first for actionable training insights
+- "Mark as Sent" functionality tracks redemption rate with redemption_at timestamp
+- Redemption Rate chart shows redemption patterns by difficulty bucket
+- Unified UI system: SelectionButton, FormSection, FormLabel components with cva pattern
+- Footer with version number display and minimal Toggle component
+- README polished with logo, casual tone, and strategic emojis
+
+**Stats:**
+
+- 61 files created/modified
+- 4,777 lines of TypeScript
+- 17 phases, 23 plans
+- 2 days from start to ship (2026-01-15 → 2026-01-17)
+
+**Git range:** `feat(05-logger-form-reset)` → `feat(15.1-01)`
+
+**What's next:** Planning next milestone
+
+---
+
 ## v1.0 Hold Color Feature (Shipped: 2026-01-15)
 
 **Delivered:** Complete hold color tracking system allowing climbers to identify routes by color when logging and reviewing climbs.
