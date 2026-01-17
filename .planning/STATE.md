@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 18: AI Coach Foundation
+**Current focus:** Phase 19: Coach Page + Recommendations UI
 
 ## Current Position
 
-Phase: 18 of 21 (AI Coach Foundation)
-Plan: 4 of 5 in current phase
-Status: In progress
-Last activity: 2026-01-17 — Completed 18-05: TanStack Query Hooks for Coach Features
+Phase: 19 of 21 (Coach Page + Recommendations UI)
+Plan: 0 of 6 in current phase
+Status: Ready to plan
+Last activity: 2026-01-17 — Phase 18: AI Coach Foundation completed (5/5 plans, verified)
 
-Progress: [████░░░░░░] 85%
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 30 (v1.0 + v1.1 + 18-01, 18-02, 18-03, 18-04, 18-05)
+- Total plans completed: 30 (v1.0 + v1.1 + v2.0 phase 18)
 - Average duration: 9 min
 - Total execution time: 4.6 hours
 

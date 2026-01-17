@@ -64,13 +64,14 @@ Scenka v2.0 adds an AI-powered climbing coach to the existing mobile PWA. The jo
   4. useCoach and useCoachMessages hooks manage state and caching via TanStack Query
   5. Privacy safeguards anonymize data before AI processing with RLS policies for user isolation
 **Plans**: 5 plans
+**Status**: Complete — verified 2026-01-17
 
 Plans:
-- [ ] 18-01-PLAN.md — Database schema and RLS for coach tables
-- [ ] 18-02-PLAN.md — patterns.ts service for data aggregation
-- [ ] 18-03-PLAN.md — coach.ts service with cost tracking and rate limiting
-- [ ] 18-04-PLAN.md — Privacy safeguards and data anonymization
-- [ ] 18-05-PLAN.md — TanStack Query hooks (useCoach, useCoachMessages)
+- [x] 18-01-PLAN.md — Database schema and RLS for coach tables
+- [x] 18-02-PLAN.md — patterns.ts service for data aggregation
+- [x] 18-03-PLAN.md — coach.ts service with cost tracking and rate limiting
+- [x] 18-04-PLAN.md — Privacy safeguards and data anonymization
+- [x] 18-05-PLAN.md — TanStack Query hooks (useCoach, useCoachMessages)
 
 #### Phase 19: Coach Page + Recommendations UI
 **Goal**: Complete recommendations display with pattern analysis and mock data
@@ -83,15 +84,16 @@ Plans:
   4. Recommendations persist across sessions with generation date displayed
   5. UI works offline showing last cached recommendations
   6. Clear entry points exist to chat from recommendations page
-**Plans**: TBD
+**Plans**: 6 plans
+**Status**: Ready to execute
 
 Plans:
-- [ ] 19-01: CoachPage layout with Recommendations and Chat tabs
-- [ ] 19-02: RecommendationsDisplay component with weekly focus and drills
-- [ ] 19-03: PatternAnalysis component showing failures, styles, frequency, successes
-- [ ] 19-04: Loading states and error handling with fallback
-- [ ] 19-05: Offline caching of last recommendations
-- [ ] 19-06: Entry points from recommendations to chat
+- [ ] 19-01-PLAN.md — usePatternAnalysis hook for loading pattern analysis data
+- [ ] 19-02-PLAN.md — CoachPage layout with Recommendations and Pattern Analysis tabs
+- [ ] 19-03-PLAN.md — RecommendationsDisplay component with weekly focus and drills
+- [ ] 19-04-PLAN.md — Loading states and error handling with fallback
+- [ ] 19-05-PLAN.md — Offline caching of last recommendations (verify TanStack Query config)
+- [ ] 19-06-PLAN.md — Entry points from recommendations to chat
 
 #### Phase 20: LLM Integration
 **Goal**: Real AI recommendations via Edge Function with OpenRouter API
@@ -160,7 +162,7 @@ Phases execute in numeric order: 18 → 19 → 20 → 21
 | 16. Version Footer | v1.1 | 1/1 | Complete | 2026-01-16 |
 | 17. Fix Toggle | v1.1 | 1/1 | Complete | 2026-01-16 |
 | 15.1 Fix Ugly Mark as Sent Button | v1.1 | 1/1 | Complete | 2026-01-17 |
-| 18. AI Coach Foundation | v2.0 | 0/5 | Not started | - |
-| 19. Coach Page + UI | v2.0 | 0/6 | Not started | - |
+| 18. AI Coach Foundation | v2.0 | 5/5 | Complete | 2026-01-17 |
+| 19. Coach Page + UI | v2.0 | 0/6 | Ready to execute | - |
 | 20. LLM Integration | v2.0 | 0/5 | Not started | - |
 | 21. Chat Interface | v2.0 | 0/5 | Not started | - |

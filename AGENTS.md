@@ -1,5 +1,9 @@
 # Scenka Agent Guidelines
 
+## Questions and answers
+
+When asking multiple questions, always use the question tool!
+
 ## Project Overview
 
 Mobile-first PWA for rock climbers tracking technique failures using React + TypeScript + Vite + Tailwind + shadcn/ui + Supabase.

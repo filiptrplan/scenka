@@ -80,14 +80,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REC-01 | Phase 19 | Pending |
 | REC-02 | Phase 19 | Pending |
 | REC-03 | Phase 19 | Pending |
-| REC-04 | Phase 18 | Pending |
+| REC-04 | Phase 18 | Complete |
 | REC-05 | Phase 19 | Pending |
-| REC-06 | Phase 18 | Pending |
-| REC-07 | Phase 18 | Pending |
-| PATT-01 | Phase 18 | Pending |
-| PATT-02 | Phase 18 | Pending |
-| PATT-03 | Phase 18 | Pending |
-| PATT-04 | Phase 18 | Pending |
+| REC-06 | Phase 18 | Complete |
+| REC-07 | Phase 18 | Complete |
+| PATT-01 | Phase 18 | Complete |
+| PATT-02 | Phase 18 | Complete |
+| PATT-03 | Phase 18 | Complete |
+| PATT-04 | Phase 18 | Complete |
 | CHAT-01 | Phase 21 | Pending |
 | CHAT-02 | Phase 21 | Pending |
 | CHAT-03 | Phase 21 | Pending |
@@ -96,8 +96,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHAT-06 | Phase 21 | Pending |
 | CHAT-07 | Phase 21 | Pending |
 | CHAT-08 | Phase 20 | Pending |
-| DIFF-01 | Phase 18 | Pending |
-| DIFF-02 | Phase 18 | Pending |
+| DIFF-01 | Phase 18 | Complete |
+| DIFF-02 | Phase 18 | Complete |
 
 **Coverage:**
 - v1 requirements: 21 total
@@ -106,4 +106,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-17*
-*Last updated: 2026-01-17 after roadmap creation*
+*Last updated: 2026-01-17 after Phase 18 completion*
