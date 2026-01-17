@@ -9,19 +9,19 @@ See: .planning/PROJECT.md (updated 2026-01-15)
 
 ## Current Position
 
-Phase: 17 of 17 (Use the New Design System to Fix the Ugly Toggle)
-Plan: 01 of 1 (Create custom Toggle component)
+Phase: 15.1 of 17 (Fix Ugly Mark as Sent Button Styling URGENT)
+Plan: 01 of 1 (Update Button component to add unified ghost variant)
 Status: Plan 01 complete
-Last activity: 2026-01-16 — Plan 01 completed: Created Toggle component with cva pattern matching Phase 14 design system, integrated into SettingsPage
+Last activity: 2026-01-17 — Plan 01 completed: Button ghost variant with white opacity pattern, ClimbCard Mark as Sent button now uses variant="ghost"
 
-Progress: ██████████ 100%
+Progress: ██████████ 94%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 22
+- Total plans completed: 23
 - Average duration: 11 min
-- Total execution time: 3.9 hours
+- Total execution time: 4.0 hours
 
 **By Phase:**
 
@@ -42,6 +42,7 @@ Progress: ██████████ 100%
 | 12-add-logo-and-emojis-to-readme | 1 | 8 min | 8 min |
 | 10.1-fix-mark-as-sent-button-styling | 1 | 3 min | 3 min |
 | 14-unify-ui-styles | 1 | 20 min | 20 min |
+| 15.1-fix-ugly-mark-as-sent-button-styling-urgent | 1 | 9 min | 9 min |
 | 16-add-version-number-to-footer | 1 | 8 min | 8 min |
 | 17-use-the-new-design-system-to-fix-the-ugly-toggle | 1 | 4 min | 4 min |
 | — | — | — | — |
@@ -151,6 +152,14 @@ All decisions from v1.0 are logged in PROJECT.md Key Decisions table.
 - Follows established patterns: cva variants, white opacity colors, border-2 for subtle definition
 - Kept Switch export for backward compatibility in ui/index.ts
 
+**Phase 15.1.01 - Fix Ugly Mark as Sent Button Styling:**
+- Updated Button component ghost variant from shadcn/ui default to white opacity pattern (bg-white/[0.02], border-white/20, hover:border-white/40, text-[#888] hover:text-white)
+- Extended existing Button component with custom ghost variant instead of creating separate GhostButton component - maintains single source of truth
+- Used white opacity colors directly instead of CSS variables - matches design system patterns from Phase 14
+- Applied SelectionButton typography (text-xs font-black uppercase tracking-wider) to Mark as Sent button for consistent visual hierarchy
+- Removed className color hack (text-[#aaa]) from ClimbCard, now uses proper variant="ghost"
+- Mark as Sent button now conforms to unified design system established in Phase 14
+
 ### Pending Todos
 
 None yet.
@@ -178,6 +187,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-16
-Stopped at: Phase 17 plan 01 completion - Toggle component created with cva pattern matching Phase 14 design system
+Last session: 2026-01-17
+Stopped at: Completed Phase 15.1 plan 01 - Button ghost variant with white opacity pattern matching Phase 14 design system
 Resume file: None
