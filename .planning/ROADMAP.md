@@ -6,14 +6,14 @@ Scenka v2.0 adds an AI-powered climbing coach to the existing mobile PWA. The jo
 
 ## Milestones
 
-- ✅ **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
-- ✅ **v1.1 UX & Analytics** — Phases 5-17 (shipped 2026-01-17)
-- 🚧 **v2.0 AI Coach** — Phases 18-21 (in progress)
+- **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
+- **v1.1 UX & Analytics** — Phases 5-17 (shipped 2026-01-17)
+- **v2.0 AI Coach** — Phases 18-21 (in progress)
 
 ## Phases
 
 <details>
-<summary>✅ v1.0 Hold Color Feature (Phases 1-4) — SHIPPED 2026-01-15</summary>
+<summary> v1.0 Hold Color Feature (Phases 1-4) — SHIPPED 2026-01-15</summary>
 
 - [x] Phase 1: Database & Types (1/1 plans) — completed 2026-01-15
 - [x] Phase 2: Settings Page (2/2 plans) — completed 2026-01-15
@@ -25,7 +25,7 @@ Scenka v2.0 adds an AI-powered climbing coach to the existing mobile PWA. The jo
 </details>
 
 <details>
-<summary>✅ v1.1 UX & Analytics (Phases 5-17) — SHIPPED 2026-01-17</summary>
+<summary> v1.1 UX & Analytics (Phases 5-17) — SHIPPED 2026-01-17</summary>
 
 - [x] Phase 5: Logger Form Reset (1/1 plans) — completed 2026-01-15
 - [x] Phase 5.1: Logger Window Close Setting (1/1 plans) — completed 2026-01-15
@@ -49,7 +49,7 @@ Scenka v2.0 adds an AI-powered climbing coach to the existing mobile PWA. The jo
 
 </details>
 
-### 🚧 v2.0 AI Coach (In Progress)
+### v2.0 AI Coach (In Progress)
 
 **Milestone Goal:** Build AI-powered climbing coach that analyzes logged data and provides actionable training guidance through weekly dashboard recommendations and free-form chat.
 
@@ -63,14 +63,14 @@ Scenka v2.0 adds an AI-powered climbing coach to the existing mobile PWA. The jo
   3. patterns.ts service extracts failure patterns, style weaknesses, and climbing frequency from climb logs
   4. useCoach and useCoachMessages hooks manage state and caching via TanStack Query
   5. Privacy safeguards anonymize data before AI processing with RLS policies for user isolation
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 18-01: Database schema and RLS for coach tables
-- [ ] 18-02: patterns.ts service for data aggregation
-- [ ] 18-03: coach.ts service with cost tracking and rate limiting
-- [ ] 18-04: Privacy safeguards and data anonymization
-- [ ] 18-05: TanStack Query hooks (useCoach, useCoachMessages)
+- [ ] 18-01-PLAN.md — Database schema and RLS for coach tables
+- [ ] 18-02-PLAN.md — patterns.ts service for data aggregation
+- [ ] 18-03-PLAN.md — coach.ts service with cost tracking and rate limiting
+- [ ] 18-04-PLAN.md — Privacy safeguards and data anonymization
+- [ ] 18-05-PLAN.md — TanStack Query hooks (useCoach, useCoachMessages)
 
 #### Phase 19: Coach Page + Recommendations UI
 **Goal**: Complete recommendations display with pattern analysis and mock data
