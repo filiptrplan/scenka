@@ -226,12 +226,13 @@ Refactored "Mark as Sent" button in ClimbCard to use consistent SelectionButton-
 **Depends on**: Phase 15
 **Research**: Unlikely (UI styling fix following established patterns)
 **Plans**: 1 plan
+**Status**: ✅ Completed 2026-01-17
 
 Plans:
-- [ ] 15.1-01: Update Button component with unified ghost variant and update ClimbCard to use it
+- [x] 15.1-01: Update Button component with unified ghost variant and update ClimbCard to use it (completed 2026-01-17)
 
 **Details:**
-Button styling still uses className hacks (text-[#aaa]) instead of proper variant. Needs ghost variant with white opacity colors (bg-white/[0.02], border-white/20) matching Phase 14 design system patterns.
+Updated Button component ghost variant with white opacity pattern (bg-white/[0.02], border-white/20, hover:border-white/40, text-[#888] hover:text-white). ClimbCard now uses variant="ghost" with SelectionButton typography, no className hacks.
 
 #### Phase 16: Add Version Number to Footer
 
@@ -282,4 +283,4 @@ Created minimal Toggle component with h-4 w-7 track size (smaller than standard 
 | 15. Use the new design guidelines to finally fix the Mark as sent button. It still looks like this! | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 16. Add Version Number to Footer | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
 | 17. Use the New Design System to Fix the Ugly Toggle | v1.1 | 1/1 | ✓ Complete | 2026-01-16 |
-| 15.1 Fix ugly Mark as Sent button styling | v1.1 | 1/1 | Not started | - |
+| 15.1 Fix ugly Mark as Sent button styling | v1.1 | 1/1 | ✓ Complete | 2026-01-17 |
