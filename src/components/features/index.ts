@@ -1,5 +1,6 @@
 export { ChartsPage } from './charts-page'
 export { ClimbCard } from './climb-card'
+export { CoachPage } from './coach-page'
 export { Logger } from './logger'
 export { LoginScreen } from './login-screen'
 export { ProtectedRoute } from './protected-route'
