@@ -51,18 +51,20 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 
 ### Active
 
-**v2.0 - AI Coach Milestone**
-
 ## Current Milestone: v2.0 AI Coach
 
-**Goal:** Build AI-powered climbing coach that analyzes logged data and provides actionable training guidance through dashboard recommendations and free-form chat.
+**Goal:** Build AI-powered climbing coach that analyzes logged data and provides actionable training guidance through weekly dashboard recommendations and free-form chat.
 
 **Target features:**
-- AI-driven dashboard with weekly focus areas
-- Free-form coach chat for questions and analysis
-- Hybrid knowledge approach (LLM general training + biomechanical concepts)
-- Persistent recommendations (saved to profile, no regeneration)
-- Pre-processed climbing patterns (failure reasons, grade progression, style strengths/weaknesses)
+- Separate Coach page with weekly focus + 3 drills, regenerated manually
+- Free-form classic chat interface with limited message history
+- Pre-processed climbing patterns: Failure Patterns, Style Weaknesses, Climbing Frequency (structured sections)
+- Comprehensive summary includes recent successes for context
+- OpenRouter API (openai/gpt-5.1 model) with LLM general climbing knowledge
+- Persistent recommendations saved to database table with created_at
+- Suggestions evolve over time based on data improvements + user feedback (combined approach)
+- User can ask: practice details, drill explanations, alternatives, projecting tactics
+- Suggestions are actionable: for warmup or as focus areas during sessions
 
 ### Considered for Future
 
@@ -133,4 +135,4 @@ Settings page exists at `src/components/features/settings-page.tsx` for user pre
 | Minimal Toggle component size (h-4 w-7) | Smaller than standard Switch, less jarring UI | ✓ Better visual hierarchy, unobtrusive (v1.1) |
 
 ---
-*Last updated: 2026-01-17 after v1.1 milestone — UX & Analytics shipped*
+*Last updated: 2026-01-17 after v2.0 milestone planning started*
