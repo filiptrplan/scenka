@@ -38,6 +38,7 @@ export const coachKeys = {
   all: ['coach'] as const,
   recommendations: () => [...coachKeys.all, 'recommendations'] as const,
   currentRecommendations: () => [...coachKeys.recommendations(), 'current'] as const,
+  patterns: () => [...coachKeys.all, 'patterns'] as const,
 }
 
 export async function getLatestRecommendations(userId: string) {

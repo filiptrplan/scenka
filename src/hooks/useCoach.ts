@@ -7,6 +7,7 @@ import {
   generateRecommendations,
   getLatestRecommendations,
 } from '@/services/coach'
+import { extractPatterns } from '@/services/patterns'
 
 export function useCoachRecommendations() {
   return useQuery({
@@ -27,6 +28,29 @@ export function useCoachRecommendations() {
       return getLatestRecommendations(user.id)
     },
     staleTime: 24 * 60 * 60 * 1000, // 24 hours - show last cached recommendations
+    gcTime: 7 * 24 * 60 * 60 * 1000, // 7 days cache
+  })
+}
+
+export function usePatternAnalysis() {
+  return useQuery({
+    queryKey: coachKeys.patterns(),
+    queryFn: async () => {
+      if (!supabase) {
+        throw new Error('Supabase client not configured')
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) {
+        throw new Error('Not authenticated')
+      }
+
+      return extractPatterns(user.id)
+    },
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours
     gcTime: 7 * 24 * 60 * 60 * 1000, // 7 days cache
   })
 }
