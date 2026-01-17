@@ -10,17 +10,17 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 18 of 21 (AI Coach Foundation)
-Plan: 4 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-17 — Completed 18-04: Data Anonymization Utilities
+Last activity: 2026-01-17 — Completed 18-03: Coach Service with API Abstraction
 
 Progress: [████░░░░░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 28 (v1.0 + v1.1 + 18-01 through 18-04)
-- Average duration: 10 min
+- Total plans completed: 29 (v1.0 + v1.1 + 18-01, 18-02, 18-03, 18-04)
+- Average duration: 9 min
 - Total execution time: 4.5 hours
 
 **By Phase:**
@@ -29,10 +29,10 @@ Progress: [████░░░░░░] 80%
 |-------|-------|-------|----------|
 | 01-04 (v1.0) | 6 | 93 min | 16 min |
 | 05-17 (v1.1) | 19 | 147 min | 8 min |
-| 18 (AI Coach) | 4 | 25 min | 6 min |
+| 18 (AI Coach) | 4 | 27 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 8 min
+- Last 5 plans: 7 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -53,6 +53,9 @@ Recent decisions affecting current work:
 - Phase 18-02: Group climbs by day to approximate session count (simpler than explicit session tracking)
 - Phase 18-02: Normalize grades across Font/V-Scale/Color scales to 1-100 for comparison
 - Phase 18-02: Return empty patterns object when no climbs exist (no crashes)
+- Phase 18-03: calculateCost() called internally in trackApiUsage() instead of accepting cost_usd as parameter
+- Phase 18-03: Failed API calls still tracked with cost=0 for monitoring visibility
+- Phase 18-03: Rate limit of 50k tokens/day per user balances utility with cost control
 - Phase 18-04: Anonymize data at the source before any external API calls
 - Phase 18-04: Map specific gym/crag names to generic "indoor_gym" or "outdoor_crags"
 - Phase 18-04: Add validateAnonymizedData() for runtime PII detection as defensive programming
@@ -73,5 +76,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed 18-04: Data Anonymization Utilities
+Stopped at: Completed 18-03: Coach Service with API Abstraction
 Resume file: None
