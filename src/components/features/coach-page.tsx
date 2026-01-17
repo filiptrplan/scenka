@@ -26,7 +26,7 @@ export function CoachPage() {
   const { data: climbs } = useClimbs()
   const { data: profile } = useProfile()
   const generateRecommendations = useGenerateRecommendations()
-  const { data: patterns, isLoading: patternsLoading } = usePatternAnalysis()
+  const { data: patterns, isLoading: patternsLoading, error: patternsError } = usePatternAnalysis()
 
   const handleRegenerate = () => {
     generateRecommendations.mutate(
@@ -166,7 +166,12 @@ export function CoachPage() {
                 <div className="h-1 flex-1 bg-green-500" />
               </div>
 
-              {((recommendations.content as any)?.drills || []).map((drill: any, index: number) => (
+              {((recommendations.content as any)?.drills || []).length === 0 ? (
+                <FormSection>
+                  <p className="text-center text-[#888]">No drills available</p>
+                </FormSection>
+              ) : (
+                ((recommendations.content as any)?.drills || []).map((drill: any, index: number) => (
                 <FormSection key={index} className="mb-4">
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="text-xl font-black uppercase">{drill.name || 'Drill'}</h3>
@@ -179,7 +184,7 @@ export function CoachPage() {
                     <span>Rest: {drill.rest || 'N/A'}</span>
                   </div>
                 </FormSection>
-              ))}
+              )))}
             </section>
 
             {/* Action Buttons */}
@@ -213,6 +218,10 @@ export function CoachPage() {
           <TabsContent value="patterns" className="mt-6 space-y-8">
             {patternsLoading ? (
               <div className="text-center py-12 text-[#888]">Loading patterns...</div>
+            ) : patternsError ? (
+              <div className="text-center py-12 text-red-400">
+                Failed to load patterns: {patternsError.message}
+              </div>
             ) : patterns ? (
               <>
                 {/* Failure Patterns */}
@@ -223,18 +232,22 @@ export function CoachPage() {
                     <div className="h-1 flex-1 bg-orange-500" />
                   </div>
                   <FormSection>
-                    <div className="space-y-3">
-                      {patterns.failure_patterns.most_common_failure_reasons.map((item) => (
-                        <div key={item.reason} className="flex items-center justify-between">
-                          <Badge variant="outline" className="text-xs font-mono border-white/20 text-[#ccc]">
-                            {item.reason}
-                          </Badge>
-                          <span className="text-sm text-[#888]">
-                            {item.count} times ({item.percentage}%)
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                    {patterns.failure_patterns.most_common_failure_reasons.length === 0 ? (
+                      <p className="text-center text-[#888]">No failure data yet</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {patterns.failure_patterns.most_common_failure_reasons.map((item) => (
+                          <div key={item.reason} className="flex items-center justify-between">
+                            <Badge variant="outline" className="text-xs font-mono border-white/20 text-[#ccc]">
+                              {item.reason}
+                            </Badge>
+                            <span className="text-sm text-[#888]">
+                              {item.count} times ({item.percentage}%)
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </FormSection>
                 </section>
 
@@ -246,18 +259,22 @@ export function CoachPage() {
                     <div className="h-1 flex-1 bg-rose-500" />
                   </div>
                   <FormSection>
-                    <div className="space-y-3">
-                      {patterns.style_weaknesses.struggling_styles.map((item) => (
-                        <div key={item.style} className="flex items-center justify-between">
-                          <Badge variant="outline" className="text-xs font-mono border-white/20 text-[#ccc]">
-                            {item.style}
-                          </Badge>
-                          <span className="text-sm text-[#888]">
-                            {Math.round(item.fail_rate * 100)}% fail rate ({item.fail_count}/{item.total_attempts})
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                    {patterns.style_weaknesses.struggling_styles.length === 0 ? (
+                      <p className="text-center text-[#888]">No style data yet</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {patterns.style_weaknesses.struggling_styles.map((item) => (
+                          <div key={item.style} className="flex items-center justify-between">
+                            <Badge variant="outline" className="text-xs font-mono border-white/20 text-[#ccc]">
+                              {item.style}
+                            </Badge>
+                            <span className="text-sm text-[#888]">
+                              {Math.round(item.fail_rate * 100)}% fail rate ({item.fail_count}/{item.total_attempts})
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </FormSection>
                 </section>
 
