@@ -11,8 +11,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs'
-import { useCoachRecommendations, useGenerateRecommendations } from '@/hooks/useCoach'
 import { useClimbs } from '@/hooks/useClimbs'
+import { useCoachRecommendations, useGenerateRecommendations } from '@/hooks/useCoach'
 import { useProfile } from '@/hooks/useProfile'
 
 export function CoachPage() {
