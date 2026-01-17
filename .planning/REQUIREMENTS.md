@@ -9,13 +9,13 @@ Requirements for v2.0 AI Coach milestone. Each maps to roadmap phases.
 
 ### Weekly Recommendations
 
-- [ ] **REC-01**: User can view weekly focus statement (1-2 sentences explaining what to work on this week)
-- [ ] **REC-02**: User can view 3 personalized drills with name, description, and sets/reps/rest
-- [ ] **REC-03**: User can manually regenerate recommendations via button
-- [ ] **REC-04**: Weekly recommendations persist across sessions with generation date displayed
-- [ ] **REC-05**: Loading states show during AI generation
-- [ ] **REC-06**: Error handling with fallback to previous recommendations on API failure
-- [ ] **REC-07**: Recommendations work offline (last cached recommendations accessible without internet)
+- [x] **REC-01**: User can view weekly focus statement (1-2 sentences explaining what to work on this week)
+- [x] **REC-02**: User can view 3 personalized drills with name, description, and sets/reps/rest
+- [x] **REC-03**: User can manually regenerate recommendations via button
+- [x] **REC-04**: Weekly recommendations persist across sessions with generation date displayed
+- [x] **REC-05**: Loading states show during AI generation
+- [x] **REC-06**: Error handling with fallback to previous recommendations on API failure
+- [x] **REC-07**: Recommendations work offline (last cached recommendations accessible without internet)
 
 ### Pattern Analysis
 
@@ -30,7 +30,7 @@ Requirements for v2.0 AI Coach milestone. Each maps to roadmap phases.
 - [ ] **CHAT-02**: User can view message bubbles with visual distinction between user and assistant
 - [ ] **CHAT-03**: Chat responses stream in real-time using Server-Sent Events
 - [ ] **CHAT-04**: Chat retains limited message history (last 10-20 messages) for context
-- [ ] **CHAT-05**: Clear entry points to chat from recommendations page
+- [x] **CHAT-05**: Clear entry points to chat from recommendations page
 - [ ] **CHAT-06**: Graceful error handling with helpful fallback messages
 - [ ] **CHAT-07**: Context-aware chat includes pre-processed patterns (failure, styles, frequency)
 - [ ] **CHAT-08**: Chat provides climbing-specific domain knowledge (understands beta, grades, styles)
@@ -77,11 +77,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REC-01 | Phase 19 | Pending |
-| REC-02 | Phase 19 | Pending |
-| REC-03 | Phase 19 | Pending |
+| REC-01 | Phase 19 | Complete |
+| REC-02 | Phase 19 | Complete |
+| REC-03 | Phase 19 | Complete |
 | REC-04 | Phase 18 | Complete |
-| REC-05 | Phase 19 | Pending |
+| REC-05 | Phase 19 | Complete |
 | REC-06 | Phase 18 | Complete |
 | REC-07 | Phase 18 | Complete |
 | PATT-01 | Phase 18 | Complete |
@@ -92,7 +92,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHAT-02 | Phase 21 | Pending |
 | CHAT-03 | Phase 21 | Pending |
 | CHAT-04 | Phase 21 | Pending |
-| CHAT-05 | Phase 19 | Pending |
+| CHAT-05 | Phase 19 | Complete |
 | CHAT-06 | Phase 21 | Pending |
 | CHAT-07 | Phase 21 | Pending |
 | CHAT-08 | Phase 20 | Pending |
@@ -106,4 +106,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-01-17*
-*Last updated: 2026-01-17 after Phase 18 completion*
+*Last updated: 2026-01-17 after Phase 19 completion*

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 19: Coach Page + Recommendations UI
+**Current focus:** Phase 20: LLM Integration
 
 ## Current Position
 
-Phase: 19 of 21 (Coach Page + Recommendations UI)
-Plan: 6 of 6 in current phase
-Status: Phase complete
-Last activity: 2026-01-17 — Completed 19-05: Verify Offline Caching of Recommendations
+Phase: 20 of 21 (LLM Integration)
+Plan: 0 of 5 in current phase
+Status: Ready to plan
+Last activity: 2026-01-17 — Phase 19: Coach Page + Recommendations UI completed (6/6 plans, verified)
 
-Progress: [██████████] 100%
+Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
@@ -33,8 +33,8 @@ Progress: [██████████] 100%
 | 19 (Coach UI) | 8 | 19 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 2 min
-- Trend: Accelerating
+- Last 5 plans: 4 min
+- Trend: Steady
 
 *Updated after each plan completion*
 
@@ -85,5 +85,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed 19-05: Verify Offline Caching of Recommendations
+Stopped at: Completed Phase 19: Coach Page + Recommendations UI
 Resume file: None
