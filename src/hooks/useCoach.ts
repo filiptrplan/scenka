@@ -27,8 +27,8 @@ export function useCoachRecommendations() {
 
       return getLatestRecommendations(user.id)
     },
-    staleTime: 24 * 60 * 60 * 1000, // 24 hours - show last cached recommendations
-    gcTime: 7 * 24 * 60 * 60 * 1000, // 7 days cache
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours - show last cached recommendations, enable offline support
+    gcTime: 7 * 24 * 60 * 60 * 1000, // 7 days - persist cache for a week before garbage collection
   })
 }
 
@@ -61,6 +61,7 @@ export function useGenerateRecommendations() {
   return useMutation({
     mutationFn: generateRecommendations,
     onSuccess: () => {
+      // Invalidate recommendations cache to fetch fresh data after regeneration
       void queryClient.invalidateQueries({
         queryKey: coachKeys.currentRecommendations(),
       })
