@@ -39,7 +39,8 @@ function sanitizeLocation(location: string): string {
     lowerLocation.includes('crag') ||
     lowerLocation.includes('boulder') ||
     lowerLocation.includes('cliff') ||
-    lowerLocation.includes('wall')
+    lowerLocation.includes('wall') ||
+    lowerLocation.includes('gorge')
   ) {
     return 'outdoor_crags'
   }
