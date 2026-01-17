@@ -205,8 +205,8 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
             type="button"
             onClick={handleMarkAsSent}
             disabled={updateClimb.isPending}
-            variant="outline"
-            className="text-[#aaa]"
+            variant="ghost"
+            className="text-xs font-black uppercase tracking-wider"
           >
             <Check className="h-4 w-4 mr-2" />
             {updateClimb.isPending ? 'Updating...' : 'Mark as Sent'}
