@@ -272,9 +272,8 @@ function validateResponse(content: string): object {
 
 // Calculate API cost
 function calculateCost(usage: { prompt_tokens: number; completion_tokens: number }): number {
-  // OpenRouter pricing for gpt-4o-mini
-  const promptCost = (usage.prompt_tokens * 0.00015) / 1000 // $0.15 per 1M tokens
-  const completionCost = (usage.completion_tokens * 0.0006) / 1000 // $0.60 per 1M tokens
+  const promptCost = (usage.prompt_tokens * 1.25) / 1000000 // $1.25 per 1M tokens
+  const completionCost = (usage.completion_tokens * 10.0) / 1000000 // $10.0 per 1M tokens
   return promptCost + completionCost
 }
 
@@ -366,7 +365,7 @@ Deno.serve(async (req: Request) => {
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       try {
         const response = await openai.chat.completions.create({
-          model: 'openai/gpt-4o-mini',
+          model: 'google/gemini-2.5-pro',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt },
