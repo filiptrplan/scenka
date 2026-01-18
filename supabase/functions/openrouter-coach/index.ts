@@ -6,7 +6,7 @@ import { corsHeaders } from '../_shared/cors.ts'
 const MAX_RETRIES = 3
 
 // Environment variable validation
-const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SB_PUBLISHABLE_KEY']
+const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_ANON_KEY']
 for (const envVar of requiredEnvVars) {
   if (!Deno.env.get(envVar)) {
     throw new Error(`Missing required environment variable: ${envVar}`)
@@ -14,7 +14,7 @@ for (const envVar of requiredEnvVars) {
 }
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-const supabaseKey = Deno.env.get('SB_PUBLISHABLE_KEY')!
+const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
 const openrouterApiKey = Deno.env.get('OPENROUTER_API_KEY')!
 
 // Initialize Supabase client
@@ -98,9 +98,7 @@ interface RequestBody {
 }
 
 // Helper function to fetch existing recommendations for fallback
-async function getExistingRecommendations(
-  userId: string
-): Promise<any | null> {
+async function getExistingRecommendations(userId: string): Promise<any | null> {
   const { data, error } = await supabase
     .from('coach_recommendations')
     .select('*')
@@ -152,10 +150,7 @@ function validateAnonymizedData(data: unknown): string[] {
         }
 
         // Specific place names (capitalized multi-word locations)
-        if (
-          currentPath.includes('location') &&
-          /^[A-Z][a-z]+(?: [A-Z][a-z]+){2,}$/.test(value)
-        ) {
+        if (currentPath.includes('location') && /^[A-Z][a-z]+(?: [A-Z][a-z]+){2,}$/.test(value)) {
           piiFields.push(currentPath)
         }
 
@@ -179,12 +174,8 @@ function validateAnonymizedData(data: unknown): string[] {
 }
 
 // Build user prompt from patterns and preferences
-function buildUserPrompt(
-  patterns: PatternAnalysis,
-  preferences: UserPreferences
-): string {
-  const { failure_patterns, style_weaknesses, climbing_frequency, recent_successes } =
-    patterns
+function buildUserPrompt(patterns: PatternAnalysis, preferences: UserPreferences): string {
+  const { failure_patterns, style_weaknesses, climbing_frequency, recent_successes } = patterns
 
   let prompt = `User Profile:
 - Preferred discipline: ${preferences.preferred_discipline}
@@ -345,6 +336,7 @@ Deno.serve(async (req: Request) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, {
+      status: 204,
       headers: {
         ...corsHeaders,
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -366,13 +358,10 @@ Deno.serve(async (req: Request) => {
     // Extract and validate JWT token
     const authHeader = req.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
-        {
-          status: 401,
-          headers: corsHeaders,
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: corsHeaders,
+      })
     }
 
     const token = authHeader.replace('Bearer ', '')
@@ -381,13 +370,10 @@ Deno.serve(async (req: Request) => {
     const { data: claims, error: claimsError } = await supabase.auth.getUser(token)
 
     if (claimsError || !claims.data.user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid or expired token' }),
-        {
-          status: 401,
-          headers: corsHeaders,
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
+        status: 401,
+        headers: corsHeaders,
+      })
     }
 
     userId = claims.data.user.id
@@ -410,13 +396,10 @@ Deno.serve(async (req: Request) => {
 
     // Verify user_id matches token
     if (body.user_id !== userId) {
-      return new Response(
-        JSON.stringify({ error: 'User ID mismatch' }),
-        {
-          status: 403,
-          headers: corsHeaders,
-        }
-      )
+      return new Response(JSON.stringify({ error: 'User ID mismatch' }), {
+        status: 403,
+        headers: corsHeaders,
+      })
     }
 
     // Get cached recommendations for fallback
@@ -470,15 +453,13 @@ Deno.serve(async (req: Request) => {
         const costUsd = calculateCost(lastUsage)
 
         // Store validated recommendations
-        const { error: insertError } = await supabase
-          .from('coach_recommendations')
-          .insert({
-            user_id: userId,
-            generation_date: generationDate,
-            content: validated,
-            is_cached: false,
-            error_message: null,
-          })
+        const { error: insertError } = await supabase.from('coach_recommendations').insert({
+          user_id: userId,
+          generation_date: generationDate,
+          content: validated,
+          is_cached: false,
+          error_message: null,
+        })
 
         if (insertError) {
           console.error('Failed to store recommendations:', insertError)
@@ -619,12 +600,9 @@ Deno.serve(async (req: Request) => {
   } catch (error: any) {
     console.error('Error in openrouter-coach:', error.message, error.stack)
 
-    return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
-      {
-        status: 500,
-        headers: corsHeaders,
-      }
-    )
+    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
+      status: 500,
+      headers: corsHeaders,
+    })
   }
 })

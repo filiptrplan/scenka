@@ -102,11 +102,10 @@ export async function generateRecommendations(
     throw new Error('Supabase client not configured')
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { session } } = await supabase.auth.getSession()
 
-  if (!user) {
+  if (!user || !session) {
     throw new Error('Not authenticated')
   }
 
@@ -119,8 +118,11 @@ export async function generateRecommendations(
   // Extract patterns (data is already anonymized inside extractPatterns)
   const patterns = await extractPatterns(user.id)
 
-  // Call Supabase Edge Function
+  // Call Supabase Edge Function with JWT token in Authorization header
   const { data, error } = await supabase.functions.invoke('openrouter-coach', {
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
     body: {
       user_id: user.id,
       patterns_data: patterns,
