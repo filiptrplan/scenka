@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 20 of 21 (LLM Integration)
-Plan: 0 of 5 in current phase
-Status: Ready to plan
-Last activity: 2026-01-17 — Phase 19: Coach Page + Recommendations UI completed (6/6 plans, verified)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-01-18 — Phase 20-01: OpenRouter Coach Edge Function completed
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████████░░░░] 89%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 39 (v1.0 + v1.1 + v2.0 phase 18-19)
+- Total plans completed: 40 (v1.0 + v1.1 + v2.0 phase 18-20)
 - Average duration: 9 min
-- Total execution time: 5.9 hours
+- Total execution time: 6.1 hours
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [░░░░░░░░░░] 0%
 | 05-17 (v1.1) | 19 | 147 min | 8 min |
 | 18 (AI Coach) | 6 | 40 min | 7 min |
 | 19 (Coach UI) | 8 | 19 min | 2 min |
+| 20 (LLM Integration) | 1 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min
+- Last 5 plans: 2 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -71,6 +72,12 @@ Recent decisions affecting current work:
 - Phase 19-02: Integrated user profile preferences (discipline, grade scale) for recommendation generation input
 - Phase 19-05: Enhanced documentation for caching behavior to clarify offline support and cache retention
 - Phase 19-06: Stub route for /coach/chat uses simple placeholder div to establish navigation structure before Phase 21 implementation
+- Phase 20-01: Used OpenAI SDK with baseURL override for OpenRouter API compatibility
+- Phase 20-01: Implemented JWT validation using supabase.auth.getUser() pattern in Edge Function
+- Phase 20-01: Built template-based prompt system with pattern analysis data injection
+- Phase 20-01: Requested JSON output format from LLM for structured parsing (response_format: { type: 'json_object' })
+- Phase 20-01: Set temperature 0.6 to balance creativity with reliability for drill suggestions
+- Phase 20-01: Used climbing-specific technical terminology (hangboard, campus board, antagonistic training) for domain expertise
 
 ### Pending Todos
 
@@ -79,11 +86,12 @@ None yet.
 ### Blockers/Concerns
 
 - **Supabase CLI authentication:** User must run `npx supabase login` and `npx supabase db push` to apply coach tables migration
-- **Prompt engineering quality:** Climbing-specific drill knowledge needs validation during Phase 20 planning
+- **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
+- **Function name mismatch:** Coach service calls `generate-recommendations`, needs update to `openrouter-coach` (tracked for 20-02)
 - **Streaming implementation:** @microsoft/fetch-event-source patterns need validation during Phase 21
 
 ## Session Continuity
 
-Last session: 2026-01-17
-Stopped at: Completed Phase 19: Coach Page + Recommendations UI
+Last session: 2026-01-18
+Stopped at: Completed Phase 20-01: OpenRouter Coach Edge Function
 Resume file: None
