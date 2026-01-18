@@ -115,7 +115,7 @@ export async function generateRecommendations(
     throw new Error(`Rate limit exceeded. ${rateLimit.remaining} tokens remaining.`)
   }
 
-  // Extract patterns (data is already anonymized inside extractPatterns)
+  // Extract patterns
   const patterns = await extractPatterns(user.id)
 
   // Call Supabase Edge Function with JWT token in Authorization header

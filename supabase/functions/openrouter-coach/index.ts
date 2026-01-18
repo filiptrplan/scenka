@@ -120,59 +120,6 @@ async function getExistingRecommendations(userId: string): Promise<any | null> {
   return null
 }
 
-// Defensive privacy check - validates anonymized data contains no PII
-function validateAnonymizedData(data: unknown): string[] {
-  const piiFields: string[] = []
-
-  const checkForPII = (obj: unknown, path = ''): void => {
-    if (typeof obj !== 'object' || obj === null) {
-      return
-    }
-
-    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
-      const currentPath = path ? `${path}.${key}` : key
-
-      // Check for common PII indicators
-      if (typeof value === 'string') {
-        // Long name-like field
-        if (key.toLowerCase().includes('name') && value.length > 20) {
-          piiFields.push(currentPath)
-        }
-
-        // Email addresses
-        if (key.toLowerCase().includes('email') && value.includes('@')) {
-          piiFields.push(currentPath)
-        }
-
-        // Phone numbers (10+ consecutive digits)
-        if (key.toLowerCase().includes('phone') && /\d{10}/.test(value)) {
-          piiFields.push(currentPath)
-        }
-
-        // Specific place names (capitalized multi-word locations)
-        if (currentPath.includes('location') && /^[A-Z][a-z]+(?: [A-Z][a-z]+){2,}$/.test(value)) {
-          piiFields.push(currentPath)
-        }
-
-        // User IDs (UUID patterns)
-        if (
-          key.toLowerCase().includes('user') &&
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
-        ) {
-          piiFields.push(currentPath)
-        }
-      }
-
-      if (typeof value === 'object' && value !== null) {
-        checkForPII(value, currentPath)
-      }
-    }
-  }
-
-  checkForPII(data)
-  return piiFields
-}
-
 // Build user prompt from patterns and preferences
 function buildUserPrompt(patterns: PatternAnalysis, preferences: UserPreferences): string {
   const { failure_patterns, style_weaknesses, climbing_frequency, recent_successes } = patterns
@@ -407,19 +354,6 @@ Deno.serve(async (req: Request) => {
 
     // Get cached recommendations for fallback
     const cachedRecommendations = await getExistingRecommendations(userId)
-
-    // Validate privacy - ensure no PII in anonymized data
-    const piiFields = validateAnonymizedData(body.patterns_data)
-    if (piiFields.length > 0) {
-      console.error('PII detected in anonymized data:', piiFields)
-      return new Response(
-        JSON.stringify({ error: 'Privacy validation failed. Please try again.' }),
-        {
-          status: 400,
-          headers: corsHeaders,
-        }
-      )
-    }
 
     // Build prompts
     const userPrompt = buildUserPrompt(body.patterns_data, body.user_preferences)
