@@ -43,7 +43,7 @@ Scenka v2.0 adds an AI-powered climbing coach to the existing mobile PWA. The jo
 - [x] Phase 15: Use Design Guidelines to Fix Mark as Sent Button (1/1 plans) — completed 2026-01-16
 - [x] Phase 16: Add Version Number to Footer (1/1 plans) — completed 2026-01-16
 - [x] Phase 17: Use New Design System to Fix Toggle (1/1 plans) — completed 2026-01-16
-- [x] Phase 15.1: Fix Ugly Mark as Sent Button Styling (1/1 plans) — completed 2026-01-17
+- [x] Phase 15.1: Fix Ugly Mark as Sent Button (1/1 plans) — completed 2026-01-17
 
 **Full details:** [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
@@ -124,14 +124,15 @@ Plans:
   4. Last 10-20 messages retained for context in conversation
   5. Chat receives pre-processed patterns (failures, styles, frequency) as context
   6. Graceful error handling with helpful fallback messages
-**Plans**: TBD
+**Plans**: 5 plans
+**Status**: Not started
 
 Plans:
-- [ ] 21-01: ChatInterface component with message bubbles and input
-- [ ] 21-02: Streaming responses via @microsoft/fetch-event-source
-- [ ] 21-03: Message history management and context injection
-- [ ] 21-04: Error handling with graceful fallback messages
-- [ ] 21-05: Mobile optimization and typing indicators
+- [ ] 21-01-PLAN.md — Edge Function for SSE streaming with JWT auth
+- [ ] 21-02-PLAN.md — Client-side SSE service with @microsoft/fetch-event-source
+- [ ] 21-03-PLAN.md — React chat interface with message bubbles and streaming
+- [ ] 21-04-PLAN.md — Route configuration for /coach/chat
+- [ ] 21-05-PLAN.md — Loading states, error handling, and visual polish
 
 #### Phase 22: OpenRouter Model Configuration
 **Goal**: Allow configurable OpenRouter model selection via environment variables
