@@ -1,392 +1,229 @@
 # Phase 21: Chat Interface - Research
 
 **Researched:** 2026-01-18
-**Domain:** React Chat Interface with SSE Streaming, Supabase Edge Functions
+**Domain:** Server-Sent Events streaming, React chat interfaces, OpenAI SDK, Supabase Edge Functions
 **Confidence:** HIGH
 
 ## Summary
 
-This research covers implementing a free-form chat interface with streaming AI responses for climbing coaching. The existing infrastructure includes coach message tables, TanStack Query hooks, and an Edge Function pattern for OpenAI API calls via OpenRouter. The implementation requires:
+Phase 21 requires implementing a free-form chat interface with real-time streaming responses and climbing-specific context injection. The core technical challenge is setting up Server-Sent Events (SSE) streaming from a Supabase Edge Function to the React client using OpenAI SDK streaming and @microsoft/fetch-event-source.
 
-1. **SSE Streaming** from a new Supabase Edge Function using Deno's ReadableStream API
-2. **@microsoft/fetch-event-source** library for client-side SSE handling (better API than native EventSource)
-3. **React chat UI** with message bubbles, typing indicators, and mobile optimization
-4. **Pattern context injection** using existing extractPatterns() function
-5. **Error handling** with graceful fallbacks and retry logic
+The implementation involves three main components:
+1. **Edge Function** (`openrouter-chat`) that streams LLM responses via SSE using Deno's ReadableStream
+2. **React Chat UI** with message bubbles, auto-scroll, and typing indicators
+3. **Service layer** that manages message history (10-20 messages) and injects pattern analysis context
 
-The project uses React 18, TypeScript, Tailwind CSS, shadcn/ui components, TanStack Query, and Supabase. All required database tables and infrastructure are already in place from Phase 18.
+Existing infrastructure includes: OpenAI SDK integration (Phase 20), `coach_messages` table with RLS, `useCoachMessages` hook for message management, and pattern analysis functions for context. The @microsoft/fetch-event-source library must be added as a dependency.
 
-**Primary recommendation:** Create a new Edge Function for chat streaming and use @microsoft/fetch-event-source with a React component featuring message bubbles, auto-scroll, and typing indicator.
+**Primary recommendation:** Use OpenAI SDK streaming with Deno's ReadableStream for SSE responses, @microsoft/fetch-event-source on client, and follow React chat patterns for message bubbles, auto-scroll, and typing indicators.
 
 ## Standard Stack
 
-### Core
+The established libraries/tools for this domain:
 
+### Core
 | Library | Version | Purpose | Why Standard |
 |---------|---------|---------|--------------|
-| @microsoft/fetch-event-source | ^1.x | SSE client with fetch API | Better API than native EventSource, supports POST with auth headers |
-| OpenAI SDK | 4.x | AI chat completion streaming | Already in use via openrouter-coach Edge Function, supports stream: true |
-| Deno | latest | Edge Function runtime | Supabase Edge Functions use Deno, supports ReadableStream for SSE |
+| OpenAI SDK | v4 | LLM API integration with streaming support | Already installed in Edge Function (Phase 20), native streaming support with `stream: true` |
+| Deno.serve | Built-in | Edge Function HTTP server with streaming | Supabase Edge Functions run on Deno, native ReadableStream support for SSE |
+| @microsoft/fetch-event-source | latest | Client-side SSE connection | More powerful than browser's native EventSource (supports POST, custom headers, body) |
 
 ### Supporting
-
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| @radix-ui/react-scroll-area | ^1.2.10 | Scrollable message container | Auto-scroll to bottom on new messages, smooth scrolling |
-| lucide-react | ^0.562.0 | Icons (Send, Loader2, ArrowUp) | Send button icon, typing indicator loader |
-| date-fns | ^4.1.0 | Message timestamps | Format relative times (e.g., "2 min ago") |
-| TanStack Query | ^5.90.16 | State management | useCoachMessages, useCreateCoachMessage already exist |
+| TanStack Query | v5+ | Server state management for message history | Already installed, useQuery for fetching messages, optimistic updates for new messages |
+| React Hooks | v18+ | State management (useState, useEffect, useRef) | Standard React patterns for chat state |
+| Supabase RLS | - | Row-level security for messages | Existing RLS policies on coach_messages table |
 
 ### Alternatives Considered
-
 | Instead of | Could Use | Tradeoff |
 |------------|-----------|----------|
-| @microsoft/fetch-event-source | Native EventSource | EventSource doesn't support POST with auth headers; fetch-event-source does |
-| New Edge Function | Extend openrouter-coach | Better to separate concerns: one for recommendations, one for chat |
+| @microsoft/fetch-event-source | Native EventSource | Native EventSource doesn't support POST requests or custom headers/body - critical for sending message and patterns to Edge Function |
+| Deno.serve | Fastify/Express | Deno.serve is built-in to Supabase Edge Functions, no extra dependencies needed |
+| OpenAI SDK streaming | Direct HTTP with fetch | SDK handles chunk parsing, retry logic, and token counting automatically |
 
 **Installation:**
 ```bash
-pnpm add @microsoft/fetch-event-source
-# Note: OpenAI SDK, TanStack Query, and Radix UI already installed
+npm install @microsoft/fetch-event-source
 ```
 
 ## Architecture Patterns
 
 ### Recommended Project Structure
-
 ```
+supabase/functions/openrouter-chat/
+├── index.ts              # Edge Function with SSE streaming
 src/
-├── components/
-│   └── features/
-│       ├── coach-page.tsx      # Existing coach page
-│       └── coach-chat-page.tsx  # NEW: Chat interface component
-├── hooks/
-│   └── useCoachMessages.ts     # Existing: message state management
+├── components/features/
+│   └── chat-page.tsx    # Main chat interface component
 ├── services/
-│   ├── coach.ts                # Existing: recommendation generation
-│   └── coach-chat.ts           # NEW: chat streaming service
-└── types/
-    └── index.ts                # Existing: PatternAnalysis types
-supabase/functions/
-├── openrouter-coach/          # Existing: recommendations
-└── openrouter-coach-chat/     # NEW: chat streaming
+│   └── chat.ts          # Chat API service (streaming function)
+└── hooks/
+    └── useCoachMessages.ts  # Already exists (message CRUD)
 ```
 
-### Pattern 1: SSE Streaming from Supabase Edge Function
+### Pattern 1: Deno Edge Function with SSE Streaming
 
-**What:** Use Deno's ReadableStream to stream OpenAI responses with Server-Sent Events
+**What:** Supabase Edge Function that streams LLM responses via Server-Sent Events using OpenAI SDK streaming.
 
-**When to use:** When returning streaming responses from Edge Functions
+**When to use:** When implementing real-time chat responses from LLM APIs.
 
 **Example:**
 ```typescript
-// Source: Deno HTTP Server APIs docs
-// supabase/functions/openrouter-coach-chat/index.ts
+// Source: Deno docs on SSE (https://deno.land/std/http/server.ts)
+import OpenAI from 'npm:openai@4'
+
+const openai = new OpenAI({
+  apiKey: Deno.env.get('OPENROUTER_API_KEY'),
+  baseURL: 'https://openrouter.ai/api/v1',
+})
 
 Deno.serve(async (req: Request) => {
-  // ... auth validation ...
+  // Validate JWT, parse request body...
 
-  const body = await req.json()
-
-  // Create readable stream
+  // Create ReadableStream for SSE
+  const encoder = new TextEncoder()
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const stream = await openai.chat.completions.create({
+        // Call OpenAI with streaming enabled
+        const response = await openai.chat.completions.create({
           model: 'google/gemini-2.5-pro',
-          messages: [
-            { role: 'system', content: chatSystemPrompt },
-            { role: 'user', content: body.message },
-          ],
-          stream: true,
+          messages: messages, // user message + context
+          stream: true,  // Enable streaming
         })
 
-        for await (const chunk of stream) {
-          const content = chunk.choices[0]?.delta?.content
+        // Stream each chunk to client
+        for await (const chunk of response) {
+          const content = chunk.choices[0]?.delta?.content || ''
           if (content) {
-            // Send SSE format: "data: <content>\n\n"
-            controller.enqueue(`data: ${JSON.stringify({ content })}\n\n`)
+            // SSE format: "data: <content>\n\n"
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`))
           }
         }
 
-        controller.close()
+        // Send done signal
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'))
       } catch (error) {
-        controller.error(error)
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: error.message })}\n\n`))
+      } finally {
+        controller.close()
       }
     },
+
     cancel() {
-      // Clean up on client disconnect
-      console.log('Client disconnected from chat stream')
+      // Cleanup when client disconnects
+      request.signal.addEventListener('abort', () => {
+        // Abort OpenAI stream if still active
+      })
     }
   })
 
+  // Return SSE response with required headers
   return new Response(stream, {
     headers: {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       'Connection': 'keep-alive',
-      ...corsHeaders,
-    },
+      ...corsHeaders,  // From _shared/cors.ts
+    }
   })
 })
 ```
 
 ### Pattern 2: Client-Side SSE with @microsoft/fetch-event-source
 
-**What:** Use fetchEventSource for streaming chat responses with auth headers
+**What:** Connect to Edge Function SSE endpoint, handle streaming responses, and update UI in real-time.
 
-**When to use:** When consuming SSE endpoints with POST requests and JWT auth
+**When to use:** When receiving real-time data from SSE endpoints with POST requests.
 
 **Example:**
 ```typescript
-// Source: @microsoft/fetch-event-source GitHub
-// src/services/coach-chat.ts
-
+// Source: @microsoft/fetch-event-source README
 import { fetchEventSource } from '@microsoft/fetch-event-source'
-import { supabase } from '@/lib/supabase'
 
-interface ChatStreamOptions {
-  message: string
-  patterns: PatternAnalysis
-  onChunk: (chunk: string) => void
-  onComplete: () => void
-  onError: (error: Error) => void
-}
+async function streamChatResponse(message: string) {
+  let assistantMessage = ''
+  let isError = false
 
-export async function streamChatResponse({
-  message,
-  patterns,
-  onChunk,
-  onComplete,
-  onError,
-}: ChatStreamOptions) {
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) throw new Error('Not authenticated')
+  await fetchEventSource('/functions/v1/openrouter-chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({
+      message,
+      patterns_data: patterns,  // Context from usePatternAnalysis
+    }),
 
-  await fetchEventSource(
-    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/openrouter-coach-chat`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({
-        message,
-        patterns_data: patterns,
-      }),
-      onopen(response) {
-        if (response.ok && response.headers.get('content-type') === 'text/event-stream') {
-          return // Connection successful
-        }
-        throw new Error(`Unexpected response: ${response.status}`)
-      },
-      onmessage(ev) {
+    // Handle incoming chunks
+    onmessage(ev) {
+      try {
         const data = JSON.parse(ev.data)
         if (data.content) {
-          onChunk(data.content)
+          assistantMessage += data.content
+          // Update UI state with partial response
+          setStreamingResponse(assistantMessage)
+        } else if (data.error) {
+          isError = true
+          setStreamingError(data.error)
         }
-      },
-      onclose() {
-        onComplete()
-      },
-      onerror(err) {
-        onError(err)
-        throw err // Will trigger retry
-      },
+      } catch (err) {
+        console.error('Failed to parse SSE message:', err)
+      }
+    },
+
+    // Connection established
+    onopen(response) {
+      if (response.ok && response.headers.get('content-type') === 'text/event-stream') {
+        setIsStreaming(true)
+        return
+      }
+      throw new Error(`Unexpected response: ${response.status}`)
+    },
+
+    // Connection closed
+    onclose() {
+      setIsStreaming(false)
+      if (!isError) {
+        // Finalize assistant message in database
+        saveAssistantMessage(assistantMessage)
+      }
+    },
+
+    // Connection error
+    onerror(err) {
+      setIsStreaming(false)
+      console.error('SSE error:', err)
+      // Don't throw to prevent automatic retry
     }
-  )
+  })
 }
 ```
 
-### Pattern 3: React Chat UI with Message Bubbles
+### Pattern 3: React Chat Message Bubbles
 
-**What:** Chat interface with user/assistant message bubbles, auto-scroll, typing indicator
+**What:** Visually distinguish user (right-aligned) from assistant (left-aligned) messages.
 
-**When to use:** Building chat interfaces with streaming responses
+**When to use:** In any chat interface for clear visual communication.
 
 **Example:**
 ```typescript
-// src/components/features/coach-chat-page.tsx
-
-import { useState, useRef, useEffect } from 'react'
-import { Send, Loader2, ArrowLeft } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { FormLabel } from '@/components/ui/form-label'
-import { useCoachMessages, useCreateCoachMessage } from '@/hooks/useCoachMessages'
-import { usePatternAnalysis } from '@/hooks/useCoach'
-import { streamChatResponse } from '@/services/coach-chat'
-
-export function CoachChatPage() {
-  const navigate = useNavigate()
-  const { data: messages = [] } = useCoachMessages()
-  const createMessage = useCreateCoachMessage()
-  const { data: patterns } = usePatternAnalysis()
-
-  const [input, setInput] = useState('')
-  const [isStreaming, setIsStreaming] = useState(false)
-  const [streamingContent, setStreamingContent] = useState('')
-
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  // Auto-scroll to bottom on new messages
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-    }
-  }, [messages, streamingContent])
-
-  const handleSend = async () => {
-    if (!input.trim() || isStreaming) return
-
-    const userMessage = input.trim()
-    setInput('')
-    setIsStreaming(true)
-    setStreamingContent('')
-
-    // Optimistically add user message
-    createMessage.mutate({
-      role: 'user',
-      content: userMessage,
-      context: {},
-    })
-
-    try {
-      await streamChatResponse({
-        message: userMessage,
-        patterns: patterns || getEmptyPatterns(),
-        onChunk: (chunk) => {
-          setStreamingContent((prev) => prev + chunk)
-        },
-        onComplete: () => {
-          createMessage.mutate({
-            role: 'assistant',
-            content: streamingContent,
-            context: { patterns_data: patterns },
-          })
-          setStreamingContent('')
-          setIsStreaming(false)
-        },
-        onError: (err) => {
-          console.error('Chat stream error:', err)
-          createMessage.mutate({
-            role: 'assistant',
-            content: 'Sorry, I had trouble generating a response. Please try again.',
-            context: { error: err.message },
-          })
-          setStreamingContent('')
-          setIsStreaming(false)
-        },
-      })
-    } catch (error) {
-      console.error('Failed to start chat stream:', error)
-      createMessage.mutate({
-        role: 'assistant',
-        content: 'Failed to connect to the coach. Please check your connection and try again.',
-        context: { error: (error as Error).message },
-      })
-      setIsStreaming(false)
-    }
-  }
-
+// Source: React best practices for chat UI
+function MessageBubble({ message, isCurrentUser }) {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] p-4 pb-24">
-      <div className="mx-auto max-w-2xl space-y-6">
-        {/* Header */}
-        <header className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate('/coach')}
-            className="h-10 w-10 p-0"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-4xl font-black tracking-tighter uppercase">Chat</h1>
-            <p className="text-sm font-mono text-[#888] uppercase tracking-widest">
-              Ask your climbing coach
-            </p>
-          </div>
-        </header>
-
-        {/* Messages */}
-        <ScrollArea className="h-[60vh] pr-4">
-          <div ref={scrollRef} className="space-y-4">
-            {/* Existing messages */}
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${
-                  msg.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                    msg.role === 'user'
-                      ? 'bg-white text-black'
-                      : 'bg-white/[0.1] text-[#f5f5f5]'
-                  }`}
-                >
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {msg.content}
-                  </p>
-                </div>
-              </div>
-            ))}
-
-            {/* Streaming assistant message */}
-            {isStreaming && streamingContent && (
-              <div className="flex justify-start">
-                <div className="max-w-[80%] rounded-lg px-4 py-3 bg-white/[0.1] text-[#f5f5f5]">
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {streamingContent}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Typing indicator */}
-            {isStreaming && !streamingContent && (
-              <div className="flex justify-start">
-                <div className="flex items-center gap-1 px-4 py-3 bg-white/[0.1] rounded-lg">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-xs text-[#888]">Coach is typing...</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-
-        {/* Input */}
-        <div className="flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault()
-                void handleSend()
-              }
-            }}
-            placeholder="Ask about training, beta, or technique..."
-            disabled={isStreaming}
-            className="flex-1 h-12 text-base"
-          />
-          <Button
-            onClick={() => void handleSend()}
-            disabled={!input.trim() || isStreaming}
-            size="lg"
-            className="h-12 px-6 bg-white text-black hover:bg-white/90"
-          >
-            {isStreaming ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Send className="h-5 w-5" />
-            )}
-          </Button>
+    <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-4`}>
+      <div
+        className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+          isCurrentUser
+            ? 'bg-blue-600 text-white rounded-br-sm'
+            : 'bg-gray-700 text-gray-100 rounded-bl-sm'
+        }`}
+      >
+        <div className="text-sm leading-relaxed">{message.content}</div>
+        <div className={`text-xs mt-1 ${isCurrentUser ? 'text-blue-200' : 'text-gray-400'}`}>
+          {formatTime(message.created_at)}
         </div>
       </div>
     </div>
@@ -394,46 +231,75 @@ export function CoachChatPage() {
 }
 ```
 
-### Pattern 4: Pattern Context Injection
+### Pattern 4: Auto-Scroll to Bottom
 
-**What:** Inject pre-processed climbing patterns into chat prompts for context-aware responses
+**What:** Automatically scroll to newest message when messages arrive.
 
-**When to use:** When the coach needs to provide personalized advice based on user's climbing data
+**When to use:** In all chat interfaces to keep conversation visible.
 
 **Example:**
 ```typescript
-// Edge Function system prompt with patterns
-const chatSystemPrompt = `You are an expert climbing coach specializing in bouldering and sport climbing. You provide personalized advice based on the user's climbing patterns.
+// Source: React docs on useEffect and useRef (https://react.dev/learn)
+function ChatContainer({ messages, streamingResponse }) {
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-Context:
-- The user struggles with these failure reasons: ${patterns.failure_patterns.most_common_failure_reasons.map(f => f.reason).join(', ')}
-- They struggle with these styles: ${patterns.style_weaknesses.struggling_styles.map(s => s.style).join(', ')}
-- They climb ~${patterns.climbing_frequency.avg_climbs_per_session} climbs per session
-- They have ${patterns.recent_successes.redemption_count} recent redemptions
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, streamingResponse])
 
-When giving advice:
-1. Reference their specific weaknesses when relevant
-2. Use climbing terminology (beta, send, project, crimp, sloper, hangboard, campus board)
-3. Be concise and actionable
-4. Ask clarifying questions if needed`
+  return (
+    <div className="flex-1 overflow-y-auto p-4">
+      {messages.map((msg) => (
+        <MessageBubble
+          key={msg.id}
+          message={msg}
+          isCurrentUser={msg.role === 'user'}
+        />
+      ))}
+      {streamingResponse && (
+        <div className="mb-4 flex justify-start">
+          <div className="max-w-[80%] rounded-2xl rounded-bl-sm bg-gray-700 px-4 py-2">
+            <div className="text-sm text-gray-100">{streamingResponse}</div>
+          </div>
+        </div>
+      )}
+      <div ref={messagesEndRef} />
+    </div>
+  )
+}
+```
 
-// Combine message history with new user message
-const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [
-  { role: 'system', content: chatSystemPrompt },
-  ...messageHistory.map(m => ({ role: m.role, content: m.content })),
-  { role: 'user', content: body.message },
-]
+### Pattern 5: Typing Indicator
+
+**What:** Show visual feedback while LLM is generating response.
+
+**When to use:** During streaming to indicate assistant is typing.
+
+**Example:**
+```typescript
+function TypingIndicator() {
+  return (
+    <div className="mb-4 flex items-center gap-1 px-4">
+      <div className="flex gap-1">
+        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+      </div>
+      <span className="text-xs text-gray-400">Coach is thinking...</span>
+    </div>
+  )
+}
+
+// Usage in chat component
+{isStreaming && <TypingIndicator />}
 ```
 
 ### Anti-Patterns to Avoid
-
-- **Using native EventSource:** Doesn't support POST with auth headers; use @microsoft/fetch-event-source
-- **Non-streaming responses:** Creates poor UX with long waits; use stream: true for real-time feedback
-- **Ignoring mobile touch targets:** Use h-12 (48px) minimum for buttons/inputs
-- **Missing typing indicator:** Users won't know if the system is working; show loader immediately on send
-- **No auto-scroll:** Users lose context when new messages arrive; scroll to bottom on updates
-- **Sending full message history:** Only send last 10-20 messages (database query already limits to 20)
-- **No error boundaries:** SSE failures should show helpful fallback messages, not crash UI
+- **Polling instead of SSE:** SSE is more efficient for real-time updates than repeated HTTP requests
+- **Scrolling on every keystroke:** Only scroll when new messages arrive, not during typing
+- **Blocking UI during streaming:** Keep interface responsive while waiting for responses
+- **Not handling disconnects:** Always clean up SSE connections when component unmounts
 
 ## Don't Hand-Roll
 
@@ -441,116 +307,159 @@ Problems that look simple but have existing solutions:
 
 | Problem | Don't Build | Use Instead | Why |
 |---------|-------------|-------------|-----|
-| SSE parsing | Custom event parsing | @microsoft/fetch-event-source | Handles reconnection, auth headers, error recovery |
-| Auto-scroll | Manual scrollIntoView | useEffect with scrollTop = scrollHeight | Simpler, more reliable with React state |
-| Typing indicator | Custom animation | lucide-react Loader2 + animate-spin | Standard, accessible, matches existing UI |
-| Pattern extraction | Manual data aggregation | extractPatterns() from patterns.ts | Already tested, handles edge cases |
+| SSE parsing | Custom chunk parsing logic | @microsoft/fetch-event-source | Handles reconnection, abort signals, and error retry automatically |
+| OpenAI streaming integration | Direct HTTP fetch with manual chunk parsing | OpenAI SDK with `stream: true` | SDK handles chunk assembly, token counting, and API errors |
+| Message state management | Complex useState logic | TanStack Query mutations | Optimistic updates, cache invalidation, and error handling built-in |
+| Scroll management | Manual scroll calculations | useRef + scrollIntoView | Smooth scrolling with browser-native behavior |
+| CORS configuration | Manual header setting | Supabase _shared/cors.ts | Consistent CORS handling across all Edge Functions |
 
-**Key insight:** SSE has subtle complexity around connection handling, reconnection, and error recovery. The fetch-event-source library handles these edge cases properly, whereas custom implementations often fail on network hiccups, CORS issues, or auth token expiration.
+**Key insight:** SSE streaming has edge cases (reconnection, abort handling, chunk buffering) that @microsoft/fetch-event-source solves. OpenAI SDK handles LLM-specific streaming quirks (chunk assembly, delta accumulation). Don't reinvent these wheels.
 
 ## Common Pitfalls
 
-### Pitfall 1: SSE Connection Drops Mid-Stream
+### Pitfall 1: Missing SSE Headers
 
-**What goes wrong:** Client disconnects or network hiccups cause stream to stop without error handling
+**What goes wrong:** Browser doesn't recognize response as SSE stream, doesn't trigger streaming behavior.
 
-**Why it happens:** ReadableStream cancel() not called properly, or client doesn't handle onerror
+**Why it happens:** Forgetting required `Content-Type: text/event-stream` or `Cache-Control: no-cache` headers in Edge Function response.
 
-**How to avoid:**
-- Implement cancel() in ReadableStream start() to clean up resources
-- Handle onerror callback in fetchEventSource to show fallback message
-- Set reasonable retry limits (don't retry indefinitely on auth errors)
-
-**Warning signs:** Messages freeze mid-word, no completion callback fired, no error shown to user
-
-### Pitfall 2: Message History Not Limited
-
-**What goes wrong:** Sending 100+ messages to AI causes token bloat and slower responses
-
-**Why it happens:** Not limiting message history before sending to API
-
-**How to avoid:**
-- Database query already limits to 20 messages (useCoachMessages hook)
-- On Edge Function side, slice to last 10-15 messages if needed
-- Consider token budgeting (older messages trimmed first)
-
-**Warning signs:** Response times increase over time, API costs spike, hitting token limits
-
-### Pitfall 3: Mobile Input Issues
-
-**What goes wrong:** Input field too small, keyboard covers content, hard to tap send button
-
-**Why it happens:** Not following 44px+ touch target rule, not handling viewport height on mobile
-
-**How to avoid:**
-- Use h-12 (48px) for input and send button
-- Reserve space for keyboard with pb-24 padding (already in App.tsx)
-- Test on actual mobile device, not just dev tools
-
-**Warning signs:** Users report "can't tap send" or "keyboard hides messages"
-
-### Pitfall 4: Pattern Data Not Sanitized
-
-**What goes wrong:** PII or sensitive data sent to external API via patterns
-
-**Why it happens:** Not using anonymizeClimbsForAI() or validateAnonymizedData()
-
-**How to avoid:**
-- Use existing extractPatterns() which processes sanitized climb data
-- Validate patterns before sending: validateAnonymizedData(patterns)
-- Never include raw climb data in context
-
-**Warning signs:** Location names in chat responses, user references in AI output
-
-### Pitfall 5: No Graceful Error Handling
-
-**What goes wrong:** SSE errors show cryptic technical messages or freeze UI
-
-**Why it happens:** Assuming stream never fails, not implementing fallbacks
-
-**How to avoid:**
-- Always show user-friendly error message: "Sorry, I had trouble..."
-- Retry once for transient errors, then give up
-- Store failed attempt in coach_messages with error context
-- Use error boundaries in React to prevent full app crash
-
-**Warning signs:** Console errors visible to users, blank screen on failure
-
-### Pitfall 6: Streaming Content Not Saved
-
-**What goes wrong:** User refreshes page mid-stream and loses assistant response
-
-**Why it happens:** Only saving to database after stream completes
-
-**How to avoid:**
-- Save to database in onComplete callback (current pattern)
-- Consider debounced saves for very long responses (not needed for this phase)
-- Show clear loading state so users don't refresh
-
-**Warning signs:** Message appears in UI but not in message list after reload
-
-## Code Examples
-
-Verified patterns from official sources:
-
-### Edge Function SSE Response Structure
-
+**How to avoid:** Always return SSE response with these headers:
 ```typescript
-// Source: Deno HTTP Server APIs
-const stream = new ReadableStream({
-  async start(controller) {
-    // Write chunks with controller.enqueue()
-    controller.enqueue("data: {\"content\":\"Hello\"}\n\n")
-    // Close when done
-    controller.close()
-  },
-  cancel() {
-    // Client disconnected - clean up
+return new Response(stream, {
+  headers: {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    ...corsHeaders,
   }
 })
+```
+
+**Warning signs:** SSE events fire once instead of continuously, browser caches responses, connection closes immediately.
+
+### Pitfall 2: Incorrect SSE Format
+
+**What goes wrong:** Client doesn't receive or parse streamed messages correctly.
+
+**Why it happens:** Using wrong format - SSE requires `data: <content>\n\n` with double newline.
+
+**How to avoid:** Always use correct SSE format in Edge Function:
+```typescript
+controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`))
+controller.enqueue(encoder.encode('data: [DONE]\n\n'))  // End signal
+```
+
+**Warning signs:** `onmessage` handler never fires, empty data in events, connection closes prematurely.
+
+### Pitfall 3: Not Cleaning Up SSE Connections
+
+**What goes wrong:** Memory leaks, multiple simultaneous connections, stale messages appearing.
+
+**Why it happens:** Not aborting SSE connection when component unmounts or user navigates away.
+
+**How to avoid:** Use AbortController in client:
+```typescript
+const abortController = new AbortController()
+
+await fetchEventSource(url, {
+  signal: abortController.signal,
+  // ...
+})
+
+// Cleanup in useEffect
+return () => {
+  abortController.abort()
+}
+```
+
+**Warning signs:** Multiple messages from previous conversations appear, console warnings about memory leaks, unexpected UI updates.
+
+### Pitfall 4: Sync vs Async Pattern Mismatch
+
+**What goes wrong:** LLM response complete but streaming continues indefinitely or UI freezes.
+
+**Why it happens:** Using synchronous operations in async streaming context, or vice versa.
+
+**How to avoid:** Always use `for await...of` with OpenAI streaming:
+```typescript
+for await (const chunk of response) {
+  // Process chunk synchronously
+  const content = chunk.choices[0]?.delta?.content || ''
+  // Send to client asynchronously
+  controller.enqueue(encoder.encode(...))
+}
+```
+
+**Warning signs:** "for await...of" errors, type mismatches, unpredictable streaming behavior.
+
+### Pitfall 5: Message History Size Bloat
+
+**What goes wrong:** Slow queries, excessive token usage, degraded LLM performance.
+
+**Why it happens:** Sending entire message history instead of last 10-20 messages to LLM.
+
+**How to avoid:** Always limit message history in Edge Function:
+```typescript
+const recentMessages = await fetchLastMessages(userId, 20)
+const messagesForLLM = recentMessages.map(m => ({
+  role: m.role,
+  content: m.content
+}))
+```
+
+**Warning signs:** Slow response times, high token costs, LLM hallucinations from too much context.
+
+### Pitfall 6: Not Validating User Input
+
+**What goes wrong:** Empty messages, XSS attacks, malformed requests crash Edge Function.
+
+**Why it happens:** Trusting client input without validation.
+
+**How to avoid:** Validate input in Edge Function:
+```typescript
+if (!body.message || typeof body.message !== 'string' || body.message.trim().length === 0) {
+  return new Response(JSON.stringify({ error: 'Invalid message' }), { status: 400 })
+}
+if (body.message.length > 5000) {
+  return new Response(JSON.stringify({ error: 'Message too long' }), { status: 400 })
+}
+```
+
+**Warning signs:** Empty or very short responses, console errors from undefined values, security vulnerabilities.
+
+### Pitfall 7: Mobile Touch Targets Too Small
+
+**What goes wrong:** Difficult to tap send button or input field on mobile devices.
+
+**Why it happens:** Using default button/input sizes (< 44px).
+
+**How to avoid:** Follow 44px minimum touch target rule:
+```css
+.send-button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.message-input {
+  min-height: 44px;
+}
+```
+
+**Warning signs:** Users complain about UI, multiple taps to send, poor accessibility ratings.
+
+### Pitfall 8: CORS Issues with SSE
+
+**What goes wrong:** SSE connection blocked by CORS policy, connection fails immediately.
+
+**Why it happens:** Forgetting to include CORS headers in SSE response.
+
+**How to avoid:** Always include corsHeaders in SSE response:
+```typescript
+import { corsHeaders } from '../_shared/cors.ts'
 
 return new Response(stream, {
   headers: {
+    ...corsHeaders,  // Include these!
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive',
@@ -558,103 +467,395 @@ return new Response(stream, {
 })
 ```
 
-### fetchEventSource Usage
+**Warning signs:** CORS errors in browser console, connection fails on first request, OPTIONS preflight fails.
+
+## Code Examples
+
+Verified patterns from official sources:
+
+### Edge Function: SSE Streaming with OpenAI
 
 ```typescript
-// Source: @microsoft/fetch-event-source GitHub
-await fetchEventSource('/api/chat', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ message: 'Hello' }),
-  onmessage(ev) {
-    console.log(ev.data) // "data: {\"content\":\"Hi\"}"
-  },
-  onclose() {
-    console.log('Stream closed')
-  },
-  onerror(err) {
-    console.error(err)
-    throw err // Triggers retry
-  },
+// Source: Deno std HTTP docs + OpenAI SDK streaming pattern
+import { createClient } from 'npm:@supabase/supabase-js@2'
+import OpenAI from 'npm:openai@4'
+import { corsHeaders } from '../_shared/cors.ts'
+
+const openai = new OpenAI({
+  apiKey: Deno.env.get('OPENROUTER_API_KEY'),
+  baseURL: 'https://openrouter.ai/api/v1',
+})
+
+Deno.serve(async (req: Request) => {
+  // 1. Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: { ...corsHeaders, 'Access-Control-Allow-Methods': 'POST, OPTIONS' }
+    })
+  }
+
+  // 2. Validate JWT and parse request
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader?.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401, headers: corsHeaders
+    })
+  }
+
+  const { message, patterns_data } = await req.json()
+
+  // 3. Build messages with context
+  const systemPrompt = buildSystemPrompt(patterns_data)
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: message }
+  ]
+
+  // 4. Create SSE stream
+  const encoder = new TextEncoder()
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        const response = await openai.chat.completions.create({
+          model: 'google/gemini-2.5-pro',
+          messages,
+          stream: true,
+        })
+
+        // 5. Stream chunks to client
+        for await (const chunk of response) {
+          const content = chunk.choices[0]?.delta?.content || ''
+          if (content) {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`))
+          }
+        }
+
+        // 6. Send done signal
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'))
+      } catch (error) {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: error.message })}\n\n`))
+      } finally {
+        controller.close()
+      }
+    },
+    cancel() {
+      // Cleanup on disconnect
+      req.signal.addEventListener('abort', () => controller.close())
+    }
+  })
+
+  // 7. Return SSE response
+  return new Response(stream, {
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    }
+  })
 })
 ```
 
-### Auto-Scroll Pattern
+### Client: Streaming Chat Hook
 
 ```typescript
-// Source: React useEffect documentation
-const scrollRef = useRef<HTMLDivElement>(null)
+// Source: @microsoft/fetch-event-source README + React patterns
+import { useState, useRef, useCallback } from 'react'
+import { fetchEventSource } from '@microsoft/fetch-event-source'
+import { useCreateCoachMessage } from '@/hooks/useCoachMessages'
+import { supabase } from '@/lib/supabase'
 
-useEffect(() => {
-  if (scrollRef.current) {
-    scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+export function useStreamingChat() {
+  const [streamingResponse, setStreamingResponse] = useState('')
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const createMessage = useCreateCoachMessage()
+
+  const sendMessage = useCallback(async (userMessage: string, patterns: any) => {
+    // 1. Create abort controller
+    abortControllerRef.current = new AbortController()
+    setIsStreaming(true)
+    setStreamingResponse('')
+    setError(null)
+
+    // 2. Save user message
+    await createMessage.mutateAsync({
+      role: 'user',
+      content: userMessage,
+      context: { patterns_data: patterns }
+    })
+
+    // 3. Get auth token
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) throw new Error('Not authenticated')
+
+    try {
+      let fullResponse = ''
+
+      // 4. Connect to SSE endpoint
+      await fetchEventSource('/functions/v1/openrouter-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ message: userMessage, patterns_data: patterns }),
+        signal: abortControllerRef.current.signal,
+
+        onmessage(ev) {
+          const data = JSON.parse(ev.data)
+          if (data.content) {
+            fullResponse += data.content
+            setStreamingResponse(fullResponse)
+          } else if (data.error) {
+            setError(data.error)
+          }
+        },
+
+        onopen(response) {
+          if (!response.ok || response.headers.get('content-type') !== 'text/event-stream') {
+            throw new Error(`Unexpected response: ${response.status}`)
+          }
+        },
+
+        onclose() {
+          setIsStreaming(false)
+          if (fullResponse && !error) {
+            // Save assistant message
+            createMessage.mutate({
+              role: 'assistant',
+              content: fullResponse,
+              context: {}
+            })
+          }
+        },
+
+        onerror(err) {
+          setIsStreaming(false)
+          setError(err.message)
+          // Don't throw to prevent retry
+        }
+      })
+    } catch (err) {
+      setIsStreaming(false)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    }
+  }, [createMessage])
+
+  // 5. Cleanup on unmount
+  const cleanup = useCallback(() => {
+    abortControllerRef.current?.abort()
+    abortControllerRef.current = null
+  }, [])
+
+  return {
+    sendMessage,
+    streamingResponse,
+    isStreaming,
+    error,
+    cleanup
   }
-}, [messages, streamingContent]) // Re-scroll on new content
+}
+```
+
+### React Chat Page Component
+
+```typescript
+// Source: React docs + existing coach-page patterns
+import { useRef, useEffect } from 'react'
+import { Send } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { useCoachMessages, useCreateCoachMessage } from '@/hooks/useCoachMessages'
+import { usePatternAnalysis } from '@/hooks/useCoach'
+import { useStreamingChat } from '@/hooks/useStreamingChat'
+
+export function ChatPage() {
+  const { data: messages, isLoading } = useCoachMessages()
+  const { data: patterns } = usePatternAnalysis()
+  const { sendMessage, streamingResponse, isStreaming, error, cleanup } = useStreamingChat()
+  const [inputValue, setInputValue] = useState('')
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, streamingResponse])
+
+  // Focus input on mount (mobile)
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      textareaRef.current?.focus()
+    }
+  }, [])
+
+  // Cleanup on unmount
+  useEffect(() => cleanup, [cleanup])
+
+  const handleSend = async () => {
+    if (!inputValue.trim() || isStreaming) return
+    const message = inputValue.trim()
+    setInputValue('')
+    await sendMessage(message, patterns)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      void handleSend()
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] flex flex-col">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {isLoading ? (
+          <div className="text-center py-12 text-[#888]">Loading messages...</div>
+        ) : messages?.map((msg) => (
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            isCurrentUser={msg.role === 'user'}
+          />
+        ))}
+        {streamingResponse && (
+          <div className="mb-4 flex justify-start">
+            <div className="max-w-[80%] rounded-2xl rounded-bl-sm bg-gray-700 px-4 py-2">
+              <div className="text-sm text-gray-100">{streamingResponse}</div>
+            </div>
+          </div>
+        )}
+        {isStreaming && <TypingIndicator />}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input */}
+      <div className="p-4 border-t border-white/10">
+        <div className="flex gap-2">
+          <Textarea
+            ref={textareaRef}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask Coach a question..."
+            disabled={isStreaming}
+            rows={1}
+            className="flex-1 min-h-[44px] resize-none bg-white/[0.02] border-white/20"
+          />
+          <Button
+            onClick={() => void handleSend()}
+            disabled={!inputValue.trim() || isStreaming}
+            className="h-[44px] w-[44px] flex-shrink-0 bg-white text-black hover:bg-white/90"
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+        {error && (
+          <div className="mt-2 text-xs text-red-400">{error}</div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function MessageBubble({ message, isCurrentUser }: { message: any, isCurrentUser: boolean }) {
+  return (
+    <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-4`}>
+      <div
+        className={`max-w-[80%] rounded-2xl px-4 py-2 ${
+          isCurrentUser
+            ? 'bg-blue-600 text-white rounded-br-sm'
+            : 'bg-gray-700 text-gray-100 rounded-bl-sm'
+        }`}
+      >
+        <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
+        <div className={`text-xs mt-1 ${isCurrentUser ? 'text-blue-200' : 'text-gray-400'}`}>
+          {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TypingIndicator() {
+  return (
+    <div className="mb-4 flex items-center gap-2 px-4">
+      <div className="flex gap-1">
+        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+      </div>
+      <span className="text-xs text-gray-400">Coach is thinking...</span>
+    </div>
+  )
+}
 ```
 
 ## State of the Art
 
 | Old Approach | Current Approach | When Changed | Impact |
 |--------------|------------------|--------------|--------|
-| Non-streaming HTTP requests | SSE streaming | 2023+ | Better UX, real-time feedback |
-| Native EventSource | @microsoft/fetch-event-source | 2024+ | POST support, auth headers, error handling |
-| Manual auto-scroll | useEffect with scrollTop | Always | Simpler, more reliable |
-| Custom typing animation | lucide-react Loader2 | Always | Consistent with app design, accessible |
+| Polling with HTTP requests | Server-Sent Events (SSE) | ~2015+ | Real-time streaming, reduced server load, better UX |
+| WebSocket for one-way streaming | SSE for server-to-client streaming | ~2017+ | Simpler than WebSocket for one-way streaming, HTTP semantics |
+| Native EventSource | @microsoft/fetch-event-source | ~2020 | Supports POST requests, custom headers, better error handling |
+| Manual scroll management | scrollIntoView with React refs | React Hooks era (2019) | Smoother scrolling, less code, browser-native behavior |
 
 **Deprecated/outdated:**
-- WebSocket for chat: Overkill for one-way streaming, SSE is simpler
-- Native EventSource: Doesn't support POST with auth headers
-- setTimeout polling: Inefficient, adds latency
+- **XHR polling:** Replaced by SSE/WebSocket for real-time updates
+- **Native EventSource only:** Limited to GET requests, no custom headers/body - use @microsoft/fetch-event-source instead
+- **jQuery-style scroll animations:** Use `scrollIntoView({ behavior: 'smooth' })` instead
 
 ## Open Questions
 
 Things that couldn't be fully resolved:
 
-1. **Exact token budgeting for context**
-   - What we know: Limit to 20 messages (database query), OpenRouter supports 100k+ context
-   - What's unclear: Should we trim older messages if approaching token limits?
-   - Recommendation: Use 20 messages (existing limit), implement token counting in Phase 22 if needed
+1. **OpenRouter API Streaming Reliability**
+   - What we know: OpenAI SDK v4 supports streaming with `stream: true`, works with OpenRouter via baseURL override
+   - What's unclear: How OpenRouter handles streaming timeouts, rate limits, and partial failures
+   - Recommendation: Implement robust error handling with retry logic, log all streaming errors for monitoring
 
-2. **Typing indicator animation style**
-   - What we know: Loader2 with animate-spin works
-   - What's unclear: Should we use dots animation (...) instead?
-   - Recommendation: Start with Loader2, can iterate based on user feedback
+2. **Mobile Keyboard Auto-Focus Behavior**
+   - What we know: React refs can focus textarea on mount, 44px+ touch targets are required
+   - What's unclear: How different mobile browsers handle virtual keyboard visibility when textarea is focused
+   - Recommendation: Test on iOS Safari and Android Chrome, consider manual focus trigger on "Ask Coach" button
 
-3. **Message grouping by date**
-   - What we know: Messages have created_at timestamp
-   - What's unclear: Should we show date separators in chat UI?
-   - Recommendation: Skip for MVP (CHAT-01 to CHAT-07), consider in Phase 22 if users request
+3. **SSE Connection Resilience**
+   - What we know: @microsoft/fetch-event-source handles automatic reconnection on retriable errors
+   - What's unclear: How to handle mid-stream failures gracefully (e.g., user loses connection during streaming)
+   - Recommendation: Store partial responses in database, allow users to request regeneration on failure
+
+4. **Token Counting for Streaming**
+   - What we know: OpenAI SDK provides usage metadata after stream completes
+   - What's unclear: How to track token usage mid-stream for rate limiting
+   - Recommendation: Track estimated tokens, validate against rate limit after stream completes, log usage for monitoring
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [@microsoft/fetch-event-source GitHub](https://github.com/Azure/fetch-event-source) - API usage, onmessage/onerror/onopen callbacks
-- [Deno HTTP Server APIs](https://docs.deno.com/runtime/manual/runtime/http_server_apis) - ReadableStream with start()/cancel(), streaming response headers
-- [OpenAI Node.js Library GitHub](https://github.com/openai/openai-node) - Streaming with `stream: true`, for-await pattern
-- [Supabase Edge Functions Docs](https://supabase.com/docs/guides/functions) - SSE support mentioned, Web Stream examples
-- Codebase analysis:
-  - /workspace/supabase/functions/openrouter-coach/index.ts - Existing Edge Function pattern with OpenAI SDK
-  - /workspace/src/hooks/useCoachMessages.ts - Message state management, 20 message limit
-  - /workspace/src/services/patterns.ts - Pattern extraction for context injection
-  - /workspace/src/components/features/coach-page.tsx - Entry point button to /coach/chat
+- [Deno std HTTP server - Server-Sent Events example](https://deno.land/std/http/server.ts) - SSE implementation with ReadableStream, required headers, event format
+- [OpenAI Node SDK README](https://github.com/openai/openai-node) - Streaming support with `stream: true`, `for await...of` iteration
+- [@microsoft/fetch-event-source README](https://raw.githubusercontent.com/Azure/fetch-event-source/main/README.md) - Client-side SSE library with onmessage, onerror, onopen, onclose handlers
+- [MDN: Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) - SSE specification, required headers (Content-Type: text/event-stream, Cache-Control: no-cache, Connection: keep-alive)
+- [React: Managing State and Refs](https://react.dev/learn/managing-state) - React hooks patterns for chat interfaces (useRef for scroll, useEffect for side effects)
+- [React: Managing State](https://react.dev/learn/managing-state) - Reducer pattern for message state, avoiding redundant state
 
 ### Secondary (MEDIUM confidence)
-- Project dependencies: @radix-ui/react-scroll-area, lucide-react, TanStack Query usage patterns
-- shadcn/ui component patterns from existing code (Input, Button, ScrollArea)
-- Mobile-first design from existing pages (44px+ targets, dark theme)
+- [MDN: HTML Input Element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) - Mobile touch target requirements (44px minimum), input attributes for chat (autocomplete, autocorrect, inputmode)
+- [React: Learn - Chat Interface Patterns](https://react.dev/learn/managing-state) - Message bubble patterns, typing indicators, auto-scroll implementation
 
 ### Tertiary (LOW confidence)
-- N/A - All findings verified through codebase analysis or official documentation
+- None - All findings verified with official sources
 
 ## Metadata
 
 **Confidence breakdown:**
-- Standard stack: HIGH - Verified through official docs and codebase analysis
-- Architecture: HIGH - Verified through Deno and fetch-event-source official sources
-- Pitfalls: HIGH - Based on common SSE patterns and codebase context
+- Standard stack: HIGH - OpenAI SDK streaming, Deno.serve, @microsoft/fetch-event-source all verified with official docs
+- Architecture: HIGH - SSE patterns verified with Deno and MDN docs, React patterns verified with React docs
+- Pitfalls: HIGH - Based on common SSE/streaming issues documented in official sources and MDN
 
 **Research date:** 2026-01-18
-**Valid until:** 30 days (libraries are stable, patterns are well-established)
+**Valid until:** 2026-02-18 (30 days - stable patterns)
