@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 20 of 21 (LLM Integration)
-Plan: 2 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-18 — Phase 20-02: JSON Validation, Retry Logic, and Database Storage completed
+Last activity: 2026-01-18 — Phase 20-03: Error Handling with Fallback completed
 
 Progress: [██████████░░░░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 41 (v1.0 + v1.1 + v2.0 phase 18-20)
+- Total plans completed: 42 (v1.0 + v1.1 + v2.0 phase 18-20)
 - Average duration: 9 min
-- Total execution time: 6.2 hours
+- Total execution time: 6.3 hours
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [██████████░░░░] 90%
 | 05-17 (v1.1) | 19 | 147 min | 8 min |
 | 18 (AI Coach) | 6 | 40 min | 7 min |
 | 19 (Coach UI) | 8 | 19 min | 2 min |
-| 20 (LLM Integration) | 2 | 6 min | 3 min |
+| 20 (LLM Integration) | 3 | 18 min | 6 min |
 
 **Recent Trend:**
-- Last 5 plans: 2 min
+- Last 5 plans: 6 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -83,6 +83,10 @@ Recent decisions affecting current work:
 - Phase 20-02: Validate all drill fields including minimum 20 character descriptions and 1-10 set range
 - Phase 20-02: Store failed requests with error_message and cost=0 for monitoring visibility
 - Phase 20-02: Database errors logged but don't fail request (graceful degradation pattern)
+- Phase 20-03: Fetch cached recommendations before API calls for graceful fallback on failure
+- Phase 20-03: Privacy validation before LLM call prevents PII leakage to external APIs
+- Phase 20-03: Client coach.ts now calls 'openrouter-coach' instead of incorrect 'generate-recommendations'
+- Phase 20-03: Response format includes is_cached flag for UI handling of cached data
 
 ### Pending Todos
 
@@ -92,11 +96,10 @@ None yet.
 
 - **Supabase CLI authentication:** User must run `npx supabase login` and `npx supabase db push` to apply coach tables migration
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
-- **Function name mismatch:** Coach service calls `generate-recommendations`, needs update to `openrouter-coach` (tracked for 20-02)
 - **Streaming implementation:** @microsoft/fetch-event-source patterns need validation during Phase 21
 
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Completed Phase 20-02: JSON Validation, Retry Logic, and Database Storage
+Stopped at: Completed Phase 20-03: Error Handling with Fallback
 Resume file: None
