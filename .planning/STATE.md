@@ -101,6 +101,7 @@ None yet.
 ### Roadmap Evolution
 
 - Phase 22 added: OpenRouter model configuration via environment variables
+- Phase 23 added: Refocus coach on technique (review system prompt and data passed to coach)
 
 ## Session Continuity
 
