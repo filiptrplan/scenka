@@ -96,14 +96,18 @@ export async function checkUserRateLimit(userId: string): Promise<{
 }
 
 export async function generateRecommendations(
-  input: GenerateRecommendationsInput,
+  input: GenerateRecommendationsInput
 ): Promise<GenerateRecommendationsResponse> {
   if (!supabase) {
     throw new Error('Supabase client not configured')
   }
 
-  const { data: { user } } = await supabase.auth.getUser()
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
   if (!user || !session) {
     throw new Error('Not authenticated')
@@ -130,6 +134,8 @@ export async function generateRecommendations(
     },
   })
 
+  let parsed_data = JSON.parse(data)
+
   if (error) {
     // Track failed attempt
     await trackApiUsage(
@@ -141,25 +147,25 @@ export async function generateRecommendations(
         model: 'openai/gpt-4o-mini',
         endpoint: 'openrouter-coach',
       },
-      true,
+      true
     )
 
     throw new Error(`Failed to generate recommendations: ${error.message}`)
   }
 
   // Handle Edge Function response format
-  if (!data.success && data.error) {
-    throw new Error(data.error)
+  if (!parsed_data.success && parsed_data.error) {
+    throw new Error(parsed_data.error)
   }
 
   // Log warning if cached data returned
-  if (data.warning) {
-    console.warn('Recommendations warning:', data.warning)
+  if (parsed_data.warning) {
+    console.warn('Recommendations warning:', parsed_data.warning)
   }
 
   return {
-    weekly_focus: data.content.weekly_focus,
-    drills: data.content.drills,
+    weekly_focus: parsed_data.content.weekly_focus,
+    drills: parsed_data.content.drills,
   } as GenerateRecommendationsResponse
 }
 
@@ -172,7 +178,7 @@ export async function trackApiUsage(
     model: string
     endpoint: string
   },
-  isError: boolean = false,
+  isError: boolean = false
 ): Promise<void> {
   if (!supabase) {
     throw new Error('Supabase client not configured')
@@ -198,10 +204,7 @@ export async function trackApiUsage(
   }
 }
 
-function calculateCost(usage: {
-  prompt_tokens: number
-  completion_tokens: number
-}): number {
+function calculateCost(usage: { prompt_tokens: number; completion_tokens: number }): number {
   // OpenRouter pricing for gpt-4o-mini
   const promptCost = (usage.prompt_tokens * 0.00015) / 1000 // $0.15 per 1M tokens
   const completionCost = (usage.completion_tokens * 0.0006) / 1000 // $0.60 per 1M tokens
