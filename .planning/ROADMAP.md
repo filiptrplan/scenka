@@ -2,7 +2,7 @@
 
 ## Overview
 
-Scenka v2.0 adds an AI-powered climbing coach to the existing mobile PWA. The journey builds from database foundations and services (Phase 18) through UI with mock data (Phase 19) to real LLM integration (Phase 20) and culminates in an interactive chat interface (Phase 21). Each phase delivers increasing value: foundation enables all features, recommendations UI provides immediate visual value, LLM integration brings personalized drills, and chat enables Q&A for deeper learning.
+Scenka v2.0 adds an AI-powered climbing coach to existing mobile PWA. The journey builds from database foundations and services (Phase 18) through UI with mock data (Phase 19) to real LLM integration (Phase 20) and culminates in an interactive chat interface (Phase 21). Each phase delivers increasing value: foundation enables all features, recommendations UI provides immediate visual value, LLM integration brings personalized drills, and chat enables Q&A for deeper learning.
 
 ## Milestones
 
@@ -125,7 +125,7 @@ Plans:
   5. Chat receives pre-processed patterns (failures, styles, frequency) as context
   6. Graceful error handling with helpful fallback messages
 **Plans**: 5 plans
-**Status**: Not started
+**Status**: Ready to execute
 
 Plans:
 - [ ] 21-01-PLAN.md — Edge Function for SSE streaming with JWT auth
@@ -142,10 +142,18 @@ Plans:
 Plans:
 - [ ] TBD (run /gsd:plan-phase 22 to break down)
 
+#### Phase 23: Refocus Coach on Technique
+**Goal**: Review and modify coach to focus exclusively on technique and technique drills, not strength training
+**Depends on**: Phase 21
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 23 to break down)
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 18 → 19 → 20 → 21
+Phases execute in numeric order: 18 → 19 → 20 → 21 → 23
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -173,5 +181,6 @@ Phases execute in numeric order: 18 → 19 → 20 → 21
 | 18. AI Coach Foundation | v2.0 | 5/5 | Complete | 2026-01-17 |
 | 19. Coach Page + UI | v2.0 | 6/6 | Complete | 2026-01-17 |
 | 20. LLM Integration | v2.0 | 3/3 | Complete | 2026-01-18 |
-| 21. Chat Interface | v2.0 | 0/5 | Not started | - |
+| 21. Chat Interface | v2.0 | 0/5 | Ready to execute | - |
 | 22. OpenRouter Model Config | v2.0 | 0/0 | Not started | - |
+| 23. Refocus Coach on Technique | v2.0 | 0/0 | Not started | - |
