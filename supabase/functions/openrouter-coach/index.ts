@@ -1,6 +1,9 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import OpenAI from 'npm:openai@4'
 
+// Constants
+const MAX_RETRIES = 3
+
 // Environment variable validation
 const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SB_PUBLISHABLE_KEY']
 for (const envVar of requiredEnvVars) {
@@ -93,6 +96,87 @@ interface RequestBody {
   user_preferences: UserPreferences
 }
 
+// Helper function to fetch existing recommendations for fallback
+async function getExistingRecommendations(
+  userId: string
+): Promise<any | null> {
+  const { data, error } = await supabase
+    .from('coach_recommendations')
+    .select('*')
+    .eq('user_id', userId)
+    .order('generation_date', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error) {
+    console.error('Failed to fetch existing recommendations:', error)
+    return null
+  }
+
+  // Only return if there's valid content (not empty or error)
+  if (data && data.content && Object.keys(data.content).length > 0 && !data.error_message) {
+    return data
+  }
+
+  return null
+}
+
+// Defensive privacy check - validates anonymized data contains no PII
+function validateAnonymizedData(data: unknown): string[] {
+  const piiFields: string[] = []
+
+  const checkForPII = (obj: unknown, path = ''): void => {
+    if (typeof obj !== 'object' || obj === null) {
+      return
+    }
+
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      const currentPath = path ? `${path}.${key}` : key
+
+      // Check for common PII indicators
+      if (typeof value === 'string') {
+        // Long name-like field
+        if (key.toLowerCase().includes('name') && value.length > 20) {
+          piiFields.push(currentPath)
+        }
+
+        // Email addresses
+        if (key.toLowerCase().includes('email') && value.includes('@')) {
+          piiFields.push(currentPath)
+        }
+
+        // Phone numbers (10+ consecutive digits)
+        if (key.toLowerCase().includes('phone') && /\d{10}/.test(value)) {
+          piiFields.push(currentPath)
+        }
+
+        // Specific place names (capitalized multi-word locations)
+        if (
+          currentPath.includes('location') &&
+          /^[A-Z][a-z]+(?: [A-Z][a-z]+){2,}$/.test(value)
+        ) {
+          piiFields.push(currentPath)
+        }
+
+        // User IDs (UUID patterns)
+        if (
+          key.toLowerCase().includes('user') &&
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+        ) {
+          piiFields.push(currentPath)
+        }
+      }
+
+      if (typeof value === 'object' && value !== null) {
+        checkForPII(value, currentPath)
+      }
+    }
+  }
+
+  checkForPII(data)
+  return piiFields
+}
+
 // Build user prompt from patterns and preferences
 function buildUserPrompt(
   patterns: PatternAnalysis,
@@ -168,6 +252,93 @@ Example output format:
   return prompt
 }
 
+// Clean response - remove markdown code blocks if present
+function cleanResponse(content: string): string {
+  return content.replace(/```json\n?|\n?```/g, '').trim()
+}
+
+// Validate response structure
+function validateResponse(content: string): object {
+  const cleaned = cleanResponse(content)
+  let parsed: any
+
+  try {
+    parsed = JSON.parse(cleaned)
+  } catch (e) {
+    throw new Error('Invalid JSON in response')
+  }
+
+  // Validate weekly_focus
+  if (!parsed.weekly_focus || typeof parsed.weekly_focus !== 'string') {
+    throw new Error('Missing or invalid field: weekly_focus')
+  }
+
+  if (parsed.weekly_focus.trim().length === 0) {
+    throw new Error('Field weekly_focus cannot be empty')
+  }
+
+  // Validate drills array
+  if (!Array.isArray(parsed.drills)) {
+    throw new Error('Missing or invalid field: drills (must be an array)')
+  }
+
+  if (parsed.drills.length < 1 || parsed.drills.length > 3) {
+    throw new Error('Field drills must contain 1-3 drill objects')
+  }
+
+  // Validate each drill
+  parsed.drills.forEach((drill: any, index: number) => {
+    const drillNum = index + 1
+
+    if (!drill.name || typeof drill.name !== 'string') {
+      throw new Error(`Drill ${drillNum}: Missing or invalid field: name`)
+    }
+    if (drill.name.trim().length === 0) {
+      throw new Error(`Drill ${drillNum}: Field name cannot be empty`)
+    }
+
+    if (!drill.description || typeof drill.description !== 'string') {
+      throw new Error(`Drill ${drillNum}: Missing or invalid field: description`)
+    }
+    if (drill.description.trim().length < 20) {
+      throw new Error(
+        `Drill ${drillNum}: Field description must be at least 20 characters (educational content)`
+      )
+    }
+
+    if (typeof drill.sets !== 'number' || !Number.isInteger(drill.sets)) {
+      throw new Error(`Drill ${drillNum}: Missing or invalid field: sets (must be integer)`)
+    }
+    if (drill.sets < 1 || drill.sets > 10) {
+      throw new Error(`Drill ${drillNum}: Field sets must be between 1 and 10`)
+    }
+
+    if (!drill.reps || typeof drill.reps !== 'string') {
+      throw new Error(`Drill ${drillNum}: Missing or invalid field: reps`)
+    }
+    if (drill.reps.trim().length === 0) {
+      throw new Error(`Drill ${drillNum}: Field reps cannot be empty`)
+    }
+
+    if (!drill.rest || typeof drill.rest !== 'string') {
+      throw new Error(`Drill ${drillNum}: Missing or invalid field: rest`)
+    }
+    if (drill.rest.trim().length === 0) {
+      throw new Error(`Drill ${drillNum}: Field rest cannot be empty`)
+    }
+  })
+
+  return parsed
+}
+
+// Calculate API cost
+function calculateCost(usage: { prompt_tokens: number; completion_tokens: number }): number {
+  // OpenRouter pricing for gpt-4o-mini
+  const promptCost = (usage.prompt_tokens * 0.00015) / 1000 // $0.15 per 1M tokens
+  const completionCost = (usage.completion_tokens * 0.0006) / 1000 // $0.60 per 1M tokens
+  return promptCost + completionCost
+}
+
 // Edge Function handler
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight
@@ -186,6 +357,8 @@ Deno.serve(async (req: Request) => {
     return new Response('Method not allowed', { status: 405 })
   }
 
+  let userId: string | null = null
+
   try {
     // Extract and validate JWT token
     const authHeader = req.headers.get('Authorization')
@@ -202,6 +375,8 @@ Deno.serve(async (req: Request) => {
       return Response.json({ error: 'Invalid or expired token' }, { status: 401 })
     }
 
+    userId = claims.data.user.id
+
     // Parse request body
     const body: RequestBody = await req.json()
 
@@ -214,55 +389,194 @@ Deno.serve(async (req: Request) => {
     }
 
     // Verify user_id matches token
-    if (body.user_id !== claims.data.user.id) {
+    if (body.user_id !== userId) {
       return Response.json({ error: 'User ID mismatch' }, { status: 403 })
+    }
+
+    // Get cached recommendations for fallback
+    const cachedRecommendations = await getExistingRecommendations(userId)
+
+    // Validate privacy - ensure no PII in anonymized data
+    const piiFields = validateAnonymizedData(body.patterns_data)
+    if (piiFields.length > 0) {
+      console.error('PII detected in anonymized data:', piiFields)
+      return Response.json(
+        { error: 'Privacy validation failed. Please try again.' },
+        { status: 400 }
+      )
     }
 
     // Build prompts
     const userPrompt = buildUserPrompt(body.patterns_data, body.user_preferences)
 
-    // Call OpenRouter API
-    const response = await openai.chat.completions.create({
-      model: 'openai/gpt-4o-mini',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      temperature: 0.6,
-      response_format: { type: 'json_object' },
-    })
+    // Retry loop for API call with validation
+    let lastError: Error | null = null
+    let lastContent: string | null = null
+    let lastUsage: any = null
 
-    // Extract content and usage
-    const content = response.choices[0].message.content
-    const usage = response.usage
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        const response = await openai.chat.completions.create({
+          model: 'openai/gpt-4o-mini',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          temperature: 0.6,
+          response_format: { type: 'json_object' },
+        })
 
-    if (!content) {
-      return Response.json({ error: 'Empty response from AI' }, { status: 500 })
+        lastContent = response.choices[0].message.content
+        lastUsage = response.usage
+
+        if (!lastContent) {
+          throw new Error('Empty response from AI')
+        }
+
+        // Validate response structure
+        const validated = validateResponse(lastContent)
+
+        // Success - store recommendations and track API usage
+        const generationDate = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+        const costUsd = calculateCost(lastUsage)
+
+        // Store validated recommendations
+        const { error: insertError } = await supabase
+          .from('coach_recommendations')
+          .insert({
+            user_id: userId,
+            generation_date: generationDate,
+            content: validated,
+            is_cached: false,
+            error_message: null,
+          })
+
+        if (insertError) {
+          console.error('Failed to store recommendations:', insertError)
+          // Continue to return response - don't fail the whole request
+        }
+
+        // Track API usage
+        const { error: usageError } = await supabase.from('coach_api_usage').insert({
+          user_id: userId,
+          prompt_tokens: lastUsage.prompt_tokens,
+          completion_tokens: lastUsage.completion_tokens,
+          total_tokens: lastUsage.total_tokens,
+          cost_usd: costUsd,
+          model: 'openai/gpt-4o-mini',
+          endpoint: 'openrouter-coach',
+          time_window_start: new Date().toISOString(),
+        })
+
+        if (usageError) {
+          console.error('Failed to track API usage:', usageError)
+          // Continue - tracking failure shouldn't break the response
+        }
+
+        // Return success response
+        return Response.json({
+          success: true,
+          content: validated,
+          usage: {
+            prompt_tokens: lastUsage.prompt_tokens,
+            completion_tokens: lastUsage.completion_tokens,
+            total_tokens: lastUsage.total_tokens,
+            cost_usd: costUsd,
+          },
+          is_cached: false,
+        })
+      } catch (error: any) {
+        lastError = error
+        console.warn(`Attempt ${attempt + 1}/${MAX_RETRIES} failed:`, error.message)
+
+        // If this was the last attempt, handle the error with fallback
+        if (attempt === MAX_RETRIES - 1) {
+          console.error('OpenRouter API failed after retries:', lastError?.message)
+
+          // Try to return cached recommendations
+          if (cachedRecommendations) {
+            // Update cached recommendations with error message
+            await supabase
+              .from('coach_recommendations')
+              .update({
+                error_message: `Failed to generate new recommendations: ${lastError?.message}`,
+              })
+              .eq('id', cachedRecommendations.id)
+
+            // Track failed attempt with cost=0
+            await supabase
+              .from('coach_api_usage')
+              .insert({
+                user_id: userId,
+                prompt_tokens: 0,
+                completion_tokens: 0,
+                total_tokens: 0,
+                cost_usd: 0,
+                model: 'openai/gpt-4o-mini',
+                endpoint: 'openrouter-coach',
+                time_window_start: new Date().toISOString(),
+              })
+              .catch((err) => {
+                console.error('Failed to track failed usage:', err)
+              })
+
+            return Response.json({
+              success: true,
+              content: cachedRecommendations.content,
+              is_cached: true,
+              warning: `Unable to generate new recommendations. Showing previous recommendations from ${new Date(cachedRecommendations.generation_date).toLocaleDateString()}.`,
+            })
+          }
+
+          // No cached recommendations available - track error and return failure
+          await supabase
+            .from('coach_recommendations')
+            .insert({
+              user_id: userId,
+              generation_date: new Date().toISOString().split('T')[0],
+              content: {},
+              is_cached: false,
+              error_message: `Failed to generate valid recommendations: ${lastError?.message}`,
+            })
+            .catch((err) => {
+              console.error('Failed to store error message:', err)
+            })
+
+          await supabase
+            .from('coach_api_usage')
+            .insert({
+              user_id: userId,
+              prompt_tokens: 0,
+              completion_tokens: 0,
+              total_tokens: 0,
+              cost_usd: 0,
+              model: 'openai/gpt-4o-mini',
+              endpoint: 'openrouter-coach',
+              time_window_start: new Date().toISOString(),
+            })
+            .catch((err) => {
+              console.error('Failed to track failed usage:', err)
+            })
+
+          return Response.json(
+            {
+              success: false,
+              error: `Failed to generate recommendations and no cached data available: ${lastError?.message}`,
+            },
+            { status: 500 }
+          )
+        }
+
+        // Continue to next retry
+        continue
+      }
     }
 
-    // Parse JSON response
-    let parsedContent
-    try {
-      parsedContent = JSON.parse(content)
-    } catch (e) {
-      return Response.json({ error: 'Invalid JSON response from AI' }, { status: 500 })
-    }
-
-    // Return success response
-    return Response.json({
-      content: parsedContent,
-      usage: {
-        prompt_tokens: usage.prompt_tokens,
-        completion_tokens: usage.completion_tokens,
-        total_tokens: usage.total_tokens,
-      },
-    })
+    // This should never be reached, but TypeScript needs it
+    throw new Error('Unexpected error: retry loop completed without result')
   } catch (error: any) {
     console.error('Error in openrouter-coach:', error.message, error.stack)
 
-    return Response.json(
-      { error: error.message || 'Internal server error' },
-      { status: 500 }
-    )
+    return Response.json({ error: error.message || 'Internal server error' }, { status: 500 })
   }
 })
