@@ -10,7 +10,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "deploy-functions": "npx supabase functions deploy openrouter-coach --no-verify-jwt"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

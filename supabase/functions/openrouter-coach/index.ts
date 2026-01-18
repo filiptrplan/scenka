@@ -367,16 +367,19 @@ Deno.serve(async (req: Request) => {
     const token = authHeader.replace('Bearer ', '')
 
     // Validate JWT token with Supabase
-    const { data: claims, error: claimsError } = await supabase.auth.getUser(token)
+    const {
+      data: { user },
+      error: claimsError,
+    } = await supabase.auth.getUser(token)
 
-    if (claimsError || !claims.data.user) {
+    if (claimsError || !user) {
       return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
         status: 401,
         headers: corsHeaders,
       })
     }
 
-    userId = claims.data.user.id
+    userId = user.id
 
     // Parse request body
     const body: RequestBody = await req.json()
