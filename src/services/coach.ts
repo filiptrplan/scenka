@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase'
-import { anonymizeClimbsForAI } from '@/lib/coachUtils'
 import { extractPatterns } from '@/services/patterns'
 import type { Climb } from '@/types'
 
@@ -117,15 +116,13 @@ export async function generateRecommendations(
     throw new Error(`Rate limit exceeded. ${rateLimit.remaining} tokens remaining.`)
   }
 
-  // Anonymize data before API call
-  const anonymizedClimbs = anonymizeClimbsForAI(input.climbs)
+  // Extract patterns (data is already anonymized inside extractPatterns)
   const patterns = await extractPatterns(user.id)
 
-  // Call Supabase Edge Function (stub for now - will implement in Phase 20)
-  const { data, error } = await supabase.functions.invoke('generate-recommendations', {
+  // Call Supabase Edge Function
+  const { data, error } = await supabase.functions.invoke('openrouter-coach', {
     body: {
       user_id: user.id,
-      climbs_data: anonymizedClimbs,
       patterns_data: patterns,
       user_preferences: input.user_preferences,
     },
@@ -140,7 +137,7 @@ export async function generateRecommendations(
         completion_tokens: 0,
         total_tokens: 0,
         model: 'openai/gpt-4o-mini',
-        endpoint: 'generate-recommendations',
+        endpoint: 'openrouter-coach',
       },
       true,
     )
@@ -148,7 +145,20 @@ export async function generateRecommendations(
     throw new Error(`Failed to generate recommendations: ${error.message}`)
   }
 
-  return data as GenerateRecommendationsResponse
+  // Handle Edge Function response format
+  if (!data.success && data.error) {
+    throw new Error(data.error)
+  }
+
+  // Log warning if cached data returned
+  if (data.warning) {
+    console.warn('Recommendations warning:', data.warning)
+  }
+
+  return {
+    weekly_focus: data.content.weekly_focus,
+    drills: data.content.drills,
+  } as GenerateRecommendationsResponse
 }
 
 export async function trackApiUsage(
