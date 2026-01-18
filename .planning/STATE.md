@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 20 of 21 (LLM Integration)
-Plan: 1 of 5 in current phase
+Plan: 2 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-18 — Phase 20-01: OpenRouter Coach Edge Function completed
+Last activity: 2026-01-18 — Phase 20-02: JSON Validation, Retry Logic, and Database Storage completed
 
-Progress: [██████████░░░░] 89%
+Progress: [██████████░░░░] 90%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 40 (v1.0 + v1.1 + v2.0 phase 18-20)
+- Total plans completed: 41 (v1.0 + v1.1 + v2.0 phase 18-20)
 - Average duration: 9 min
-- Total execution time: 6.1 hours
+- Total execution time: 6.2 hours
 
 **By Phase:**
 
@@ -31,7 +31,7 @@ Progress: [██████████░░░░] 89%
 | 05-17 (v1.1) | 19 | 147 min | 8 min |
 | 18 (AI Coach) | 6 | 40 min | 7 min |
 | 19 (Coach UI) | 8 | 19 min | 2 min |
-| 20 (LLM Integration) | 1 | 4 min | 4 min |
+| 20 (LLM Integration) | 2 | 6 min | 3 min |
 
 **Recent Trend:**
 - Last 5 plans: 2 min
@@ -78,6 +78,11 @@ Recent decisions affecting current work:
 - Phase 20-01: Requested JSON output format from LLM for structured parsing (response_format: { type: 'json_object' })
 - Phase 20-01: Set temperature 0.6 to balance creativity with reliability for drill suggestions
 - Phase 20-01: Used climbing-specific technical terminology (hangboard, campus board, antagonistic training) for domain expertise
+- Phase 20-02: Retry up to 3 times for LLM response validation failures with MAX_RETRIES constant
+- Phase 20-02: Strip markdown code blocks before JSON parsing using cleanResponse() function
+- Phase 20-02: Validate all drill fields including minimum 20 character descriptions and 1-10 set range
+- Phase 20-02: Store failed requests with error_message and cost=0 for monitoring visibility
+- Phase 20-02: Database errors logged but don't fail request (graceful degradation pattern)
 
 ### Pending Todos
 
@@ -93,5 +98,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Completed Phase 20-01: OpenRouter Coach Edge Function
+Stopped at: Completed Phase 20-02: JSON Validation, Retry Logic, and Database Storage
 Resume file: None
