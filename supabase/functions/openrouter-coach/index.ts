@@ -463,7 +463,7 @@ Deno.serve(async (req: Request) => {
                 completion_tokens: 0,
                 total_tokens: 0,
                 cost_usd: 0,
-                model: 'openai/gpt-4o-mini',
+                model: 'google/gemini-2.5-pro',
                 endpoint: 'openrouter-coach',
                 time_window_start: new Date().toISOString(),
               })
@@ -506,7 +506,7 @@ Deno.serve(async (req: Request) => {
               completion_tokens: 0,
               total_tokens: 0,
               cost_usd: 0,
-              model: 'openai/gpt-4o-mini',
+              model: 'google/gemini-2.5-pro',
               endpoint: 'openrouter-coach',
               time_window_start: new Date().toISOString(),
             })
