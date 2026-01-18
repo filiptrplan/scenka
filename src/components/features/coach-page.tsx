@@ -7,14 +7,13 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { FormLabel } from '@/components/ui/form-label'
 import { FormSection } from '@/components/ui/form-section'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useClimbs } from '@/hooks/useClimbs'
-import { useCoachRecommendations, useGenerateRecommendations, usePatternAnalysis } from '@/hooks/useCoach'
+import {
+  useCoachRecommendations,
+  useGenerateRecommendations,
+  usePatternAnalysis,
+} from '@/hooks/useCoach'
 import { useProfile } from '@/hooks/useProfile'
 import { Badge } from '@/components/ui/badge'
 
@@ -154,7 +153,9 @@ export function CoachPage() {
               </div>
               <FormSection>
                 <FormLabel className="mb-4 block">This week's focus</FormLabel>
-                <p className="text-lg text-[#f5f5f5] leading-relaxed">{(recommendations.content as any).weekly_focus || 'No weekly focus available'}</p>
+                <p className="text-lg text-[#f5f5f5] leading-relaxed">
+                  {(recommendations.content as any).weekly_focus || 'No weekly focus available'}
+                </p>
               </FormSection>
             </section>
 
@@ -171,20 +172,28 @@ export function CoachPage() {
                   <p className="text-center text-[#888]">No drills available</p>
                 </FormSection>
               ) : (
-                ((recommendations.content as any)?.drills || []).map((drill: any, index: number) => (
-                <FormSection key={index} className="mb-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-xl font-black uppercase">{drill.name || 'Drill'}</h3>
-                    <Badge variant="outline" className="text-xs font-mono border-white/20 text-[#ccc]">
-                      {drill.sets || 0} × {drill.reps || 'N/A'}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-[#bbb] leading-relaxed mb-3">{drill.description || 'No description available'}</p>
-                  <div className="flex items-center gap-2 text-xs font-mono text-[#666]">
-                    <span>Rest: {drill.rest || 'N/A'}</span>
-                  </div>
-                </FormSection>
-              )))}
+                ((recommendations.content as any)?.drills || []).map(
+                  (drill: any, index: number) => (
+                    <FormSection key={index} className="mb-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-xl font-black uppercase">{drill.name || 'Drill'}</h3>
+                        <Badge
+                          variant="outline"
+                          className="text-xs font-mono border-white/20 text-[#ccc] flex flex-col items-start py-2"
+                        >
+                          <span>
+                            Sets: {drill.sets || 0} × {drill.reps || 'N/A'}
+                          </span>
+                          <span>Rest: {drill.rest || 'N/A'}</span>
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-[#bbb] leading-relaxed mb-3">
+                        {drill.description || 'No description available'}
+                      </p>
+                    </FormSection>
+                  )
+                )
+              )}
             </section>
 
             {/* Action Buttons */}
@@ -210,7 +219,10 @@ export function CoachPage() {
             {/* Last Updated */}
             <div className="text-center pt-4">
               <FormLabel>
-                Last updated: {formatDistanceToNow(new Date(recommendations.generation_date), { addSuffix: true })}
+                Last updated:{' '}
+                {formatDistanceToNow(new Date(recommendations.generation_date), {
+                  addSuffix: true,
+                })}
               </FormLabel>
             </div>
           </TabsContent>
@@ -228,7 +240,9 @@ export function CoachPage() {
                 <section>
                   <div className="flex items-center gap-4 mb-6">
                     <div className="h-1 flex-1 bg-orange-500" />
-                    <h2 className="text-3xl font-black tracking-tighter uppercase">Failure Patterns</h2>
+                    <h2 className="text-3xl font-black tracking-tighter uppercase">
+                      Failure Patterns
+                    </h2>
                     <div className="h-1 flex-1 bg-orange-500" />
                   </div>
                   <FormSection>
@@ -238,7 +252,10 @@ export function CoachPage() {
                       <div className="space-y-3">
                         {patterns.failure_patterns.most_common_failure_reasons.map((item) => (
                           <div key={item.reason} className="flex items-center justify-between">
-                            <Badge variant="outline" className="text-xs font-mono border-white/20 text-[#ccc]">
+                            <Badge
+                              variant="outline"
+                              className="text-xs font-mono border-white/20 text-[#ccc]"
+                            >
                               {item.reason}
                             </Badge>
                             <span className="text-sm text-[#888]">
@@ -255,7 +272,9 @@ export function CoachPage() {
                 <section>
                   <div className="flex items-center gap-4 mb-6">
                     <div className="h-1 flex-1 bg-rose-500" />
-                    <h2 className="text-3xl font-black tracking-tighter uppercase">Style Weaknesses</h2>
+                    <h2 className="text-3xl font-black tracking-tighter uppercase">
+                      Style Weaknesses
+                    </h2>
                     <div className="h-1 flex-1 bg-rose-500" />
                   </div>
                   <FormSection>
@@ -265,11 +284,15 @@ export function CoachPage() {
                       <div className="space-y-3">
                         {patterns.style_weaknesses.struggling_styles.map((item) => (
                           <div key={item.style} className="flex items-center justify-between">
-                            <Badge variant="outline" className="text-xs font-mono border-white/20 text-[#ccc]">
+                            <Badge
+                              variant="outline"
+                              className="text-xs font-mono border-white/20 text-[#ccc]"
+                            >
                               {item.style}
                             </Badge>
                             <span className="text-sm text-[#888]">
-                              {Math.round(item.fail_rate * 100)}% fail rate ({item.fail_count}/{item.total_attempts})
+                              {Math.round(item.fail_rate * 100)}% fail rate ({item.fail_count}/
+                              {item.total_attempts})
                             </span>
                           </div>
                         ))}
@@ -282,18 +305,24 @@ export function CoachPage() {
                 <section>
                   <div className="flex items-center gap-4 mb-6">
                     <div className="h-1 flex-1 bg-teal-500" />
-                    <h2 className="text-3xl font-black tracking-tighter uppercase">Climbing Frequency</h2>
+                    <h2 className="text-3xl font-black tracking-tighter uppercase">
+                      Climbing Frequency
+                    </h2>
                     <div className="h-1 flex-1 bg-teal-500" />
                   </div>
                   <FormSection>
                     <div className="space-y-4">
                       <div className="text-center">
                         <p className="text-sm text-[#888] mb-1">Average per session</p>
-                        <p className="text-4xl font-black">{patterns.climbing_frequency.avg_climbs_per_session}</p>
+                        <p className="text-4xl font-black">
+                          {patterns.climbing_frequency.avg_climbs_per_session}
+                        </p>
                       </div>
                       <div className="text-center pt-4 border-t border-white/10">
                         <p className="text-sm text-[#888] mb-1">Per month</p>
-                        <p className="text-4xl font-black">{patterns.climbing_frequency.climbs_per_month}</p>
+                        <p className="text-4xl font-black">
+                          {patterns.climbing_frequency.climbs_per_month}
+                        </p>
                       </div>
                     </div>
                   </FormSection>
@@ -303,14 +332,18 @@ export function CoachPage() {
                 <section>
                   <div className="flex items-center gap-4 mb-6">
                     <div className="h-1 flex-1 bg-purple-500" />
-                    <h2 className="text-3xl font-black tracking-tighter uppercase">Recent Successes</h2>
+                    <h2 className="text-3xl font-black tracking-tighter uppercase">
+                      Recent Successes
+                    </h2>
                     <div className="h-1 flex-1 bg-purple-500" />
                   </div>
                   <FormSection>
                     <div className="space-y-4">
                       <div className="text-center">
                         <p className="text-sm text-[#888] mb-1">Redemptions</p>
-                        <p className="text-4xl font-black">{patterns.recent_successes.redemption_count}</p>
+                        <p className="text-4xl font-black">
+                          {patterns.recent_successes.redemption_count}
+                        </p>
                       </div>
                       {patterns.recent_successes.grade_progression.length > 0 && (
                         <div className="pt-4 border-t border-white/10">
