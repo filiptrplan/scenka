@@ -98,6 +98,10 @@ None yet.
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
 - **Streaming implementation:** @microsoft/fetch-event-source patterns need validation during Phase 21
 
+### Roadmap Evolution
+
+- Phase 22 added: OpenRouter model configuration via environment variables
+
 ## Session Continuity
 
 Last session: 2026-01-18

@@ -133,6 +133,14 @@ Plans:
 - [ ] 21-04: Error handling with graceful fallback messages
 - [ ] 21-05: Mobile optimization and typing indicators
 
+#### Phase 22: OpenRouter Model Configuration
+**Goal**: Allow configurable OpenRouter model selection via environment variables
+**Depends on**: Phase 21
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 22 to break down)
+
 ## Progress
 
 **Execution Order:**
@@ -165,3 +173,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21
 | 19. Coach Page + UI | v2.0 | 6/6 | Complete | 2026-01-17 |
 | 20. LLM Integration | v2.0 | 3/3 | Complete | 2026-01-18 |
 | 21. Chat Interface | v2.0 | 0/5 | Not started | - |
+| 22. OpenRouter Model Config | v2.0 | 0/0 | Not started | - |
