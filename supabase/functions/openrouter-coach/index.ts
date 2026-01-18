@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import OpenAI from 'npm:openai@4'
+import { corsHeaders } from '../_shared/cors.ts'
 
 // Constants
 const MAX_RETRIES = 3
@@ -345,16 +346,18 @@ Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        ...corsHeaders,
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'authorization, content-type',
       },
     })
   }
 
   // Only accept POST requests
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+    return new Response('Method not allowed', {
+      status: 405,
+      headers: corsHeaders,
+    })
   }
 
   let userId: string | null = null
@@ -363,7 +366,13 @@ Deno.serve(async (req: Request) => {
     // Extract and validate JWT token
     const authHeader = req.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return Response.json({ error: 'Missing authorization header' }, { status: 401 })
+      return new Response(
+        JSON.stringify({ error: 'Missing authorization header' }),
+        {
+          status: 401,
+          headers: corsHeaders,
+        }
+      )
     }
 
     const token = authHeader.replace('Bearer ', '')
@@ -372,7 +381,13 @@ Deno.serve(async (req: Request) => {
     const { data: claims, error: claimsError } = await supabase.auth.getUser(token)
 
     if (claimsError || !claims.data.user) {
-      return Response.json({ error: 'Invalid or expired token' }, { status: 401 })
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        {
+          status: 401,
+          headers: corsHeaders,
+        }
+      )
     }
 
     userId = claims.data.user.id
@@ -382,15 +397,26 @@ Deno.serve(async (req: Request) => {
 
     // Validate required fields
     if (!body.user_id || !body.patterns_data || !body.user_preferences) {
-      return Response.json(
-        { error: 'Missing required fields: user_id, patterns_data, user_preferences' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({
+          error: 'Missing required fields: user_id, patterns_data, user_preferences',
+        }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       )
     }
 
     // Verify user_id matches token
     if (body.user_id !== userId) {
-      return Response.json({ error: 'User ID mismatch' }, { status: 403 })
+      return new Response(
+        JSON.stringify({ error: 'User ID mismatch' }),
+        {
+          status: 403,
+          headers: corsHeaders,
+        }
+      )
     }
 
     // Get cached recommendations for fallback
@@ -400,9 +426,12 @@ Deno.serve(async (req: Request) => {
     const piiFields = validateAnonymizedData(body.patterns_data)
     if (piiFields.length > 0) {
       console.error('PII detected in anonymized data:', piiFields)
-      return Response.json(
-        { error: 'Privacy validation failed. Please try again.' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: 'Privacy validation failed. Please try again.' }),
+        {
+          status: 400,
+          headers: corsHeaders,
+        }
       )
     }
 
@@ -474,17 +503,22 @@ Deno.serve(async (req: Request) => {
         }
 
         // Return success response
-        return Response.json({
-          success: true,
-          content: validated,
-          usage: {
-            prompt_tokens: lastUsage.prompt_tokens,
-            completion_tokens: lastUsage.completion_tokens,
-            total_tokens: lastUsage.total_tokens,
-            cost_usd: costUsd,
-          },
-          is_cached: false,
-        })
+        return new Response(
+          JSON.stringify({
+            success: true,
+            content: validated,
+            usage: {
+              prompt_tokens: lastUsage.prompt_tokens,
+              completion_tokens: lastUsage.completion_tokens,
+              total_tokens: lastUsage.total_tokens,
+              cost_usd: costUsd,
+            },
+            is_cached: false,
+          }),
+          {
+            headers: corsHeaders,
+          }
+        )
       } catch (error: any) {
         lastError = error
         console.warn(`Attempt ${attempt + 1}/${MAX_RETRIES} failed:`, error.message)
@@ -520,12 +554,17 @@ Deno.serve(async (req: Request) => {
                 console.error('Failed to track failed usage:', err)
               })
 
-            return Response.json({
-              success: true,
-              content: cachedRecommendations.content,
-              is_cached: true,
-              warning: `Unable to generate new recommendations. Showing previous recommendations from ${new Date(cachedRecommendations.generation_date).toLocaleDateString()}.`,
-            })
+            return new Response(
+              JSON.stringify({
+                success: true,
+                content: cachedRecommendations.content,
+                is_cached: true,
+                warning: `Unable to generate new recommendations. Showing previous recommendations from ${new Date(cachedRecommendations.generation_date).toLocaleDateString()}.`,
+              }),
+              {
+                headers: corsHeaders,
+              }
+            )
           }
 
           // No cached recommendations available - track error and return failure
@@ -558,12 +597,15 @@ Deno.serve(async (req: Request) => {
               console.error('Failed to track failed usage:', err)
             })
 
-          return Response.json(
-            {
+          return new Response(
+            JSON.stringify({
               success: false,
               error: `Failed to generate recommendations and no cached data available: ${lastError?.message}`,
-            },
-            { status: 500 }
+            }),
+            {
+              status: 500,
+              headers: corsHeaders,
+            }
           )
         }
 
@@ -577,6 +619,12 @@ Deno.serve(async (req: Request) => {
   } catch (error: any) {
     console.error('Error in openrouter-coach:', error.message, error.stack)
 
-    return Response.json({ error: error.message || 'Internal server error' }, { status: 500 })
+    return new Response(
+      JSON.stringify({ error: error.message || 'Internal server error' }),
+      {
+        status: 500,
+        headers: corsHeaders,
+      }
+    )
   }
 })
