@@ -165,6 +165,7 @@ export async function generateRecommendations(
   return {
     weekly_focus: parsed_data.content.weekly_focus,
     drills: parsed_data.content.drills,
+    projecting_focus: parsed_data.content.projecting_focus || [],
   } as GenerateRecommendationsResponse
 }
 
