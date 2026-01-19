@@ -140,19 +140,7 @@ export async function generateRecommendations(
   const parsed_data = JSON.parse(data)
 
   if (error) {
-    // Track failed attempt
-    await trackApiUsage(
-      user.id,
-      {
-        prompt_tokens: 0,
-        completion_tokens: 0,
-        total_tokens: 0,
-        model: 'openai/gpt-4o-mini',
-        endpoint: 'openrouter-coach',
-      },
-      true
-    )
-
+    // Edge Function already tracks all API usage (including failures)
     throw new Error(`Failed to generate recommendations: ${error.message}`)
   }
 
@@ -172,46 +160,3 @@ export async function generateRecommendations(
   } as GenerateRecommendationsResponse
 }
 
-export async function trackApiUsage(
-  userId: string,
-  usage: {
-    prompt_tokens: number
-    completion_tokens: number
-    total_tokens: number
-    model: string
-    endpoint: string
-    cost_usd?: number // Optional - if provided, use directly
-  },
-  isError: boolean = false
-): Promise<void> {
-  if (!supabase) {
-    throw new Error('Supabase client not configured')
-  }
-
-  // Use provided cost_usd or calculate from usage (for backward compatibility)
-  const cost_usd = isError ? 0 : (usage.cost_usd ?? calculateCost(usage))
-
-  const { error } = await supabase.from('coach_api_usage').insert({
-    user_id: userId,
-    prompt_tokens: usage.prompt_tokens,
-    completion_tokens: usage.completion_tokens,
-    total_tokens: usage.total_tokens,
-    cost_usd,
-    model: usage.model,
-    endpoint: usage.endpoint,
-    time_window_start: new Date().toISOString(),
-  })
-
-  if (error) {
-    console.error('Failed to track API usage:', error)
-    // Don't throw - tracking failure shouldn't break the main flow
-  }
-}
-
-function calculateCost(usage: { prompt_tokens: number; completion_tokens: number }): number {
-  // OpenRouter pricing - kept for backward compatibility
-  // Edge Functions now use OpenRouter's provided cost directly
-  const promptCost = (usage.prompt_tokens * 0.00015) / 1000 // $0.15 per 1M tokens
-  const completionCost = (usage.completion_tokens * 0.0006) / 1000 // $0.60 per 1M tokens
-  return promptCost + completionCost
-}
