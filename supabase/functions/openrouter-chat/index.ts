@@ -248,19 +248,20 @@ Deno.serve(async (req: Request) => {
 
           // Store assistant message in database
           if (assistantContent) {
-            await supabase.from('coach_messages').insert({
+            const { error: insertError } = await supabase.from('coach_messages').insert({
               user_id: userId,
               role: 'assistant',
               content: assistantContent,
               context: body.patterns_data || {},
-            }).catch((err) => {
-              console.error('Failed to store assistant message:', err)
             })
+            if (insertError) {
+              console.error('Failed to store assistant message:', insertError)
+            }
           }
 
           // Track API usage with OpenRouter's cost
           if (finalUsage) {
-            await supabase.from('coach_api_usage').insert({
+            const { error: usageError } = await supabase.from('coach_api_usage').insert({
               user_id: userId,
               prompt_tokens: finalUsage.prompt_tokens || 0,
               completion_tokens: finalUsage.completion_tokens || 0,
@@ -269,9 +270,10 @@ Deno.serve(async (req: Request) => {
               model,
               endpoint: 'openrouter-chat',
               time_window_start: new Date().toISOString(),
-            }).catch((err) => {
-              console.error('Failed to track API usage:', err)
             })
+            if (usageError) {
+              console.error('Failed to track API usage:', usageError)
+            }
           }
 
           // Send DONE signal

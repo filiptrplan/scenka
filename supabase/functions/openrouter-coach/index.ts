@@ -659,7 +659,7 @@ Deno.serve(async (req: Request) => {
               .eq('id', cachedRecommendations.id)
 
             // Track failed attempt with cost=0
-            await supabase
+            const { error: failedUsageError } = await supabase
               .from('coach_api_usage')
               .insert({
                 user_id: userId,
@@ -671,9 +671,9 @@ Deno.serve(async (req: Request) => {
                 endpoint: 'openrouter-coach',
                 time_window_start: new Date().toISOString(),
               })
-              .catch((err) => {
-                console.error('Failed to track failed usage:', err)
-              })
+            if (failedUsageError) {
+              console.error('Failed to track failed usage:', failedUsageError)
+            }
 
             return new Response(
               JSON.stringify({
@@ -689,7 +689,7 @@ Deno.serve(async (req: Request) => {
           }
 
           // No cached recommendations available - track error and return failure
-          await supabase
+          const { error: errorInsertError } = await supabase
             .from('coach_recommendations')
             .insert({
               user_id: userId,
@@ -697,11 +697,11 @@ Deno.serve(async (req: Request) => {
               is_cached: false,
               error_message: `Failed to generate valid recommendations: ${lastError?.message}`,
             })
-            .catch((err) => {
-              console.error('Failed to store error message:', err)
-            })
+          if (errorInsertError) {
+            console.error('Failed to store error message:', errorInsertError)
+          }
 
-          await supabase
+          const { error: finalFailedUsageError } = await supabase
             .from('coach_api_usage')
             .insert({
               user_id: userId,
@@ -713,9 +713,9 @@ Deno.serve(async (req: Request) => {
               endpoint: 'openrouter-coach',
               time_window_start: new Date().toISOString(),
             })
-            .catch((err) => {
-              console.error('Failed to track failed usage:', err)
-            })
+          if (finalFailedUsageError) {
+            console.error('Failed to track failed usage:', finalFailedUsageError)
+          }
 
           return new Response(
             JSON.stringify({
