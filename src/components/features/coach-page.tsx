@@ -199,6 +199,11 @@ export function CoachPage() {
                       <p className="text-sm text-[#bbb] leading-relaxed mb-3">
                         {drill.description || 'No description available'}
                       </p>
+                      {drill.measurable_outcome && (
+                        <p className="text-sm text-green-400/80 leading-relaxed font-mono mt-2 pt-2 border-t border-white/10">
+                          Goal: {drill.measurable_outcome}
+                        </p>
+                      )}
                     </FormSection>
                   )
                 )
