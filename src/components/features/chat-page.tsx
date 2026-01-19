@@ -1,9 +1,8 @@
-import { useRef, useEffect, useState } from 'react'
 import { Send } from 'lucide-react'
+import { useRef, useEffect, useState, type KeyboardEvent } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-
 import { usePatternAnalysis } from '@/hooks/useCoach'
 import { useCoachMessages } from '@/hooks/useCoachMessages'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
@@ -90,7 +89,7 @@ export function ChatPage() {
     await sendMessage(message, patterns)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       void handleSend()
@@ -151,14 +150,14 @@ export function ChatPage() {
             className="flex-1 min-h-[44px] resize-none bg-white/[0.02] border-white/20"
           />
           <Button
-            onClick={handleSend}
+            onClick={() => void handleSend()}
             disabled={!inputValue.trim() || isStreaming}
             className="h-[44px] w-[44px] flex-shrink-0 bg-white text-black hover:bg-white/90"
           >
             <Send className="h-4 w-4" />
           </Button>
         </div>
-        {error && <div className="text-red-400 text-sm mt-2">{error}</div>}
+        {error !== null && <div className="text-red-400 text-sm mt-2">{error}</div>}
       </div>
     </div>
   )
