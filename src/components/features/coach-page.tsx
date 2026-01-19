@@ -18,6 +18,14 @@ import {
 import { useProfile } from '@/hooks/useProfile'
 import { type ProjectingFocus } from '@/services/coach'
 
+const safeDate = (dateString: string | undefined | null): Date => {
+  if (!dateString) {
+    return new Date()
+  }
+  const date = new Date(dateString)
+  return isNaN(date.getTime()) ? new Date() : date
+}
+
 export function CoachPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'recommendations' | 'patterns'>('recommendations')
@@ -148,10 +156,10 @@ export function CoachPage() {
             {/* Generation Date - Subtle indicator above Weekly Focus */}
             <div className="text-center text-xs text-[#666] font-mono uppercase tracking-wide">
               Generated{' '}
-              {formatDistanceToNow(new Date(recommendations.created_at), {
+              {formatDistanceToNow(safeDate(recommendations.created_at), {
                 addSuffix: true,
               })}{' '}
-              (at {format(new Date(recommendations.created_at), 'HH:mm')})
+              (at {format(safeDate(recommendations.created_at), 'HH:mm')})
             </div>
 
             {/* Weekly Focus Section */}
@@ -284,7 +292,7 @@ export function CoachPage() {
             <div className="text-center pt-4">
               <FormLabel>
                 Last updated:{' '}
-                {formatDistanceToNow(new Date(recommendations.created_at), {
+                {formatDistanceToNow(safeDate(recommendations.created_at), {
                   addSuffix: true,
                 })}
               </FormLabel>
