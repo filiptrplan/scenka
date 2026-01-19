@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 
 ## Current Position
 
-Phase: 25 of 25 (User Climbing Context for Prompts)
+Phase: 25 of 26 (User Climbing Context for Prompts)
 Plan: 4 of 4 in current phase
-Status: Phase complete
-Last activity: 2026-01-19 — Completed Phase 25-04: Climbing Context Integration for Edge Functions
+Status: Phase verified — complete
+Last activity: 2026-01-19 — Verified Phase 25 goal achievement (13/13 must-haves passed)
 
-Progress: [███████████] 100%
+Progress: [██████████░] 100%
 
 ## Performance Metrics
 
@@ -177,6 +177,7 @@ None yet.
 - Phase 23 added: Refocus coach on technique (review system prompt and data passed to coach)
 - Phase 24 added: Projecting focus recommendations to help users select boulders to project on each week
 - Phase 25 added: User climbing context for prompts (allow users to describe what kind of climber they are)
+- Phase 26 added: Update README with the work done in this milestone
 
 ## Session Continuity
 

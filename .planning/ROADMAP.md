@@ -8,7 +8,7 @@ Scenka v2.0 adds an AI-powered climbing coach to existing mobile PWA. The journe
 
 - **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
 - **v1.1 UX & Analytics** — Phases 5-17 (shipped 2026-01-17)
-- **v2.0 AI Coach** — Phases 18-25 (in progress)
+- **v2.0 AI Coach** — Phases 18-26 (in progress)
 
 ## Phases
 
@@ -183,20 +183,32 @@ Projecting focus recommendations help users select boulders to project based on 
 **Goal**: Allow users to add their own context to system prompts like what kind of climber they are
 **Depends on**: Phase 24
 **Plans**: 4 plans
+**Status**: Complete — verified 2026-01-19
 
 Plans:
-- [ ] 25-01-PLAN.md — Database migration, types, and validation schema
-- [ ] 25-02-PLAN.md — Settings UI with climbing context textarea
-- [ ] 25-03-PLAN.md — Coach service integration with climbing context
-- [ ] 25-04-PLAN.md — Edge Functions integration with climbing context
+- [x] 25-01-PLAN.md — Database migration, types, and validation schema
+- [x] 25-02-PLAN.md — Settings UI with climbing context textarea
+- [x] 25-03-PLAN.md — Coach service integration with climbing context
+- [x] 25-04-PLAN.md — Edge Functions integration with climbing context
 
 **Details**:
 Add climbing_context TEXT column to profiles table (2000 char limit) with UI in settings page allowing users to describe their climbing style, goals, and preferences. Context integrated into both coach recommendations and chat system prompts for more personalized AI responses. Follows ChatGPT's "custom instructions" pattern.
 
+#### Phase 26: Update README with Milestone Work
+**Goal**: Update README.md with documentation of all AI coach features implemented in v2.0
+**Depends on**: Phase 25
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 26 to break down)
+
+**Details**:
+Update README.md to document the new AI Coach features including coach recommendations, pattern analysis, chat interface, projecting focus, and climbing context configuration. Include screenshots, setup instructions, and usage examples.
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25
+Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 → 26
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -228,4 +240,5 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25
 | 22. OpenRouter Model Config | v2.0 | 1/1 | Complete | 2026-01-19 |
 | 23. Refocus Coach on Technique | v2.0 | 7/7 | Complete | 2026-01-19 |
 | 24. Projecting Focus Recommendations | v2.0 | 3/3 | Complete | 2026-01-19 |
-| 25. User Climbing Context for Prompts | v2.0 | 0/4 | Pending | |
+| 25. User Climbing Context for Prompts | v2.0 | 4/4 | Complete | 2026-01-19 |
+| 26. Update README with Milestone Work | v2.0 | 0/0 | Pending | |
