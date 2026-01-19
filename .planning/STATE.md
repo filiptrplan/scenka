@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 21: Chat Interface
+**Current focus:** Phase 23: Refocus Coach on Technique
 
 ## Current Position
 
-Phase: 21 of 21 (Chat Interface)
-Plan: 5 of 5 in current phase
+Phase: 23 of 23 (Refocus Coach on Technique)
+Plan: 2 of 2 in current phase
 Status: Phase complete
-Last activity: 2026-01-19 — Completed Phase 21-05: Loading States and Error Handling
+Last activity: 2026-01-19 — Completed Phase 23-02: Refocus Coach on Technique
 
-Progress: [████████████] 100%
+Progress: [██████████░] 89%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 49 (v1.0 + v1.1 + v2.0 phase 18-21)
+- Total plans completed: 52 (v1.0 + v1.1 + v2.0 phase 18-23)
 - Average duration: 9 min
-- Total execution time: 7.2 hours
+- Total execution time: 7.5 hours
 
 **By Phase:**
 
@@ -33,9 +33,11 @@ Progress: [████████████] 100%
 | 19 (Coach UI) | 8 | 19 min | 2 min |
 | 20 (LLM Integration) | 3 | 18 min | 6 min |
 | 21 (Chat Interface) | 5 | 33 min | 7 min |
+| 22 (OpenRouter Config) | 1 | 0 min | 0 min |
+| 23 (Refocus Coach) | 2 | 2 min | 1 min |
 
 **Recent Trend:**
-- Last 5 plans: 9 min
+- Last 5 plans: 4 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -108,6 +110,11 @@ Recent decisions affecting current work:
 - Phase 21-05: Added transition-all duration-200 for smooth UI changes
 - Phase 21-05: Added shadow-lg to message bubbles for depth
 - Phase 21-05: Used explicit boolean checks (isStreaming === true, length > 0) to satisfy ESLint
+- Phase 23-02: Refactored system prompt to technique-first coaching philosophy (strength failures = technique gaps)
+- Phase 23-02: Added specific strength-to-technique reframing for pumped, finger strength, core, power failures
+- Phase 23-02: Replaced strength terminology with technique drills (movement, positioning, efficiency, footwork, body positioning)
+- Phase 23-02: Added measurable_outcome field validation (min 10 chars) to drill schema for progress tracking
+- Phase 23-02: No schema migration needed - JSONB content storage supports field addition seamlessly
 
 ### Pending Todos
 
@@ -115,8 +122,8 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Supabase CLI authentication:** User must run `npx supabase login` and `npx supabase db push` to apply coach tables migration
-- **Edge Function deployment:** User must run `npx supabase functions deploy openrouter-chat` to deploy new Edge Function
+- **Edge Function deployment:** User must run `npx supabase functions deploy openrouter-coach` to deploy updated system prompt
+- **Existing cached recommendations:** Won't have measurable_outcome field until they regenerate
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
 
 ### Roadmap Evolution
@@ -127,5 +134,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 21-05: Loading States and Error Handling
+Stopped at: Completed Phase 23-02: Refocus Coach on Technique
 Resume file: None
