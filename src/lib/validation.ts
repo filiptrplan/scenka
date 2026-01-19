@@ -14,7 +14,7 @@ export const climbSchema = z.object({
       message: 'You must select a grade',
     })
     .pipe(z.string()),
-  hold_color: z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink']).optional(),
+  hold_color: z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink', 'teal']).optional(),
   style: z
     .array(
       z.enum([
@@ -83,8 +83,9 @@ export const profileSchema = z.object({
   preferred_grade_scale: z.enum(['font', 'v_scale', 'color_circuit']),
   preferred_discipline: z.enum(['boulder', 'sport']),
   home_gym: z.string().optional(),
-  enabled_hold_colors: z.array(z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink'])).default(DEFAULT_COLORS),
+  enabled_hold_colors: z.array(z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink', 'teal'])).default(DEFAULT_COLORS),
   close_logger_after_add: z.boolean().default(true),
+  climbing_context: z.string().max(2000).optional(),
 })
 
 export type UpdateProfileInput = z.infer<typeof profileSchema>

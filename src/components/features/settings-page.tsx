@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { Toggle } from '@/components/ui/toggle'
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile'
 import { profileSchema } from '@/lib/validation'
@@ -40,6 +41,7 @@ export function SettingsPage() {
       home_gym: profile?.home_gym ?? '',
       enabled_hold_colors: profile?.enabled_hold_colors ?? DEFAULT_COLORS,
       close_logger_after_add: profile?.close_logger_after_add ?? true,
+      climbing_context: profile?.climbing_context ?? '',
     },
   })
 
@@ -47,6 +49,7 @@ export function SettingsPage() {
   const discipline = watch('preferred_discipline')
   const enabledColors = watch('enabled_hold_colors')
   const closeAfterAdd = watch('close_logger_after_add')
+  const climbingContext = watch('climbing_context')
 
   useEffect(() => {
     if (profile) {
@@ -56,6 +59,7 @@ export function SettingsPage() {
         home_gym: profile.home_gym ?? '',
         enabled_hold_colors: profile.enabled_hold_colors ?? DEFAULT_COLORS,
         close_logger_after_add: profile.close_logger_after_add ?? true,
+        climbing_context: profile.climbing_context ?? '',
       })
     }
   }, [profile, reset])
@@ -156,6 +160,24 @@ export function SettingsPage() {
                 checked={closeAfterAdd ?? true}
                 onCheckedChange={(checked) => setValue('close_logger_after_add', checked)}
               />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <FormLabel>Describe Yourself as a Climber</FormLabel>
+            <Textarea
+              {...register('climbing_context')}
+              placeholder="e.g., Intermediate boulderer working V5-V6 projects. Weak on crimps and overhangs. Train 3x/week. Goal: send my first V7 this year."
+              className="min-h-[120px] bg-[#1a1a1a] border-white/10 text-white placeholder:text-white/30 hover:border-white/30 focus:border-white/50 transition-colors resize-none"
+              maxLength={2000}
+            />
+            <div className="flex justify-between">
+              <p className="text-xs text-[#666]">
+                Help the coach understand your goals, weaknesses, and climbing style. Avoid personal information.
+              </p>
+              <p className="text-xs text-[#666]">
+                {(climbingContext?.length ?? 0)} / 2000
+              </p>
             </div>
           </div>
         </FormSection>

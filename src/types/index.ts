@@ -62,6 +62,7 @@ export interface Database {
           onboarding_completed: boolean
           updated_at: string
           enabled_hold_colors: string[]
+          climbing_context: string | null
         }
         Insert: {
           id: string
@@ -71,6 +72,7 @@ export interface Database {
           onboarding_completed?: boolean
           updated_at?: string
           enabled_hold_colors?: string[]
+          climbing_context?: string | null
         }
         Update: {
           id?: string
@@ -80,6 +82,7 @@ export interface Database {
           onboarding_completed?: boolean
           updated_at?: string
           enabled_hold_colors?: string[]
+          climbing_context?: string | null
         }
       }
       coach_recommendations: {
@@ -221,7 +224,7 @@ export type MentalReason = 'Fear' | 'Commitment' | 'Focus'
 
 export type FailureReason = PhysicalReason | TechnicalReason | MentalReason
 
-export type HoldColor = 'red' | 'green' | 'blue' | 'yellow' | 'black' | 'white' | 'orange' | 'purple' | 'pink'
+export type HoldColor = 'red' | 'green' | 'blue' | 'yellow' | 'black' | 'white' | 'orange' | 'purple' | 'pink' | 'teal'
 
 // Pattern Analysis Types (for AI Coach)
 export interface FailurePatterns {
@@ -295,4 +298,5 @@ export interface Profile {
   updated_at: string
   enabled_hold_colors: HoldColor[]
   close_logger_after_add: boolean
+  climbing_context: string | null
 }
