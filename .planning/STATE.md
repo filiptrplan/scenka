@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 25 of 25 (User Climbing Context for Prompts)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-01-19 — Completed Phase 25-03: Coach Service Climbing Context Integration
+Plan: 4 of 4 in current phase
+Status: Phase complete
+Last activity: 2026-01-19 — Completed Phase 25-04: Climbing Context Integration for Edge Functions
 
-Progress: [██████████░] 97%
+Progress: [███████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 66 (v1.0 + v1.1 + v2.0 phase 18-25)
+- Total plans completed: 67 (v1.0 + v1.1 + v2.0 phase 18-25)
 - Average duration: 9 min
-- Total execution time: 9.1 hours
+- Total execution time: 9.2 hours
 
 **By Phase:**
 
@@ -36,7 +36,7 @@ Progress: [██████████░] 97%
 | 22 (OpenRouter Config) | 1 | 5 min | 5 min |
 | 23 (Refocus Coach) | 7 | 20 min | 3 min |
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
-| 25 (User Context) | 3 | 12 min | 4 min |
+| 25 (User Context) | 4 | 17 min | 4 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min
@@ -156,6 +156,9 @@ Recent decisions affecting current work:
 - Phase 25-02: Used nullish coalescing (??) instead of logical or (||) for character count to satisfy ESLint
 - Phase 25-03: Sequential profile fetch placed after pattern extraction to maintain existing execution pattern
 - Phase 25-03: Optional chaining (profile?.climbing_context) allows null/undefined for profiles without context
+- Phase 25-04: Optional context parameter pattern for backward compatibility (climbingContext?: string | null)
+- Phase 25-04: Null-coalescing for safety (profile?.climbing_context ?? null) to ensure proper null handling
+- Phase 25-04: Climbing context integrated into system prompt after User Profile section and before footer instruction
 
 ### Pending Todos
 
@@ -178,5 +181,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 25-03: Coach Service Climbing Context Integration
+Stopped at: Completed Phase 25-04: Climbing Context Integration for Edge Functions (Phase 25 complete)
 Resume file: None
