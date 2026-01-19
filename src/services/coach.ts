@@ -22,6 +22,13 @@ export interface GenerateRecommendationsInput {
   }
 }
 
+export interface ProjectingFocus {
+  focus_area: string
+  description: string
+  grade_guidance: string
+  rationale: string
+}
+
 export interface GenerateRecommendationsResponse {
   weekly_focus: string
   drills: Array<{
@@ -32,6 +39,7 @@ export interface GenerateRecommendationsResponse {
     rest: string
     measurable_outcome: string
   }>
+  projecting_focus: ProjectingFocus[]
 }
 
 export const coachKeys = {
