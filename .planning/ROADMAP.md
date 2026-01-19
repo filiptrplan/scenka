@@ -135,12 +135,12 @@ Plans:
 - [x] 21-05-PLAN.md — Loading states, error handling, and visual polish
 
 #### Phase 22: OpenRouter Model Configuration
-**Goal**: Allow configurable OpenRouter model selection via environment variables
+**Goal**: Configure OpenRouter model selection via environment variables and use OpenRouter's cost data for tracking
 **Depends on**: Phase 21
-**Plans**: 0 plans
+**Plans**: 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 22 to break down)
+- [ ] 22-01-PLAN.md — Configure OPENROUTER_MODEL env var and use OpenRouter's usage.cost
 
 #### Phase 23: Refocus Coach on Technique
 **Goal**: Review and modify coach to focus exclusively on technique and technique drills, not strength training
