@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+
 import { getAllGradeBuckets, getDifficultyBucket, normalizeGrade } from './grades'
 
 describe('normalizeGrade', () => {

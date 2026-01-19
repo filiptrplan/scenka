@@ -1,4 +1,5 @@
 import { z } from 'zod'
+
 import type { HoldColor } from '@/types'
 
 const DEFAULT_COLORS: HoldColor[] = ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink']

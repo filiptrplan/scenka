@@ -1,6 +1,6 @@
-import { offlineQueue } from '@/services/offlineQueue'
 import { supabase } from '@/lib/supabase'
 import type { CreateClimbInput } from '@/lib/validation'
+import { offlineQueue } from '@/services/offlineQueue'
 import type { Climb, TablesInsert, TablesUpdate } from '@/types'
 
 export const climbsKeys = {

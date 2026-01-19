@@ -224,7 +224,7 @@ export function ChartsPage() {
                     labelStyle={{ color: '#888', textTransform: 'uppercase' }}
                     cursor={{ fill: 'rgba(255,255,255,0.05)' }}
                     labelFormatter={(label, payload) => {
-                      if (payload && payload[0]) {
+                      if (payload?.[0]) {
                         const percentage = (payload[0].payload as any).percentage?.toFixed(0)
                         return `${label} (${percentage}% of total)`
                       }

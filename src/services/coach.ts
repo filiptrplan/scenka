@@ -134,7 +134,7 @@ export async function generateRecommendations(
     },
   })
 
-  let parsed_data = JSON.parse(data)
+  const parsed_data = JSON.parse(data)
 
   if (error) {
     // Track failed attempt

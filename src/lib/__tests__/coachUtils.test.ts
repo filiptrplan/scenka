@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest'
+
 import { anonymizeClimbsForAI, validateAnonymizedData } from '../coachUtils'
+
 import type { Climb } from '@/types'
 
 describe('coachUtils', () => {

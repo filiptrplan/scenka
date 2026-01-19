@@ -1,10 +1,11 @@
-import { offlineQueue } from '@/services/offlineQueue'
 import { supabase } from './supabase'
+
+import { offlineQueue } from '@/services/offlineQueue'
 
 export async function syncOfflineQueue(): Promise<void> {
   const mutations = offlineQueue.getAll()
 
-  if (mutations.length === 0) return
+  if (mutations.length === 0) {return}
 
   if (!supabase) {
     console.error('Supabase client not configured')

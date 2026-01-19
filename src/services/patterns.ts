@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabase'
 import { normalizeGrade } from '@/lib/grades'
+import { supabase } from '@/lib/supabase'
 import type { Climb, PatternAnalysis } from '@/types'
 
 export async function extractPatterns(userId: string): Promise<PatternAnalysis> {
@@ -189,7 +189,7 @@ function getDaysSpanned(start: string, end: string): number {
 }
 
 function calculateAvgPerSession(climbs: Climb[]): number {
-  if (climbs.length === 0) return 0
+  if (climbs.length === 0) {return 0}
 
   // Group climbs by day (approximate session)
   const sessions = new Map<string, number>()
