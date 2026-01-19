@@ -274,6 +274,13 @@ function validateResponse(content: string): object {
     if (drill.rest.trim().length === 0) {
       throw new Error(`Drill ${drillNum}: Field rest cannot be empty`)
     }
+
+    if (!drill.measurable_outcome || typeof drill.measurable_outcome !== 'string') {
+      throw new Error(`Drill ${drillNum}: Missing or invalid field: measurable_outcome`)
+    }
+    if (drill.measurable_outcome.trim().length < 10) {
+      throw new Error(`Drill ${drillNum}: Field measurable_outcome must be at least 10 characters`)
+    }
   })
 
   return parsed
