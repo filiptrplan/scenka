@@ -197,13 +197,13 @@ Add climbing_context TEXT column to profiles table (2000 char limit) with UI in 
 #### Phase 26: Update README with Milestone Work
 **Goal**: Update README.md with documentation of all AI coach features implemented in v2.0
 **Depends on**: Phase 25
-**Plans**: 0 plans
+**Plans**: 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 26 to break down)
+- [ ] 26-01-PLAN.md — Add AI Coach section, upgrade instructions, and technical details
 
 **Details**:
-Update README.md to document the new AI Coach features including coach recommendations, pattern analysis, chat interface, projecting focus, and climbing context configuration. Include screenshots, setup instructions, and usage examples.
+Update README.md to document the new AI Coach features including coach recommendations, pattern analysis, chat interface, projecting focus, and climbing context configuration. Include screenshots, setup instructions, privacy safeguards, and usage examples.
 
 ## Progress
 
@@ -241,4 +241,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 �
 | 23. Refocus Coach on Technique | v2.0 | 7/7 | Complete | 2026-01-19 |
 | 24. Projecting Focus Recommendations | v2.0 | 3/3 | Complete | 2026-01-19 |
 | 25. User Climbing Context for Prompts | v2.0 | 4/4 | Complete | 2026-01-19 |
-| 26. Update README with Milestone Work | v2.0 | 0/0 | Pending | |
+| 26. Update README with Milestone Work | v2.0 | 0/1 | Pending | |
