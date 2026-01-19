@@ -87,7 +87,6 @@ export interface Database {
           id: string
           user_id: string
           created_at: string
-          generation_date: string
           content: Json
           is_cached: boolean
           error_message: string | null
@@ -96,7 +95,6 @@ export interface Database {
           id?: string
           user_id: string
           created_at?: string
-          generation_date?: string
           content?: Json
           is_cached?: boolean
           error_message?: string | null
@@ -105,7 +103,6 @@ export interface Database {
           id?: string
           user_id?: string
           created_at?: string
-          generation_date?: string
           content?: Json
           is_cached?: boolean
           error_message?: string | null

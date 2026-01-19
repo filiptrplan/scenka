@@ -147,7 +147,7 @@ export function CoachPage() {
             {/* Generation Date - Subtle indicator above Weekly Focus */}
             <div className="text-center text-xs text-[#666] font-mono uppercase tracking-wide">
               Generated{' '}
-              {formatDistanceToNow(new Date(recommendations.generation_date), {
+              {formatDistanceToNow(new Date(recommendations.created_at), {
                 addSuffix: true,
               })}{' '}
               (at {format(new Date(recommendations.created_at), 'HH:mm')})
@@ -234,7 +234,7 @@ export function CoachPage() {
             <div className="text-center pt-4">
               <FormLabel>
                 Last updated:{' '}
-                {formatDistanceToNow(new Date(recommendations.generation_date), {
+                {formatDistanceToNow(new Date(recommendations.created_at), {
                   addSuffix: true,
                 })}
               </FormLabel>

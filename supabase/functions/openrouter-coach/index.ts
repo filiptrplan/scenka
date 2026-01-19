@@ -127,7 +127,7 @@ async function getExistingRecommendations(userId: string): Promise<any | null> {
     .from('coach_recommendations')
     .select('*')
     .eq('user_id', userId)
-    .order('generation_date', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(1)
     .single()
 
@@ -416,13 +416,11 @@ Deno.serve(async (req: Request) => {
         const validated = validateResponse(lastContent)
 
         // Success - store recommendations and track API usage
-        const generationDate = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
         const costUsd = lastUsage.cost || 0
 
         // Store validated recommendations
         const { error: insertError } = await supabase.from('coach_recommendations').insert({
           user_id: userId,
-          generation_date: generationDate,
           content: validated,
           is_cached: false,
           error_message: null,
@@ -507,7 +505,7 @@ Deno.serve(async (req: Request) => {
                 success: true,
                 content: cachedRecommendations.content,
                 is_cached: true,
-                warning: `Unable to generate new recommendations. Showing previous recommendations from ${new Date(cachedRecommendations.generation_date).toLocaleDateString()}.`,
+                warning: `Unable to generate new recommendations. Showing previous recommendations from ${new Date(cachedRecommendations.created_at).toLocaleDateString()}.`,
               }),
               {
                 headers: corsHeaders,
@@ -520,7 +518,6 @@ Deno.serve(async (req: Request) => {
             .from('coach_recommendations')
             .insert({
               user_id: userId,
-              generation_date: new Date().toISOString().split('T')[0],
               content: {},
               is_cached: false,
               error_message: `Failed to generate valid recommendations: ${lastError?.message}`,

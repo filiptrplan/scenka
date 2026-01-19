@@ -3,7 +3,6 @@ CREATE TABLE public.coach_recommendations (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  generation_date DATE NOT NULL DEFAULT CURRENT_DATE,
   content jsonb NOT NULL DEFAULT '{}'::jsonb,
   is_cached BOOLEAN NOT NULL DEFAULT false,
   error_message TEXT
@@ -28,8 +27,6 @@ CREATE POLICY "Users can update own recommendations"
 
 -- Indexes for recommendations
 CREATE INDEX coach_recommendations_user_id_idx ON public.coach_recommendations(user_id);
-CREATE INDEX coach_recommendations_generation_date_idx ON public.coach_recommendations(generation_date DESC);
-CREATE INDEX coach_recommendations_user_date_idx ON public.coach_recommendations(user_id, generation_date DESC);
 CREATE INDEX coach_recommendations_content_idx ON public.coach_recommendations USING GIN (content jsonb_path_ops);
 
 -- Create coach_messages table
