@@ -1,9 +1,10 @@
-import { MessageCircle, RefreshCw } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 import { formatDistanceToNow } from 'date-fns'
+import { MessageCircle, RefreshCw } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { FormLabel } from '@/components/ui/form-label'
 import { FormSection } from '@/components/ui/form-section'
@@ -15,7 +16,6 @@ import {
   usePatternAnalysis,
 } from '@/hooks/useCoach'
 import { useProfile } from '@/hooks/useProfile'
-import { Badge } from '@/components/ui/badge'
 
 export function CoachPage() {
   const navigate = useNavigate()
@@ -367,6 +367,18 @@ export function CoachPage() {
                 No climbing data available for pattern analysis
               </div>
             )}
+
+            {/* Action Buttons */}
+            <div className="flex flex-col gap-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/coach/chat')}
+                className="w-full h-12 border-white/20 hover:border-white/40 bg-white/[0.02] text-white font-black uppercase tracking-wider"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Ask Coach a Question
+              </Button>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
