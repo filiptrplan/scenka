@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 23: Refocus Coach on Technique
+**Current focus:** Phase 22: OpenRouter Model Configuration
 
 ## Current Position
 
-Phase: 23 of 23 (Refocus Coach on Technique)
-Plan: 7 of 7 in current phase
-Status: Phase verified — complete
-Last activity: 2026-01-19 — Verified Phase 23 goal achievement (8/8 must-haves passed)
+Phase: 22 of 23 (OpenRouter Model Configuration)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-01-19 — Completed Phase 22-01: OpenRouter Model Configuration
 
-Progress: [███████████] 100%
+Progress: [██████████░] 96%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 56 (v1.0 + v1.1 + v2.0 phase 18-23)
+- Total plans completed: 57 (v1.0 + v1.1 + v2.0 phase 18-23)
 - Average duration: 9 min
-- Total execution time: 7.8 hours
+- Total execution time: 7.9 hours
 
 **By Phase:**
 
@@ -33,11 +33,11 @@ Progress: [███████████] 100%
 | 19 (Coach UI) | 8 | 19 min | 2 min |
 | 20 (LLM Integration) | 3 | 18 min | 6 min |
 | 21 (Chat Interface) | 5 | 33 min | 7 min |
-| 22 (OpenRouter Config) | 1 | 0 min | 0 min |
+| 22 (OpenRouter Config) | 1 | 5 min | 5 min |
 | 23 (Refocus Coach) | 7 | 20 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min
+- Last 5 plans: 5 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -132,6 +132,10 @@ Recent decisions affecting current work:
 - Phase 23-07: Added measurable_outcome field to example output (was missing in old example)
 - Phase 23-07: Changed weekly_focus from strength to technique emphasis (footwork and body positioning)
 - Phase 23-07: Replaced hangboard protocol drill with silent feet drill for movement pattern training
+- Phase 22-01: Used OPENROUTER_MODEL env var for both chat and coach Edge Functions (single shared configuration)
+- Phase 22-01: Removed calculateCost() functions in favor of OpenRouter's provided usage.cost field
+- Phase 22-01: Track usage data in openrouter-chat after streaming completes (not during)
+- Phase 22-01: Keep calculateCost in client service for backward compatibility (unused but prevents breakage)
 
 ### Pending Todos
 
@@ -139,8 +143,8 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Edge Function deployment:** User must run `npx supabase functions deploy openrouter-coach` to deploy updated system prompt
-- **Existing cached recommendations:** Won't have measurable_outcome field until they regenerate
+- **Edge Function deployment:** User must run `supabase functions deploy openrouter-chat` and `supabase functions deploy openrouter-coach` to deploy updated model configuration
+- **OPENROUTER_MODEL required:** User must set OPENROUTER_MODEL environment variable via `supabase secrets set OPENROUTER_MODEL=google/gemini-2.5-pro` (documented in 22-01 SUMMARY)
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
 
 ### Roadmap Evolution
@@ -151,5 +155,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 23-07: Technique-Focused Example Output
+Stopped at: Completed Phase 22-01: OpenRouter Model Configuration
 Resume file: None
