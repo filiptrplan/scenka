@@ -29,6 +29,7 @@ const openai = new OpenAI({
 interface RequestBody {
   message: string
   patterns_data?: Record<string, unknown>
+  climbing_context?: string | null
 }
 
 interface Message {
@@ -156,7 +157,7 @@ Deno.serve(async (req: Request) => {
 
     // Build messages array for LLM
     const messages = [
-      { role: 'system' as const, content: getChatSystemPrompt(body.patterns_data) },
+      { role: 'system' as const, content: getChatSystemPrompt(body.patterns_data, body.climbing_context) },
       ...messageHistory.map((msg) => ({
         role: msg.role as 'user' | 'assistant',
         content: msg.content,
