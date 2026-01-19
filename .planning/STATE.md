@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 27 of 27 (Impose Daily Limit on Usage)
-Plan: 4 of 6 in current phase
+Plan: 5 of 6 in current phase
 Status: In progress
-Last activity: 2026-01-19 - Completed Phase 27-04: Client-side Usage Limits Hooks
+Last activity: 2026-01-19 - Completed Phase 27-05: Coach Page Recommendation Usage Counter
 
-Progress: [████░░░░░░] 67%
+Progress: [█████░░░░░] 83%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 72 (v1.0 + v1.1 + v2.0 phase 18-27)
+- Total plans completed: 73 (v1.0 + v1.1 + v2.0 phase 18-27)
 - Average duration: 9 min
-- Total execution time: 9.6 hours
+- Total execution time: 9.7 hours
 
 **By Phase:**
 
@@ -38,7 +38,7 @@ Progress: [████░░░░░░] 67%
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
 | 25 (User Context) | 4 | 17 min | 4 min |
 | 26 (README Update) | 1 | 2 min | 2 min |
-| 27 (Daily Limit) | 4 (of 6) | 7 min | 2 min |
+| 27 (Daily Limit) | 5 (of 6) | 9 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: 2 min
@@ -180,6 +180,11 @@ Recent decisions affecting current work:
 - Phase 27-04: 30-second gcTime provides performance benefit for rapid successive fetches
 - Phase 27-04: maybeSingle() handles users without limits row gracefully (returns null instead of error)
 - Phase 27-04: Invalidation in useCreateCoachMessage ensures counter refreshes after every chat message
+- Phase 27-05: Simple text counter display ("1/2 used today") instead of progress bar as specified in CONTEXT.md
+- Phase 27-05: Inline error message used instead of tooltip because shadcn/ui Tooltip doesn't work on disabled elements
+- Phase 27-05: Counter refresh via query invalidation pattern (staleTime: 0 + invalidation on success) ensures fresh data
+- Phase 27-05: Button disabled state uses `isRecAtLimit` alongside existing `isPending` check
+- Phase 27-05: Same counter and error pattern applied to both Generate (empty state) and Regenerate (existing state) buttons
 
 ### Pending Todos
 
@@ -206,5 +211,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 27-04: Client-side Usage Limits Hooks
+Stopped at: Completed Phase 27-05: Coach Page Recommendation Usage Counter
 Resume file: None
