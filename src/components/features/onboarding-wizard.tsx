@@ -4,19 +4,20 @@ import { useForm } from 'react-hook-form'
 
 import { DisciplineStep } from './onboarding/discipline-step'
 import { GradeScaleStep } from './onboarding/grade-scale-step'
+import { HoldColorStep } from './onboarding/hold-color-step'
 import { HomeGymStep } from './onboarding/home-gym-step'
 import { ProgressIndicator } from './onboarding/progress-indicator'
 
 import { Button } from '@/components/ui/button'
 import { useUpdateProfile } from '@/hooks/useProfile'
-import { onboardingSchema, type OnboardingInput } from '@/lib/validation'
+import { DEFAULT_COLORS, onboardingSchema, type OnboardingInput } from '@/lib/validation'
 
 interface OnboardingWizardProps {
   onComplete: () => void
 }
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1)
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1)
   const updateProfile = useUpdateProfile()
 
   const form = useForm<OnboardingInput>({
@@ -25,6 +26,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       preferred_grade_scale: 'font',
       preferred_discipline: 'boulder',
       home_gym: '',
+      enabled_hold_colors: DEFAULT_COLORS,
     },
     mode: 'onChange',
   })
@@ -33,19 +35,21 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     { id: 1, title: 'Grade Scale', component: GradeScaleStep },
     { id: 2, title: 'Discipline', component: DisciplineStep },
     { id: 3, title: 'Home Gym', component: HomeGymStep },
+    { id: 4, title: 'Hold Colors', component: HoldColorStep },
   ]
 
   const stepFields = {
     1: ['preferred_grade_scale'],
     2: ['preferred_discipline'],
     3: ['home_gym'],
+    4: ['enabled_hold_colors'],
   } as const
 
   const handleNext = async () => {
     const isValid = await form.trigger(stepFields[currentStep])
     if (isValid) {
-      if (currentStep < 3) {
-        setCurrentStep((currentStep + 1) as 1 | 2 | 3)
+      if (currentStep < 4) {
+        setCurrentStep((currentStep + 1) as 1 | 2 | 3 | 4)
       } else {
         handleSubmit(form.getValues())
       }
@@ -54,7 +58,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep((currentStep - 1) as 1 | 2 | 3)
+      setCurrentStep((currentStep - 1) as 1 | 2 | 3 | 4)
     }
   }
 
@@ -86,7 +90,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           <h1 className="text-4xl font-black tracking-tighter uppercase text-center text-white">
             Welcome to Scenka
           </h1>
-          <ProgressIndicator currentStep={currentStep} totalSteps={3} />
+          <ProgressIndicator currentStep={currentStep} totalSteps={4} />
         </div>
 
         {/* Step Content */}
@@ -114,7 +118,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           >
             {updateProfile.isPending
               ? 'Saving...'
-              : currentStep === 3
+              : currentStep === 4
                 ? 'Complete Setup'
                 : 'Continue'}
           </Button>

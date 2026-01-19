@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import type { HoldColor } from '@/types'
 
-const DEFAULT_COLORS: HoldColor[] = ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink']
+export const DEFAULT_COLORS: HoldColor[] = ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink']
 
 export const climbSchema = z.object({
   location: z.string().min(1, 'Location is required'),
@@ -94,6 +94,9 @@ export const onboardingSchema = z.object({
   preferred_grade_scale: z.enum(['font', 'v_scale', 'color_circuit']),
   preferred_discipline: z.enum(['boulder', 'sport']),
   home_gym: z.string().min(1, 'Please enter your home gym name'),
+  enabled_hold_colors: z
+    .array(z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink', 'teal']))
+    .min(1, 'Select at least one color'),
 })
 
 export type OnboardingInput = z.infer<typeof onboardingSchema>
