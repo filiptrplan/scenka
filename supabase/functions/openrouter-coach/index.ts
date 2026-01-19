@@ -63,6 +63,19 @@ interface UserPreferences {
   preferred_grade_scale: string
 }
 
+interface AnonymizedClimb {
+  location: string
+  grade_scale: string
+  grade_value: string
+  climb_type: string
+  style: string[]
+  outcome: string
+  awkwardness: number
+  failure_reasons: string[]
+  notes?: string | null
+  date: string
+}
+
 interface FailurePattern {
   reason: string
   count: number
