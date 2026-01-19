@@ -148,8 +148,8 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 23-01-PLAN.md — Update AnonymizedClimb type with notes and date
-- [ ] 23-02-PLAN.md — Refocus system prompt on technique and add measurable_outcome
+- [x] 23-01-PLAN.md — Update AnonymizedClimb type with notes and date
+- [x] 23-02-PLAN.md — Refocus system prompt on technique and add measurable_outcome
 - [ ] 23-03-PLAN.md — Add extractRecentClimbs function to patterns.ts
 - [ ] 23-04-PLAN.md — Update client service to include recent climbs in request
 - [ ] 23-05-PLAN.md — Update Edge Function to process and include recent climbs
@@ -186,5 +186,5 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23
 | 19. Coach Page + UI | v2.0 | 6/6 | Complete | 2026-01-17 |
 | 20. LLM Integration | v2.0 | 3/3 | Complete | 2026-01-18 |
 | 21. Chat Interface | v2.0 | 5/5 | Complete | 2026-01-19 |
-| 22. OpenRouter Model Config | v2.0 | 0/0 | Not started | - |
-| 23. Refocus Coach on Technique | v2.0 | 0/5 | Not started | - |
+| 22. OpenRouter Model Config | v2.0 | 1/1 | Complete | 2026-01-19 |
+| 23. Refocus Coach on Technique | v2.0 | 2/5 | In progress | 2026-01-19 |
