@@ -279,6 +279,8 @@ export interface AnonymizedClimb {
   outcome: string
   awkwardness: number
   failure_reasons: FailureReason[]
+  notes?: string | null
+  date: string
 }
 
 export type Climb = TablesRow<'climbs'> & {
