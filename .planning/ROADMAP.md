@@ -138,9 +138,10 @@ Plans:
 **Goal**: Configure OpenRouter model selection via environment variables and use OpenRouter's cost data for tracking
 **Depends on**: Phase 21
 **Plans**: 1 plan
+**Status**: Complete — verified 2026-01-19
 
 Plans:
-- [ ] 22-01-PLAN.md — Configure OPENROUTER_MODEL env var and use OpenRouter's usage.cost
+- [x] 22-01-PLAN.md — Configure OPENROUTER_MODEL env var and use OpenRouter's usage.cost
 
 #### Phase 23: Refocus Coach on Technique
 **Goal**: Review and modify coach to focus exclusively on technique and technique drills, not strength training
