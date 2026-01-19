@@ -49,7 +49,7 @@ export async function getLatestRecommendations(userId: string) {
     .from('coach_recommendations')
     .select('*')
     .eq('user_id', userId)
-    .order('generation_date', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(1)
     .single()
 
