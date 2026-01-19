@@ -144,7 +144,7 @@ async function getExistingRecommendations(userId: string): Promise<any | null> {
 }
 
 // Build user prompt from patterns and preferences
-function buildUserPrompt(patterns: PatternAnalysis, preferences: UserPreferences): string {
+function buildUserPrompt(patterns: PatternAnalysis, preferences: UserPreferences, recentClimbs?: AnonymizedClimb[]): string {
   const { failure_patterns, style_weaknesses, climbing_frequency, recent_successes } = patterns
 
   let prompt = `User Profile:
