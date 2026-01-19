@@ -86,12 +86,6 @@ To enable AI Coach features, set up OpenRouter and deploy Edge Functions:
 
 _[Capture from: Navigate to Coach tab, showing Recommendations tab with Weekly Focus, Training Drills, Projecting Focus sections, and Pattern Analysis tab with failure patterns, style weaknesses, and climbing frequency]_
 
-<!-- TODO: Capture screenshot from app -->
-
-![Screenshot: Chat interface with streaming conversation about climbing technique](./docs/screenshots/chat-page.png)
-
-_[Capture from: Click "Ask Coach a Question" from coach page, showing chat interface with user/assistant message bubbles, streaming indicator, and text input]_
-
 ## Tech Stack
 
 - **React 18** + **TypeScript** + **Vite** — Fast, type-safe frontend ⚛️
@@ -135,31 +129,17 @@ pnpm preview
 
 ![Screenshot: Logger form with grade picker, outcome selection, and multi-select style tags](./docs/screenshots/logger-form.png)
 
-_[Capture from: Open the logger by clicking the + button, showing all form fields including grade scale, grade value, outcome (Sent/Fail), awkwardness slider, style tags multi-select, and failure reasons multi-select]_
-
 <!-- TODO: Capture screenshot from app -->
 
 ![Screenshot: Analytics dashboard showing failure breakdown by category](./docs/screenshots/analytics-dashboard.png)
-
-_[Capture from: Navigate to Analytics tab, showing charts for failure reasons breakdown, grade distribution, and weekly activity]_
 
 <!-- TODO: Capture screenshot from app -->
 
 ![Screenshot: Settings page with hold color preferences and grade scale selection](./docs/screenshots/settings-page.png)
 
-_[Capture from: Navigate to Settings, showing enabled hold colors section with toggle switches, grade scale dropdown, and other user preferences]_
-
 <!-- TODO: Capture screenshot from app -->
 
 ![Screenshot: Climb history view with list of logged climbs and details](./docs/screenshots/climb-history.png)
-
-_[Capture from: Main view showing list of logged climbs with grade, outcome, awkwardness, tags, and hold color indicators]_
-
-<!-- TODO: Capture screenshot from app -->
-
-![Screenshot: Mobile view showing PWA experience on phone](./docs/screenshots/mobile-view.png)
-
-_[Capture from: View on mobile device or browser DevTools mobile simulation, showing responsive layout and PWA full-screen experience]_
 
 ## Development Notes
 
