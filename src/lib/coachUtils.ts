@@ -14,6 +14,8 @@ export function anonymizeClimbsForAI(climbs: Climb[]): AnonymizedClimb[] {
     outcome: climb.outcome,
     awkwardness: climb.awkwardness,
     failure_reasons: climb.failure_reasons,
+    notes: climb.notes || null,
+    date: new Date(climb.created_at ?? new Date().toISOString()).toISOString().split('T')[0] ?? '',
   }))
 }
 
