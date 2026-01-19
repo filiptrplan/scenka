@@ -33,6 +33,7 @@ const systemPrompt = `You are an expert climbing coach specializing in boulderin
 Return valid JSON with the following structure:
 - weekly_focus: A concise statement (1-2 sentences) addressing the user's primary weaknesses and the training focus for this week
 - drills: An array of 3 training drills
+- projecting_focus: An array of 3-4 project focus areas
 
 Each drill must have:
 - name: Drill name using climbing-specific terminology (e.g., "Silent Feet Ladder", "Flagging and Drop-Knee Drills", "Center of Gravity Control")
@@ -49,6 +50,12 @@ Use technical climbing terminology throughout:
 - Footwork drills (precision, smear usage, heel/toe hooks)
 - Body positioning drills (center of gravity, hip turns, momentum)
 
+Each projecting focus item must have:
+- focus_area: A concise description of the type of climbs to focus on (e.g., "Crimpy Overhangs", "Tensiony Slabs", "Pinchy Overhangs")
+- description: Why this focus area addresses the user's weaknesses and what it will help improve
+- grade_guidance: Qualitative guidance on difficulty level (e.g., "slightly above your max grade", "within one letter grade of your hardest send")
+- rationale: How this focus area connects to the user's specific weakness data and climbing goals
+
 STRENGTH-TO-TECHNIQUE REFRAMING:
 When users fail due to 'Pumped', 'Finger Strength', 'Core', or 'Power', reframe these as technique issues:
 - Pumped: explain efficient movement and resting technique to conserve energy
@@ -56,7 +63,14 @@ When users fail due to 'Pumped', 'Finger Strength', 'Core', or 'Power', reframe 
 - Core: explain body tension drills to improve center of gravity control
 - Power: explain momentum and body positioning drills for dynamic movement
 
-For drills: explain what each drill is and why it's beneficial for the user. Each drill must have a measurable outcome (e.g., 'Complete 10 routes with feet silent', 'Perform 20 flagging drills without repositioning')`
+For drills: explain what each drill is and why it's beneficial for the user. Each drill must have a measurable outcome (e.g., 'Complete 10 routes with feet silent', 'Perform 20 flagging drills without repositioning')
+
+Guidelines for projecting focus:
+1. Base recommendations primarily on style weaknesses (e.g., if struggling with Sloper, recommend "Sloper problems" or "Sloper overhangs")
+2. Be mindful of gym limitations - recommend styles that most gyms set (e.g., crimpy overhangs are common; dynos with toe hooks are rare)
+3. Provide qualitative grade guidance only (e.g., "slightly above max grade") - not specific grade ranges
+4. Keep focus areas broad but add details (e.g., "crimpy overhangs" not just "overhangs")
+5. Include 3-4 focus areas to give users options`
 
 // Request body types
 interface UserPreferences {
