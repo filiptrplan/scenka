@@ -391,7 +391,7 @@ Deno.serve(async (req: Request) => {
     const cachedRecommendations = await getExistingRecommendations(userId)
 
     // Build prompts
-    const userPrompt = buildUserPrompt(body.patterns_data, body.user_preferences)
+    const userPrompt = buildUserPrompt(body.patterns_data, body.user_preferences, body.recent_climbs)
 
     // Retry loop for API call with validation
     let lastError: Error | null = null
