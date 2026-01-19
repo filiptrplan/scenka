@@ -177,6 +177,7 @@ interface RequestBody {
   patterns_data: PatternAnalysis
   user_preferences: UserPreferences
   recent_climbs?: AnonymizedClimb[]
+  climbing_context?: string | null
 }
 
 // Helper function to fetch existing recommendations for fallback
@@ -206,15 +207,22 @@ async function getExistingRecommendations(userId: string): Promise<any | null> {
 function buildUserPrompt(
   patterns: PatternAnalysis,
   preferences: UserPreferences,
-  recentClimbs?: AnonymizedClimb[]
+  recentClimbs?: AnonymizedClimb[],
+  climbingContext?: string | null
 ): string {
   const { failure_patterns, style_weaknesses, climbing_frequency, recent_successes } = patterns
 
   let prompt = `User Profile:
 - Preferred discipline: ${preferences.preferred_discipline}
 - Preferred grade scale: ${preferences.preferred_grade_scale}
-
 `
+
+  // Add climbing context if provided
+  if (climbingContext && climbingContext.trim().length > 0) {
+    prompt += `\nUser's Climbing Context:\n${climbingContext.trim()}\n`
+  }
+
+  prompt += `\n`
 
   // Add failure patterns
   prompt += `Failure Patterns:
@@ -501,7 +509,8 @@ Deno.serve(async (req: Request) => {
     const userPrompt = buildUserPrompt(
       body.patterns_data,
       body.user_preferences,
-      body.recent_climbs
+      body.recent_climbs,
+      body.climbing_context
     )
 
     // Retry loop for API call with validation
