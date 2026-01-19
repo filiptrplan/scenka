@@ -13,6 +13,8 @@ export interface UseStreamingChatReturn {
   cleanup: () => void
 }
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+
 export function useStreamingChat(): UseStreamingChatReturn {
   const [streamingResponse, setStreamingResponse] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
@@ -74,7 +76,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
         let fullResponse = ''
 
         // Connect to SSE endpoint
-        await fetchEventSource('/functions/v1/openrouter-chat', {
+        await fetchEventSource(supabaseUrl + '/functions/v1/openrouter-chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -142,7 +144,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
         console.error('Message send error:', e)
       }
     },
-    [isStreaming, createMessage],
+    [isStreaming, createMessage]
   )
 
   // Cleanup on unmount
