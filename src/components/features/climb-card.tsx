@@ -20,6 +20,7 @@ const HOLD_COLOR_MAP: Record<HoldColor, string> = {
   orange: '#f97316',
   purple: '#a855f7',
   pink: '#ec4899',
+  teal: '#14b8a6',
 }
 
 interface ClimbCardProps {
@@ -61,16 +62,14 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
   return (
     <FormSection className="group">
       <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex items-center gap-3">
           <div className="flex flex-col">
             <div className="mb-1">
               <FormLabel>{dateLabel}</FormLabel>
             </div>
             <div className="flex items-center gap-1">
-              <FormLabel>
-                <MapPin className="h-3 w-3" />
-                {climb.location}
-              </FormLabel>
+              <MapPin className="h-3 w-3" />
+              <FormLabel>{climb.location}</FormLabel>
             </div>
             {climb.hold_color !== null && climb.hold_color !== undefined && (
               <div className="flex items-center gap-2 mt-1">
@@ -103,7 +102,7 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
         </div>
       </div>
 
-      <div className="flex items-center gap-3 pt-2 mb-4">
+      <div className="flex items-center gap-3 mb-4">
         <div className="flex items-center gap-2">
           <span className="text-sm font-mono text-[#666]">
             {gradeScaleLabels[climb.grade_scale]}
@@ -144,10 +143,7 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
 
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <FormLabel>
-            <Flame className="h-4 w-4" />
-            Awkwardness: {climb.awkwardness}/5
-          </FormLabel>
+          <FormLabel>Awkwardness: {climb.awkwardness}/5</FormLabel>
         </div>
       </div>
 

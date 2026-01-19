@@ -19,9 +19,10 @@ export function ColorSettings({ value, onChange }: ColorSettingsProps) {
     orange: '#f97316',
     purple: '#a855f7',
     pink: '#ec4899',
+    teal: '#14b8a6',
   }
 
-  const ALL_COLORS: HoldColor[] = ['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink']
+  const ALL_COLORS: HoldColor[] = ['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink', 'teal']
 
   const toggleColor = (color: HoldColor) => {
     const updated = value.includes(color) ? value.filter((c) => c !== color) : [...value, color]
