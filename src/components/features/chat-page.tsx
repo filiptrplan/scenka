@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { usePatternAnalysis } from '@/hooks/useCoach'
 import { useCoachMessages } from '@/hooks/useCoachMessages'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
+import { getProfile } from '@/services/profiles'
 
 interface MessageBubbleProps {
   message: {
@@ -83,12 +84,18 @@ function LoadingSkeleton() {
 export function ChatPage() {
   const [inputValue, setInputValue] = useState('')
   const [lastMessage, setLastMessage] = useState<string>('')
+  const [profile, setProfile] = useState<{ climbing_context: string | null } | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const { data: messages, isLoading } = useCoachMessages()
   const { data: patterns } = usePatternAnalysis()
   const { sendMessage, streamingResponse, isStreaming, error, cleanup, setError } = useStreamingChat()
+
+  // Fetch profile on mount
+  useEffect(() => {
+    void getProfile().then(setProfile)
+  }, [])
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -117,7 +124,7 @@ export function ChatPage() {
     const message = inputValue.trim()
     setLastMessage(message)
     setInputValue('')
-    await sendMessage(message, patterns)
+    await sendMessage(message, patterns, profile?.climbing_context ?? null)
   }
 
   const handleRetry = async () => {
@@ -125,7 +132,7 @@ export function ChatPage() {
       return
     }
     setError(null)
-    await sendMessage(lastMessage, patterns)
+    await sendMessage(lastMessage, patterns, profile?.climbing_context ?? null)
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {

@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useCreateCoachMessage } from '@/hooks/useCoachMessages'
 
 export interface UseStreamingChatReturn {
-  sendMessage: (message: string, patterns?: unknown) => Promise<void>
+  sendMessage: (message: string, patterns?: unknown, climbingContext?: string | null) => Promise<void>
   streamingResponse: string
   isStreaming: boolean
   error: string | null
@@ -31,7 +31,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
   }, [])
 
   const sendMessage = useCallback(
-    async (message: string, patterns: unknown = null) => {
+    async (message: string, patterns: unknown = null, climbingContext: string | null = null) => {
       if (!message.trim()) {
         setError('Message cannot be empty')
         return
@@ -85,6 +85,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
           body: JSON.stringify({
             message,
             patterns_data: patterns,
+            climbing_context: climbingContext,
           }),
           signal: abortController.signal,
 
