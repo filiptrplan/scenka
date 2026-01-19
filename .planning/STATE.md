@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 21 of 21 (Chat Interface)
-Plan: 3 of 5 in current phase
-Status: In progress
-Last activity: 2026-01-19 — Completed Phase 21-03: Chat Interface Component
+Plan: 5 of 5 in current phase
+Status: Phase complete
+Last activity: 2026-01-19 — Completed Phase 21-05: Loading States and Error Handling
 
-Progress: [█████░░░░░░░░] 50%
+Progress: [████████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 47 (v1.0 + v1.1 + v2.0 phase 18-21)
+- Total plans completed: 49 (v1.0 + v1.1 + v2.0 phase 18-21)
 - Average duration: 9 min
-- Total execution time: 7.0 hours
+- Total execution time: 7.2 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [█████░░░░░░░░] 50%
 | 18 (AI Coach) | 6 | 40 min | 7 min |
 | 19 (Coach UI) | 8 | 19 min | 2 min |
 | 20 (LLM Integration) | 3 | 18 min | 6 min |
-| 21 (Chat Interface) | 3 | 26 min | 9 min |
+| 21 (Chat Interface) | 5 | 33 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 10 min
+- Last 5 plans: 9 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -100,6 +100,14 @@ Recent decisions affecting current work:
 - Phase 21-03: Mobile auto-focus on textarea mount to reduce friction on mobile devices
 - Phase 21-03: Auto-scroll behavior triggered on both messages and streamingResponse changes
 - Phase 21-03: Empty message state displays friendly prompt rather than blank screen
+- Phase 21-05: Used skeleton UI with pulsing animation for loading state instead of simple text
+- Phase 21-05: Added Brain icon to empty state and typing indicator for visual consistency
+- Phase 21-05: Exported setError from useStreamingChat hook to allow manual error clearing for retry
+- Phase 21-05: Added lastMessage state to track the most recent sent message for retry
+- Phase 21-05: Used opacity-50 and cursor-not-allowed for disabled visual feedback
+- Phase 21-05: Added transition-all duration-200 for smooth UI changes
+- Phase 21-05: Added shadow-lg to message bubbles for depth
+- Phase 21-05: Used explicit boolean checks (isStreaming === true, length > 0) to satisfy ESLint
 
 ### Pending Todos
 
@@ -119,5 +127,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 21-03: Chat Interface Component
+Stopped at: Completed Phase 21-05: Loading States and Error Handling
 Resume file: None
