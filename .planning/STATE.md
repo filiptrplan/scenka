@@ -12,14 +12,14 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 Phase: 23 of 23 (Refocus Coach on Technique)
 Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-19 — Completed Phase 23-05: Edge Function Recent Climbs Integration
+Last activity: 2026-01-19 — Completed Phase 23-04: Include Recent Climbs in Edge Function Request
 
-Progress: [██████████░] 92%
+Progress: [██████████░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 55 (v1.0 + v1.1 + v2.0 phase 18-23)
+- Total plans completed: 54 (v1.0 + v1.1 + v2.0 phase 18-23)
 - Average duration: 9 min
 - Total execution time: 7.6 hours
 
@@ -34,7 +34,7 @@ Progress: [██████████░] 92%
 | 20 (LLM Integration) | 3 | 18 min | 6 min |
 | 21 (Chat Interface) | 5 | 33 min | 7 min |
 | 22 (OpenRouter Config) | 1 | 0 min | 0 min |
-| 23 (Refocus Coach) | 4 | 11 min | 3 min |
+| 23 (Refocus Coach) | 4 | 14 min | 4 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min
@@ -120,6 +120,10 @@ Recent decisions affecting current work:
 - Phase 23-03: Added extractRecentClimbs function to fetch last 30 climbs for LLM context (30 limit balances context with token usage)
 - Phase 23-03: Reuses existing anonymization utility from Phase 18-04 for privacy protection
 - Phase 23-03: Returns empty array for no climbs (graceful degradation pattern)
+- Phase 23-04: Fetch recent climbs after pattern extraction in generateRecommendations (sequential execution maintains existing pattern extraction logic)
+- Phase 23-04: Include recent_climbs in Edge Function request body alongside patterns_data and user_preferences
+- Phase 23-04: Added explicit type annotation for recentClimbs variable (AnonymizedClimb[]) to eliminate "unused import" warning
+- Phase 23-04: No schema changes required - recent_climbs passed as request body field, JSONB supports schema evolution
 - Phase 23-05: Added AnonymizedClimb interface to Edge Function matching client-side type from src/types/index.ts
 - Phase 23-05: Made recent_climbs optional in RequestBody for backward compatibility with older clients
 - Phase 23-05: Used compact JSON formatting (null indentation) in "Recent Climb History" section to minimize token usage
@@ -143,5 +147,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 23-05: Edge Function Recent Climbs Integration
+Stopped at: Completed Phase 23-04: Include Recent Climbs in Edge Function Request
 Resume file: None
