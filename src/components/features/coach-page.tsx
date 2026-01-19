@@ -16,6 +16,7 @@ import {
   usePatternAnalysis,
 } from '@/hooks/useCoach'
 import { useProfile } from '@/hooks/useProfile'
+import { type ProjectingFocus } from '@/services/coach'
 
 export function CoachPage() {
   const navigate = useNavigate()
@@ -30,7 +31,7 @@ export function CoachPage() {
   const handleRegenerate = () => {
     generateRecommendations.mutate(
       {
-        climbs: climbs || [],
+        climbs: climbs ?? [],
         user_preferences: {
           preferred_discipline: 'boulder',
           preferred_grade_scale: 'font',
@@ -161,9 +162,9 @@ export function CoachPage() {
                 <div className="h-1 flex-1 bg-blue-500" />
               </div>
               <FormSection>
-                <FormLabel className="mb-4 block">This week's focus</FormLabel>
+                <FormLabel className="mb-4 block">This week&apos;s focus</FormLabel>
                 <p className="text-lg text-[#f5f5f5] leading-relaxed">
-                  {(recommendations.content as any).weekly_focus || 'No weekly focus available'}
+                  {recommendations.content?.weekly_focus ?? 'No weekly focus available'}
                 </p>
               </FormSection>
             </section>
@@ -176,34 +177,83 @@ export function CoachPage() {
                 <div className="h-1 flex-1 bg-green-500" />
               </div>
 
-              {((recommendations.content as any)?.drills || []).length === 0 ? (
+              {(recommendations.content?.drills ?? []).length === 0 ? (
                 <FormSection>
                   <p className="text-center text-[#888]">No drills available</p>
                 </FormSection>
               ) : (
-                ((recommendations.content as any)?.drills || []).map(
-                  (drill: any, index: number) => (
-                    <FormSection key={index} className="mb-4">
+                (recommendations.content?.drills ?? []).map(
+                  (
+                    drill: {
+                      name: string
+                      description: string
+                      sets: number
+                      reps: string
+                      rest: string
+                      measurable_outcome: string
+                    },
+                    index: number,
+                  ) => (
+                    <FormSection key={`drill-${index}`} className="mb-4">
                       <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-xl font-black uppercase">{drill.name || 'Drill'}</h3>
+                        <h3 className="text-xl font-black uppercase">{drill.name ?? 'Drill'}</h3>
                         <Badge
                           variant="outline"
                           className="text-xs font-mono border-white/20 text-[#ccc] flex flex-col items-start py-2"
                         >
                           <span>
-                            Sets: {drill.sets || 0} × {drill.reps || 'N/A'}
+                            Sets: {drill.sets ?? 0} × {drill.reps ?? 'N/A'}
                           </span>
-                          <span>Rest: {drill.rest || 'N/A'}</span>
+                          <span>Rest: {drill.rest ?? 'N/A'}</span>
                         </Badge>
                       </div>
                       <p className="text-sm text-[#bbb] leading-relaxed mb-3">
-                        {drill.description || 'No description available'}
+                        {drill.description ?? 'No description available'}
                       </p>
                       {drill.measurable_outcome && (
                         <p className="text-sm text-green-400/80 leading-relaxed font-mono mt-2 pt-2 border-t border-white/10">
                           Goal: {drill.measurable_outcome}
                         </p>
                       )}
+                    </FormSection>
+                  )
+                )
+              )}
+            </section>
+
+            {/* Projecting Focus Section */}
+            <section>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-1 flex-1 bg-purple-500" />
+                <h2 className="text-3xl font-black tracking-tighter uppercase">Projecting Focus</h2>
+                <div className="h-1 flex-1 bg-purple-500" />
+              </div>
+
+              {(recommendations.content?.projecting_focus ?? []).length === 0 ? (
+                <FormSection>
+                  <p className="text-center text-[#888]">No projecting focus available</p>
+                </FormSection>
+              ) : (
+                (recommendations.content?.projecting_focus ?? []).map(
+                  (focus: ProjectingFocus, index: number) => (
+                    <FormSection key={`focus-${index}`} className="mb-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <h3 className="text-xl font-black uppercase">
+                          {focus.focus_area ?? 'Focus Area'}
+                        </h3>
+                        <Badge
+                          variant="outline"
+                          className="text-xs font-mono border-white/20 text-[#ccc]"
+                        >
+                          {focus.grade_guidance ?? 'No grade guidance'}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-[#bbb] leading-relaxed mb-3">
+                        {focus.description ?? 'No description available'}
+                      </p>
+                      <p className="text-xs text-purple-400/80 leading-relaxed font-mono">
+                        Why: {focus.rationale ?? 'No rationale provided'}
+                      </p>
                     </FormSection>
                   )
                 )
@@ -222,7 +272,7 @@ export function CoachPage() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => navigate('/coach/chat')}
+                onClick={() => void navigate('/coach/chat')}
                 className="w-full h-12 border-white/20 hover:border-white/40 bg-white/[0.02] text-white font-black uppercase tracking-wider"
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
@@ -386,7 +436,7 @@ export function CoachPage() {
             <div className="flex flex-col gap-3 mt-6">
               <Button
                 variant="outline"
-                onClick={() => navigate('/coach/chat')}
+                onClick={() => void navigate('/coach/chat')}
                 className="w-full h-12 border-white/20 hover:border-white/40 bg-white/[0.02] text-white font-black uppercase tracking-wider"
               >
                 <MessageCircle className="h-4 w-4 mr-2" />

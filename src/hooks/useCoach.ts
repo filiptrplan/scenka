@@ -6,11 +6,32 @@ import {
   coachKeys,
   generateRecommendations,
   getLatestRecommendations,
+  type ProjectingFocus,
 } from '@/services/coach'
 import { extractPatterns } from '@/services/patterns'
 
+interface CoachRecommendation {
+  id: string
+  user_id: string
+  created_at: string
+  content?: {
+    weekly_focus?: string
+    drills?: Array<{
+      name: string
+      description: string
+      sets: number
+      reps: string
+      rest: string
+      measurable_outcome: string
+    }>
+    projecting_focus?: ProjectingFocus[]
+  }
+  is_cached?: boolean
+  error_message?: string | null
+}
+
 export function useCoachRecommendations() {
-  return useQuery({
+  return useQuery<CoachRecommendation | null>({
     queryKey: coachKeys.currentRecommendations(),
     queryFn: async () => {
       if (!supabase) {
