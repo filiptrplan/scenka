@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 22: OpenRouter Model Configuration
+**Current focus:** Phase 24: Projecting Focus Recommendations
 
 ## Current Position
 
-Phase: 22 of 23 (OpenRouter Model Configuration)
-Plan: 1 of 1 in current phase
-Status: Phase verified — complete
-Last activity: 2026-01-19 — Verified Phase 22 goal achievement (7/7 must-haves passed)
+Phase: 24 of 24 (Projecting Focus Recommendations)
+Plan: 1 of 2 in current phase
+Status: Plan complete
+Last activity: 2026-01-19 — Completed 24-01: Projecting Focus Recommendations
 
 Progress: [██████████░] 96%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 57 (v1.0 + v1.1 + v2.0 phase 18-23)
+- Total plans completed: 58 (v1.0 + v1.1 + v2.0 phase 18-24)
 - Average duration: 9 min
-- Total execution time: 7.9 hours
+- Total execution time: 8.1 hours
 
 **By Phase:**
 
@@ -35,6 +35,7 @@ Progress: [██████████░] 96%
 | 21 (Chat Interface) | 5 | 33 min | 7 min |
 | 22 (OpenRouter Config) | 1 | 5 min | 5 min |
 | 23 (Refocus Coach) | 7 | 20 min | 3 min |
+| 24 (Projecting Focus) | 1 | 9 min | 9 min |
 
 **Recent Trend:**
 - Last 5 plans: 5 min
@@ -136,6 +137,11 @@ Recent decisions affecting current work:
 - Phase 22-01: Removed calculateCost() functions in favor of OpenRouter's provided usage.cost field
 - Phase 22-01: Track usage data in openrouter-chat after streaming completes (not during)
 - Phase 22-01: Keep calculateCost in client service for backward compatibility (unused but prevents breakage)
+- Phase 24-01: Qualitative grade guidance only (e.g., 'slightly above max grade') rather than specific grade ranges
+- Phase 24-01: Gym limitation awareness in focus recommendations (crimpy overhangs common, dynos with toe hooks rare)
+- Phase 24-01: 3-4 focus areas to give users options rather than single recommendation
+- Phase 24-01: Base recommendations primarily on style weaknesses from pattern analysis
+- Phase 24-01: No schema migration needed - JSONB content storage supports projecting_focus field addition
 
 ### Pending Todos
 
@@ -143,7 +149,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Edge Function deployment:** User must run `supabase functions deploy openrouter-chat` and `supabase functions deploy openrouter-coach` to deploy updated model configuration
+- **Edge Function deployment:** User must run `supabase functions deploy openrouter-chat` and `supabase functions deploy openrouter-coach` to deploy updated model configuration and projecting focus
 - **OPENROUTER_MODEL required:** User must set OPENROUTER_MODEL environment variable via `supabase secrets set OPENROUTER_MODEL=google/gemini-2.5-pro` (documented in 22-01 SUMMARY)
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
 
@@ -151,9 +157,11 @@ None yet.
 
 - Phase 22 added: OpenRouter model configuration via environment variables
 - Phase 23 added: Refocus coach on technique (review system prompt and data passed to coach)
+- Phase 24 added: Projecting focus recommendations to help users select boulders to project on each week
+- Phase 25 added: User climbing context for prompts (allow users to describe what kind of climber they are)
 
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 22-01: OpenRouter Model Configuration
+Stopped at: Completed Phase 24-01: Projecting Focus Recommendations
 Resume file: None
