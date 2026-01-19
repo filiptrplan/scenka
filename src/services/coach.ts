@@ -180,6 +180,7 @@ export async function trackApiUsage(
     total_tokens: number
     model: string
     endpoint: string
+    cost_usd?: number // Optional - if provided, use directly
   },
   isError: boolean = false
 ): Promise<void> {
@@ -187,8 +188,8 @@ export async function trackApiUsage(
     throw new Error('Supabase client not configured')
   }
 
-  // Calculate cost internally using calculateCost helper
-  const cost_usd = isError ? 0 : calculateCost(usage)
+  // Use provided cost_usd or calculate from usage (for backward compatibility)
+  const cost_usd = isError ? 0 : (usage.cost_usd ?? calculateCost(usage))
 
   const { error } = await supabase.from('coach_api_usage').insert({
     user_id: userId,
@@ -208,7 +209,8 @@ export async function trackApiUsage(
 }
 
 function calculateCost(usage: { prompt_tokens: number; completion_tokens: number }): number {
-  // OpenRouter pricing for gpt-4o-mini
+  // OpenRouter pricing - kept for backward compatibility
+  // Edge Functions now use OpenRouter's provided cost directly
   const promptCost = (usage.prompt_tokens * 0.00015) / 1000 // $0.15 per 1M tokens
   const completionCost = (usage.completion_tokens * 0.0006) / 1000 // $0.60 per 1M tokens
   return promptCost + completionCost
