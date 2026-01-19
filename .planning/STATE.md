@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 21 of 21 (Chat Interface)
-Plan: 2 of 5 in current phase
+Plan: 4 of 5 in current phase
 Status: In progress
-Last activity: 2026-01-19 — Phase 21-02: Client-Side SSE Service completed
+Last activity: 2026-01-19 — Phase 21-04: Route Configuration and Navigation completed
 
-Progress: [████░░░░░░░░░░] 40%
+Progress: [████████░░░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 44 (v1.0 + v1.1 + v2.0 phase 18-21)
+- Total plans completed: 47 (v1.0 + v1.1 + v2.0 phase 18-21)
 - Average duration: 9 min
-- Total execution time: 6.8 hours
+- Total execution time: 7.0 hours
 
 **By Phase:**
 
@@ -32,10 +32,10 @@ Progress: [████░░░░░░░░░░] 40%
 | 18 (AI Coach) | 6 | 40 min | 7 min |
 | 19 (Coach UI) | 8 | 19 min | 2 min |
 | 20 (LLM Integration) | 3 | 18 min | 6 min |
-| 21 (Chat Interface) | 2 | 26 min | 13 min |
+| 21 (Chat Interface) | 5 | 34 min | 7 min |
 
 **Recent Trend:**
-- Last 5 plans: 11 min
+- Last 5 plans: 8 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -96,6 +96,10 @@ Recent decisions affecting current work:
 - Phase 21-02: Used hasErrorRef to track errors across async callbacks (onmessage, onclose, onerror)
 - Phase 21-02: AbortController stored in ref for cleanup on unmount and manual abort
 - Phase 21-02: useStreamingChat hook provides streaming state management and message persistence for React chat UI
+- Phase 21-03: React Router nested route pattern with parent Layout providing Outlet for consistent styling
+- Phase 21-03: ChatPage uses useStreamingChat hook for SSE message streaming and persistence
+- Phase 21-03: Mobile-optimized chat with auto-scroll, typing indicator, and visual message distinction
+- Phase 21-04: Programmatic navigation with useNavigate hook from coach-page to /coach/chat
 
 ### Pending Todos
 
@@ -115,5 +119,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 21-02: Client-Side SSE Service
+Stopped at: Completed Phase 21-04: Route Configuration and Navigation
 Resume file: None
