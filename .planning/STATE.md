@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 24: Projecting Focus Recommendations
+**Current focus:** Phase 25: User Climbing Context for Prompts
 
 ## Current Position
 
-Phase: 24 of 25 (Projecting Focus Recommendations)
-Plan: 3 of 3 in current phase
-Status: Phase verified — complete
-Last activity: 2026-01-19 — Verified Phase 24 goal achievement (8/8 must-haves passed)
+Phase: 25 of 25 (User Climbing Context for Prompts)
+Plan: 2 of 4 in current phase
+Status: In progress
+Last activity: 2026-01-19 — Completed Phase 25-02: Climbing Context UI
 
-Progress: [██████████░] 96%
+Progress: [██████████░] 97%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 63 (v1.0 + v1.1 + v2.0 phase 18-24)
+- Total plans completed: 64 (v1.0 + v1.1 + v2.0 phase 18-24, 25-01/25-02)
 - Average duration: 9 min
-- Total execution time: 8.8 hours
+- Total execution time: 8.9 hours
 
 **By Phase:**
 
@@ -36,6 +36,7 @@ Progress: [██████████░] 96%
 | 22 (OpenRouter Config) | 1 | 5 min | 5 min |
 | 23 (Refocus Coach) | 7 | 20 min | 3 min |
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
+| 25 (User Context) | 2 | 4 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min
@@ -145,6 +146,11 @@ Recent decisions affecting current work:
 - Phase 24-03: Added CoachRecommendation interface in useCoach.ts with projecting_focus field for type-safe UI display
 - Phase 24-03: Removed as any casts from Weekly Focus and Drills sections by using proper types
 - Phase 24-03: Purple divider color for Projecting Focus section matching "Recent Successes" in Pattern Analysis tab
+- Phase 25-02: Optional climbing_context field in profileSchema to avoid requiring existing users to fill it in immediately
+- Phase 25-02: 2000 character limit follows ChatGPT's 1500-char precedent with more flexibility
+- Phase 25-02: Explicit PII warning in help text to prevent PII leakage to OpenRouter API
+- Phase 25-02: Real-time character count via React Hook Form watch() for live updates
+- Phase 25-02: Used nullish coalescing (??) instead of logical or (||) for character count to satisfy ESLint
 
 ### Pending Todos
 
@@ -166,5 +172,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 24-03: Projecting Focus UI
+Stopped at: Completed Phase 25-02: Climbing Context UI
 Resume file: None
