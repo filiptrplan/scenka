@@ -192,6 +192,12 @@ function buildUserPrompt(patterns: PatternAnalysis, preferences: UserPreferences
     })
   }
 
+  // Add recent climb history
+  if (recentClimbs && recentClimbs.length > 0) {
+    prompt += `\nRecent Climb History (last 30 climbs):
+${JSON.stringify(recentClimbs, null, 0)}\n`
+  }
+
   // Add request
   prompt += `\nBased on this data, provide:
 1. A weekly focus statement addressing the user's primary weaknesses
