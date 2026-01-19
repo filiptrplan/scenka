@@ -217,6 +217,7 @@ ${JSON.stringify(recentClimbs, null, 0)}\n`
   prompt += `\nBased on this data, provide:
 1. A weekly focus statement addressing the user's primary weaknesses
 2. 3 specific training drills with educational explanations
+3. 3-4 projecting focus areas for project selection this week
 
 Example output format:
 {
@@ -229,6 +230,14 @@ Example output format:
       "reps": "1 route per set",
       "rest": "2 minutes",
       "measurable_outcome": "Complete 10 routes with 100% silent foot placements"
+    }
+  ],
+  "projecting_focus": [
+    {
+      "focus_area": "Crimpy Overhangs",
+      "description": "Your 40% failure rate on crimp holds suggests you need more time on crimpy terrain. Overhangs will test your tension and body positioning on crimps.",
+      "grade_guidance": "Focus on problems slightly above your max grade - challenging but realistic for a week of projecting",
+      "rationale": "Builds finger strength on crimps while developing body tension skills for steep terrain"
     }
   ]
 }`
