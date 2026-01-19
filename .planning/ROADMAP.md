@@ -8,7 +8,7 @@ Scenka v2.0 adds an AI-powered climbing coach to existing mobile PWA. The journe
 
 - **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
 - **v1.1 UX & Analytics** — Phases 5-17 (shipped 2026-01-17)
-- **v2.0 AI Coach** — Phases 18-26 (in progress)
+- **v2.0 AI Coach** — Phases 18-26 (shipped 2026-01-19)
 
 ## Phases
 
@@ -49,7 +49,7 @@ Scenka v2.0 adds an AI-powered climbing coach to existing mobile PWA. The journe
 
 </details>
 
-### v2.0 AI Coach (In Progress)
+### v2.0 AI Coach (Shipped 2026-01-19)
 
 **Milestone Goal:** Build AI-powered climbing coach that analyzes logged data and provides actionable training guidance through weekly dashboard recommendations and free-form chat.
 
@@ -206,10 +206,36 @@ Plans:
 **Details**:
 Update README.md to document the new AI Coach features including coach recommendations, pattern analysis, chat interface, projecting focus, and climbing context configuration. Include screenshots, setup instructions, privacy safeguards, and usage examples.
 
+#### Phase 27: Impose Daily Limit on Usage
+**Goal**: Implement daily usage limits of 2 recommendation generations and 10 chat messages per user
+**Depends on**: Phase 26
+**Success Criteria** (what must be TRUE):
+  1. user_limits table exists with rec_count and chat_count columns
+  2. Edge Functions check limits BEFORE LLM API calls to prevent unnecessary costs
+  3. RPC functions increment counters atomically with UTC midnight reset
+  4. Client can fetch current usage counts via useUserLimits hook
+  5. Coach page displays "X/2 used today" counter next to Generate button
+  6. Chat page displays "X/10 used today" counter next to Send button
+  7. Buttons disabled when limit reached with inline error message showing time until reset
+  8. Counters refresh after each action (via TanStack Query invalidation)
+**Plans**: 6 plans
+**Status**: Planned — ready for execution
+
+Plans:
+- [ ] 27-01-PLAN.md — Database migration for user_limits table and RPC functions
+- [ ] 27-02-PLAN.md — Update openrouter-coach Edge Function with recommendation limit check
+- [ ] 27-03-PLAN.md — Update openrouter-chat Edge Function with chat limit check
+- [ ] 27-04-PLAN.md — Create useUserLimits hook and update hooks to invalidate limits
+- [ ] 27-05-PLAN.md — Update coach-page.tsx with recommendation usage counter
+- [ ] 27-06-PLAN.md — Update chat-page.tsx with chat usage counter
+
+**Details**:
+Daily usage limits implemented at Edge Function layer to enforce 2 recommendation generations and 10 chat messages per user. Limits checked BEFORE LLM API calls to control costs, counters increment atomically via PostgreSQL upsert pattern with UTC midnight reset. Client-side counters display inline next to action buttons, refresh after each action, and show inline error messages when limit reached.
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 → 26
+Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 → 26 → 27
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -243,3 +269,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 �
 | 24. Projecting Focus Recommendations | v2.0 | 3/3 | Complete | 2026-01-19 |
 | 25. User Climbing Context for Prompts | v2.0 | 4/4 | Complete | 2026-01-19 |
 | 26. Update README with Milestone Work | v2.0 | 1/1 | Complete | 2026-01-19 |
+| 27. Impose Daily Limit on Usage | v2.0 | 0/6 | Planned | — |
