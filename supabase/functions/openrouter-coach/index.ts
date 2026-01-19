@@ -117,6 +117,7 @@ interface RequestBody {
   user_id: string
   patterns_data: PatternAnalysis
   user_preferences: UserPreferences
+  recent_climbs?: AnonymizedClimb[]
 }
 
 // Helper function to fetch existing recommendations for fallback
