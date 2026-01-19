@@ -222,7 +222,7 @@ Update README.md to document the new AI Coach features including coach recommend
 **Status**: Planned — ready for execution
 
 Plans:
-- [ ] 27-01-PLAN.md — Database migration for user_limits table and RPC functions
+- [x] 27-01-PLAN.md — Database migration for user_limits table and RPC functions
 - [ ] 27-02-PLAN.md — Update openrouter-coach Edge Function with recommendation limit check
 - [ ] 27-03-PLAN.md — Update openrouter-chat Edge Function with chat limit check
 - [ ] 27-04-PLAN.md — Create useUserLimits hook and update hooks to invalidate limits
@@ -269,4 +269,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 �
 | 24. Projecting Focus Recommendations | v2.0 | 3/3 | Complete | 2026-01-19 |
 | 25. User Climbing Context for Prompts | v2.0 | 4/4 | Complete | 2026-01-19 |
 | 26. Update README with Milestone Work | v2.0 | 1/1 | Complete | 2026-01-19 |
-| 27. Impose Daily Limit on Usage | v2.0 | 0/6 | Planned | — |
+| 27. Impose Daily Limit on Usage | v2.0 | 1/6 | In progress | 2026-01-19 |

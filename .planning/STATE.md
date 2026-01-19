@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 26: Update README with the work done in this milestone
+**Current focus:** Phase 27: Impose daily limit of 2 recommendation generations and 10 chat messages per day
 
 ## Current Position
 
-Phase: 26 of 26 (Update README with the work done in this milestone)
-Plan: 1 of 1 in current phase
-Status: Phase verified — complete
-Last activity: 2026-01-19 — Verified Phase 26 goal achievement (7/7 must-haves passed)
+Phase: 27 of 27 (Impose Daily Limit on Usage)
+Plan: 1 of 6 in current phase
+Status: In progress
+Last activity: 2026-01-19 - Completed Phase 27-01: Database Foundation for Daily Limits
 
-Progress: [██████████] 100%
+Progress: [█░░░░░░░░░] 17%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 68 (v1.0 + v1.1 + v2.0 phase 18-26)
+- Total plans completed: 69 (v1.0 + v1.1 + v2.0 phase 18-27)
 - Average duration: 9 min
-- Total execution time: 9.4 hours
+- Total execution time: 9.5 hours
 
 **By Phase:**
 
@@ -38,6 +38,7 @@ Progress: [██████████] 100%
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
 | 25 (User Context) | 4 | 17 min | 4 min |
 | 26 (README Update) | 1 | 2 min | 2 min |
+| 27 (Daily Limit) | 1 (of 6) | 3 min | — |
 
 **Recent Trend:**
 - Last 5 plans: 4 min
@@ -167,6 +168,10 @@ Recent decisions affecting current work:
 - Phase 26-01: Included all migration file references for developer access
 - Phase 26-01: Listed 4 tables including profiles.climbing_context in schema section
 - Phase 26-01: Described 5-step privacy architecture data flow
+- Phase 27-01: Used separate rec_count and chat_count columns (not JSONB) for simpler queries and check constraints
+- Phase 27-01: Atomic reset and increment pattern with CASE statement handles both reset and increment in one operation
+- Phase 27-01: RLS policy with SELECT only (no INSERT/UPDATE) because Edge Functions use RPC functions with elevated permissions
+- Phase 27-01: PostgreSQL CURRENT_DATE returns UTC date on Supabase servers (no explicit timezone handling needed)
 
 ### Pending Todos
 
@@ -179,6 +184,7 @@ None yet.
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
 - **Database migration required:** User must run `npx supabase db push` to apply climbing_context migration to profiles table (documented in 25-01 SUMMARY)
 - **Screenshots need capture:** README includes TODO comments for screenshot capture that need to be fulfilled (coach page, chat page)
+- **Edge Functions need deployment:** After daily limits are implemented, Edge Functions must be deployed with limit checking logic
 
 ### Roadmap Evolution
 
@@ -187,9 +193,10 @@ None yet.
 - Phase 24 added: Projecting focus recommendations to help users select boulders to project on each week
 - Phase 25 added: User climbing context for prompts (allow users to describe what kind of climber they are)
 - Phase 26 added: Update README with the work done in this milestone
+- Phase 27 added: Impose daily limit of 2 recommendation generations and 10 chat messages per day
 
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 26-01: README Update (Phase 26 complete)
+Stopped at: Completed Phase 27-01: Database Foundation for Daily Limits
 Resume file: None
