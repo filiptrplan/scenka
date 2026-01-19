@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 27 of 27 (Impose Daily Limit on Usage)
-Plan: 1 of 6 in current phase
+Plan: 3 of 6 in current phase
 Status: In progress
-Last activity: 2026-01-19 - Completed Phase 27-01: Database Foundation for Daily Limits
+Last activity: 2026-01-19 - Completed Phase 27-03: Daily Chat Limit Enforcement
 
-Progress: [█░░░░░░░░░] 17%
+Progress: [███░░░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 69 (v1.0 + v1.1 + v2.0 phase 18-27)
+- Total plans completed: 71 (v1.0 + v1.1 + v2.0 phase 18-27)
 - Average duration: 9 min
-- Total execution time: 9.5 hours
+- Total execution time: 9.6 hours
 
 **By Phase:**
 
@@ -38,10 +38,10 @@ Progress: [█░░░░░░░░░] 17%
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
 | 25 (User Context) | 4 | 17 min | 4 min |
 | 26 (README Update) | 1 | 2 min | 2 min |
-| 27 (Daily Limit) | 1 (of 6) | 3 min | — |
+| 27 (Daily Limit) | 3 (of 6) | 5 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 4 min
+- Last 5 plans: 2 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -172,6 +172,10 @@ Recent decisions affecting current work:
 - Phase 27-01: Atomic reset and increment pattern with CASE statement handles both reset and increment in one operation
 - Phase 27-01: RLS policy with SELECT only (no INSERT/UPDATE) because Edge Functions use RPC functions with elevated permissions
 - Phase 27-01: PostgreSQL CURRENT_DATE returns UTC date on Supabase servers (no explicit timezone handling needed)
+- Phase 27-03: Check limit before increment and API call to prevent expensive LLM operations for blocked requests
+- Phase 27-03: Atomic increment via RPC function before any message storage or API calls
+- Phase 27-03: Client-side effectiveCount calculation handles day reset case before RPC function executes
+- Phase 27-03: Time until reset calculation shows user-friendly messages for UTC midnight reset
 
 ### Pending Todos
 
@@ -198,5 +202,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 27-01: Database Foundation for Daily Limits
+Stopped at: Completed Phase 27-03: Daily Chat Limit Enforcement
 Resume file: None
