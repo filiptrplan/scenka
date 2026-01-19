@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 27 of 27 (Impose Daily Limit on Usage)
-Plan: 5 of 6 in current phase
-Status: In progress
-Last activity: 2026-01-19 - Completed Phase 27-05: Coach Page Recommendation Usage Counter
+Plan: 6 of 6 in current phase
+Status: Phase complete
+Last activity: 2026-01-19 - Completed Phase 27-06: Chat Usage Counter UI
 
-Progress: [█████░░░░░] 83%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 73 (v1.0 + v1.1 + v2.0 phase 18-27)
+- Total plans completed: 74 (v1.0 + v1.1 + v2.0 phase 18-27)
 - Average duration: 9 min
-- Total execution time: 9.7 hours
+- Total execution time: 9.8 hours
 
 **By Phase:**
 
@@ -38,7 +38,7 @@ Progress: [█████░░░░░] 83%
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
 | 25 (User Context) | 4 | 17 min | 4 min |
 | 26 (README Update) | 1 | 2 min | 2 min |
-| 27 (Daily Limit) | 5 (of 6) | 9 min | 2 min |
+| 27 (Daily Limit) | 6 (of 6) | 11 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: 2 min
@@ -185,6 +185,11 @@ Recent decisions affecting current work:
 - Phase 27-05: Counter refresh via query invalidation pattern (staleTime: 0 + invalidation on success) ensures fresh data
 - Phase 27-05: Button disabled state uses `isRecAtLimit` alongside existing `isPending` check
 - Phase 27-05: Same counter and error pattern applied to both Generate (empty state) and Regenerate (existing state) buttons
+- Phase 27-06: Simple text counter display ("5/10 used today") for chat messages matches recommendation counter pattern
+- Phase 27-06: Client-side limit check in handleSend provides immediate feedback via toast notification before server enforcement
+- Phase 27-06: Inline error message when at limit shows time until reset via getTimeUntilNextReset helper
+- Phase 27-06: whitespace-nowrap on counter text prevents wrapping on small screens
+- Phase 27-06: Explicit boolean check (isChatAtLimit === true) for ESLint compliance with strict-boolean-expressions rule
 
 ### Pending Todos
 
@@ -211,5 +216,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 27-05: Coach Page Recommendation Usage Counter
+Stopped at: Completed Phase 27-06: Chat Usage Counter UI
 Resume file: None
