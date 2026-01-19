@@ -30,6 +30,7 @@ export interface GenerateRecommendationsResponse {
     sets: number
     reps: string
     rest: string
+    measurable_outcome: string
   }>
 }
 
