@@ -8,7 +8,7 @@ Scenka v2.0 adds an AI-powered climbing coach to existing mobile PWA. The journe
 
 - **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
 - **v1.1 UX & Analytics** — Phases 5-17 (shipped 2026-01-17)
-- **v2.0 AI Coach** — Phases 18-21 (in progress)
+- **v2.0 AI Coach** — Phases 18-24 (in progress)
 
 ## Phases
 
@@ -147,6 +147,7 @@ Plans:
 **Goal**: Review and modify coach to focus exclusively on technique and technique drills, not strength training
 **Depends on**: Phase 21
 **Plans**: 7 plans
+**Status**: Complete — verified 2026-01-19
 
 Plans:
 - [x] 23-01-PLAN.md — Update AnonymizedClimb type with notes and date
@@ -157,10 +158,30 @@ Plans:
 - [x] 23-06-PLAN.md — Add measurable_outcome to client types and UI (gap closure)
 - [x] 23-07-PLAN.md — Update example output to be technique-focused (gap closure)
 
+#### Phase 24: Projecting Focus Recommendations
+**Goal**: Add "Projecting focus" section to help users select boulders to project on each week
+**Depends on**: Phase 23
+**Success Criteria** (what must be TRUE):
+  1. Edge Function generates 3-4 projecting focus areas based on style weaknesses
+  2. Projecting focus includes qualitative grade guidance (not specific grade ranges)
+  3. System prompt includes gym limitation awareness (common vs rare styles)
+  4. TypeScript types updated for type safety
+  5. UI displays projecting focus section below drills with proper styling
+  6. Backward compatible with old cached recommendations (no projecting_focus field)
+**Plans**: 3 plans
+
+Plans:
+- [ ] 24-01-PLAN.md — Extend Edge Function system prompt and validation for projecting_focus
+- [ ] 24-02-PLAN.md — Update client types to include ProjectingFocus interface
+- [ ] 24-03-PLAN.md — Add Projecting Focus section to coach-page UI
+
+**Details**:
+Projecting focus recommendations help users select boulders to project based on style weaknesses with qualitative grade guidance and gym awareness. Implementation extends existing Edge Function with new field, updates TypeScript types, and adds UI section using existing FormSection pattern.
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 18 → 19 → 20 → 21 → 23
+Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -191,3 +212,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23
 | 21. Chat Interface | v2.0 | 5/5 | Complete | 2026-01-19 |
 | 22. OpenRouter Model Config | v2.0 | 1/1 | Complete | 2026-01-19 |
 | 23. Refocus Coach on Technique | v2.0 | 7/7 | Complete | 2026-01-19 |
+| 24. Projecting Focus Recommendations | v2.0 | 0/3 | Pending | |
