@@ -4,7 +4,7 @@ import { corsHeaders } from '../_shared/cors.ts'
 import { getChatSystemPrompt } from '../_shared/system-prompt.ts'
 
 // Environment variable validation
-const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']
+const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'OPENROUTER_MODEL']
 for (const envVar of requiredEnvVars) {
   if (!Deno.env.get(envVar)) {
     throw new Error(`Missing required environment variable: ${envVar}`)
@@ -14,6 +14,7 @@ for (const envVar of requiredEnvVars) {
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const openrouterApiKey = Deno.env.get('OPENROUTER_API_KEY')!
+const model = Deno.env.get('OPENROUTER_MODEL')!
 
 // Initialize Supabase client
 const supabase = createClient(supabaseUrl, supabaseKey)
@@ -170,12 +171,13 @@ Deno.serve(async (req: Request) => {
         try {
           // Call OpenAI with streaming
           const response = await openai.chat.completions.create({
-            model: 'google/gemini-2.5-pro',
+            model,
             messages,
             stream: true,
           })
 
           let assistantContent = ''
+          let finalUsage: any = null
 
           // Stream each chunk
           for await (const chunk of response) {
@@ -188,6 +190,11 @@ Deno.serve(async (req: Request) => {
               const data = JSON.stringify({ content })
               controller.enqueue(encoder.encode(`data: ${data}\n\n`))
             }
+
+            // Capture usage from final chunk
+            if (chunk.usage) {
+              finalUsage = chunk.usage
+            }
           }
 
           // Store assistant message in database
@@ -199,6 +206,22 @@ Deno.serve(async (req: Request) => {
               context: body.patterns_data || {},
             }).catch((err) => {
               console.error('Failed to store assistant message:', err)
+            })
+          }
+
+          // Track API usage with OpenRouter's cost
+          if (finalUsage) {
+            await supabase.from('coach_api_usage').insert({
+              user_id: userId,
+              prompt_tokens: finalUsage.prompt_tokens || 0,
+              completion_tokens: finalUsage.completion_tokens || 0,
+              total_tokens: finalUsage.total_tokens || 0,
+              cost_usd: finalUsage.cost || 0,
+              model,
+              endpoint: 'openrouter-chat',
+              time_window_start: new Date().toISOString(),
+            }).catch((err) => {
+              console.error('Failed to track API usage:', err)
             })
           }
 
