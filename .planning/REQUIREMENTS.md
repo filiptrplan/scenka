@@ -26,14 +26,14 @@ Requirements for v2.0 AI Coach milestone. Each maps to roadmap phases.
 
 ### Chat Interface
 
-- [ ] **CHAT-01**: User can send messages through text input with send button (mobile-optimized)
-- [ ] **CHAT-02**: User can view message bubbles with visual distinction between user and assistant
-- [ ] **CHAT-03**: Chat responses stream in real-time using Server-Sent Events
-- [ ] **CHAT-04**: Chat retains limited message history (last 10-20 messages) for context
+- [x] **CHAT-01**: User can send messages through text input with send button (mobile-optimized)
+- [x] **CHAT-02**: User can view message bubbles with visual distinction between user and assistant
+- [x] **CHAT-03**: Chat responses stream in real-time using Server-Sent Events
+- [x] **CHAT-04**: Chat retains limited message history (last 10-20 messages) for context
 - [x] **CHAT-05**: Clear entry points to chat from recommendations page
-- [ ] **CHAT-06**: Graceful error handling with helpful fallback messages
-- [ ] **CHAT-07**: Context-aware chat includes pre-processed patterns (failure, styles, frequency)
-- [ ] **CHAT-08**: Chat provides climbing-specific domain knowledge (understands beta, grades, styles)
+- [x] **CHAT-06**: Graceful error handling with helpful fallback messages
+- [x] **CHAT-07**: Context-aware chat includes pre-processed patterns (failure, styles, frequency)
+- [x] **CHAT-08**: Chat provides climbing-specific domain knowledge (understands beta, grades, styles)
 
 ### Differentiators
 
@@ -88,14 +88,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PATT-02 | Phase 18 | Complete |
 | PATT-03 | Phase 18 | Complete |
 | PATT-04 | Phase 18 | Complete |
-| CHAT-01 | Phase 21 | Pending |
-| CHAT-02 | Phase 21 | Pending |
-| CHAT-03 | Phase 21 | Pending |
-| CHAT-04 | Phase 21 | Pending |
+| CHAT-01 | Phase 21 | Complete |
+| CHAT-02 | Phase 21 | Complete |
+| CHAT-03 | Phase 21 | Complete |
+| CHAT-04 | Phase 21 | Complete |
 | CHAT-05 | Phase 19 | Complete |
-| CHAT-06 | Phase 21 | Pending |
-| CHAT-07 | Phase 21 | Pending |
-| CHAT-08 | Phase 20 | Pending |
+| CHAT-06 | Phase 21 | Complete |
+| CHAT-07 | Phase 21 | Complete |
+| CHAT-08 | Phase 20 | Complete |
 | DIFF-01 | Phase 18 | Complete |
 | DIFF-02 | Phase 18 | Complete |
 
