@@ -145,10 +145,14 @@ Plans:
 #### Phase 23: Refocus Coach on Technique
 **Goal**: Review and modify coach to focus exclusively on technique and technique drills, not strength training
 **Depends on**: Phase 21
-**Plans**: 0 plans
+**Plans**: 5 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 23 to break down)
+- [ ] 23-01-PLAN.md — Update AnonymizedClimb type with notes and date
+- [ ] 23-02-PLAN.md — Refocus system prompt on technique and add measurable_outcome
+- [ ] 23-03-PLAN.md — Add extractRecentClimbs function to patterns.ts
+- [ ] 23-04-PLAN.md — Update client service to include recent climbs in request
+- [ ] 23-05-PLAN.md — Update Edge Function to process and include recent climbs
 
 ## Progress
 
@@ -183,4 +187,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23
 | 20. LLM Integration | v2.0 | 3/3 | Complete | 2026-01-18 |
 | 21. Chat Interface | v2.0 | 5/5 | Complete | 2026-01-19 |
 | 22. OpenRouter Model Config | v2.0 | 0/0 | Not started | - |
-| 23. Refocus Coach on Technique | v2.0 | 0/0 | Not started | - |
+| 23. Refocus Coach on Technique | v2.0 | 0/5 | Not started | - |
