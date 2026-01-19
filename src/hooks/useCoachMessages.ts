@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { supabase } from '@/lib/supabase'
 import type { TablesInsert } from '@/types'
+import { userLimitsKeys } from './useUserLimits'
 
 export interface CoachMessage {
   id: string
@@ -91,6 +92,10 @@ export function useCreateCoachMessage() {
     mutationFn: createCoachMessage,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: coachMessagesKeys.lists() })
+      // Invalidate user limits to refresh counter display after chat message
+      void queryClient.invalidateQueries({
+        queryKey: userLimitsKeys.current(),
+      })
     },
   })
 }

@@ -9,6 +9,7 @@ import {
   type ProjectingFocus,
 } from '@/services/coach'
 import { extractPatterns } from '@/services/patterns'
+import { userLimitsKeys } from './useUserLimits'
 
 interface CoachRecommendation {
   id: string
@@ -85,6 +86,10 @@ export function useGenerateRecommendations() {
       // Invalidate recommendations cache to fetch fresh data after regeneration
       void queryClient.invalidateQueries({
         queryKey: coachKeys.currentRecommendations(),
+      })
+      // Invalidate user limits to refresh counter display
+      void queryClient.invalidateQueries({
+        queryKey: userLimitsKeys.current(),
       })
     },
     onError: (error) => {
