@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from 'date-fns'
+import { format, formatDistanceToNow } from 'date-fns'
 import { MessageCircle, RefreshCw } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -144,6 +144,15 @@ export function CoachPage() {
           </TabsList>
 
           <TabsContent value="recommendations" className="mt-6 space-y-8">
+            {/* Generation Date - Subtle indicator above Weekly Focus */}
+            <div className="text-center text-xs text-[#666] font-mono uppercase tracking-wide">
+              Generated{' '}
+              {formatDistanceToNow(new Date(recommendations.generation_date), {
+                addSuffix: true,
+              })}{' '}
+              (at {format(new Date(recommendations.created_at), 'HH:mm')})
+            </div>
+
             {/* Weekly Focus Section */}
             <section>
               <div className="flex items-center gap-4 mb-6">
