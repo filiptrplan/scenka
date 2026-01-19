@@ -1,4 +1,4 @@
-import { Send } from 'lucide-react'
+import { Brain, Send } from 'lucide-react'
 import { useRef, useEffect, useState, type KeyboardEvent } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -19,9 +19,9 @@ function MessageBubble({ message, isCurrentUser }: MessageBubbleProps) {
   return (
     <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-4`}>
       <div
-        className={`max-w-[80%] rounded-2xl px-4 py-2 ${isCurrentUser
-            ? 'bg-blue-600 text-white rounded-br-sm'
-            : 'bg-gray-700 text-gray-100 rounded-bl-sm'
+        className={`max-w-[80%] rounded-2xl px-4 py-2 shadow-lg transition-all duration-200 hover:brightness-110 ${isCurrentUser
+            ? 'bg-blue-600 text-white rounded-br-sm hover:brightness-110'
+            : 'bg-gray-700 text-gray-100 rounded-bl-sm hover:brightness-105'
         }`}
       >
         <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
@@ -41,6 +41,7 @@ function MessageBubble({ message, isCurrentUser }: MessageBubbleProps) {
 function TypingIndicator() {
   return (
     <div className="mb-4 flex items-center gap-2 px-4">
+      <Brain className="h-4 w-4 text-gray-400" />
       <div className="flex gap-1">
         <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
         <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -51,14 +52,43 @@ function TypingIndicator() {
   )
 }
 
+function LoadingSkeleton() {
+  return (
+    <div className="space-y-4 p-4">
+      <div className="flex gap-3">
+        <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-white/10 rounded w-3/4 animate-pulse" />
+          <div className="h-4 bg-white/10 rounded w-1/2 animate-pulse" />
+        </div>
+      </div>
+      <div className="flex gap-3 justify-end">
+        <div className="flex-1 space-y-2 max-w-[80%]">
+          <div className="h-4 bg-blue-600/30 rounded w-full animate-pulse" />
+          <div className="h-4 bg-blue-600/30 rounded w-2/3 animate-pulse ml-auto" />
+        </div>
+        <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
+      </div>
+      <div className="flex gap-3">
+        <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-white/10 rounded w-5/6 animate-pulse" />
+          <div className="h-4 bg-white/10 rounded w-1/3 animate-pulse" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function ChatPage() {
   const [inputValue, setInputValue] = useState('')
+  const [lastMessage, setLastMessage] = useState<string>('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const { data: messages, isLoading } = useCoachMessages()
   const { data: patterns } = usePatternAnalysis()
-  const { sendMessage, streamingResponse, isStreaming, error, cleanup } = useStreamingChat()
+  const { sendMessage, streamingResponse, isStreaming, error, cleanup, setError } = useStreamingChat()
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -85,8 +115,17 @@ export function ChatPage() {
     }
 
     const message = inputValue.trim()
+    setLastMessage(message)
     setInputValue('')
     await sendMessage(message, patterns)
+  }
+
+  const handleRetry = async () => {
+    if (!lastMessage || isStreaming) {
+      return
+    }
+    setError(null)
+    await sendMessage(lastMessage, patterns)
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -101,7 +140,7 @@ export function ChatPage() {
       {/* Messages container */}
       <div className="flex-1 overflow-y-auto p-4">
         {isLoading ? (
-          <div className="text-center py-12 text-[#888]">Loading messages...</div>
+          <LoadingSkeleton />
         ) : messages && messages.length > 0 ? (
           <>
             {messages.map((message) => (
@@ -113,13 +152,17 @@ export function ChatPage() {
             ))}
           </>
         ) : (
-          <div className="text-center py-12 text-[#888]">
-            No messages yet. Ask Coach a question!
+          <div className="text-center py-12">
+            <Brain className="h-12 w-12 mx-auto mb-4 text-[#888]" />
+            <p className="text-[#888] text-sm mb-2">No messages yet</p>
+            <p className="text-xs text-gray-500 font-mono">
+              Ask Coach about technique, beta, or training
+            </p>
           </div>
         )}
 
         {/* Streaming bubble */}
-        {streamingResponse && (
+        {streamingResponse.length > 0 && (
           <MessageBubble
             message={{
               content: streamingResponse,
@@ -130,7 +173,7 @@ export function ChatPage() {
         )}
 
         {/* Typing indicator */}
-        {isStreaming && <TypingIndicator />}
+        {isStreaming === true && <TypingIndicator />}
 
         {/* Scroll anchor */}
         <div ref={messagesEndRef} />
@@ -147,17 +190,34 @@ export function ChatPage() {
             placeholder="Ask Coach a question..."
             disabled={isStreaming}
             rows={1}
-            className="flex-1 min-h-[44px] resize-none bg-white/[0.02] border-white/20"
+            className={`flex-1 min-h-[44px] resize-none bg-white/[0.02] border-white/20 transition-all duration-200 ${
+              isStreaming ? 'opacity-50 cursor-not-allowed' : 'hover:border-white/30'
+            }`}
           />
           <Button
             onClick={() => void handleSend()}
             disabled={!inputValue.trim() || isStreaming}
-            className="h-[44px] w-[44px] flex-shrink-0 bg-white text-black hover:bg-white/90"
+            className={`h-[44px] w-[44px] flex-shrink-0 bg-white text-black transition-all duration-200 ${
+              !inputValue.trim() || isStreaming ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/90'
+            }`}
           >
             <Send className="h-4 w-4" />
           </Button>
         </div>
-        {error !== null && <div className="text-red-400 text-sm mt-2">{error}</div>}
+        {error !== null && (
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-xs text-red-400">{error}</span>
+            {lastMessage.length > 0 && !isStreaming && (
+              <button
+                onClick={() => void handleRetry()}
+                type="button"
+                className="ml-2 text-xs text-blue-400 underline hover:text-blue-300 transition-colors"
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

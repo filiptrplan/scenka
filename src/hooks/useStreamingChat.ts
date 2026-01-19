@@ -1,4 +1,4 @@
-/* eslint-disable import/order, @typescript-eslint/no-unused-vars */
+/* eslint-disable import/order */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import { supabase } from '@/lib/supabase'
@@ -9,6 +9,7 @@ export interface UseStreamingChatReturn {
   streamingResponse: string
   isStreaming: boolean
   error: string | null
+  setError: (error: string | null) => void
   cleanup: () => void
 }
 
@@ -156,6 +157,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
     streamingResponse,
     isStreaming,
     error,
+    setError,
     cleanup,
   }
 }
