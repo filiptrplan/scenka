@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
-import { extractPatterns } from '@/services/patterns'
-import type { Climb } from '@/types'
+import { extractPatterns, extractRecentClimbs } from '@/services/patterns'
+import type { Climb, AnonymizedClimb } from '@/types'
 
 export interface ApiUsage {
   id: string
@@ -121,6 +121,7 @@ export async function generateRecommendations(
 
   // Extract patterns
   const patterns = await extractPatterns(user.id)
+  const recentClimbs: AnonymizedClimb[] = await extractRecentClimbs(user.id)
 
   // Call Supabase Edge Function with JWT token in Authorization header
   const { data, error } = await supabase.functions.invoke('openrouter-coach', {
@@ -131,6 +132,7 @@ export async function generateRecommendations(
       user_id: user.id,
       patterns_data: patterns,
       user_preferences: input.user_preferences,
+      recent_climbs: recentClimbs,
     },
   })
 
