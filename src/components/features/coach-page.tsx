@@ -211,7 +211,7 @@ export function CoachPage() {
                         {drill.description ?? 'No description available'}
                       </p>
                       {drill.measurable_outcome && (
-                        <p className="text-sm text-green-400/80 leading-relaxed font-mono mt-2 pt-2 border-t border-white/10">
+                        <p className="text-xs text-green-400/80 leading-relaxed font-mono">
                           Goal: {drill.measurable_outcome}
                         </p>
                       )}
@@ -243,7 +243,7 @@ export function CoachPage() {
                         </h3>
                         <Badge
                           variant="outline"
-                          className="text-xs font-mono border-white/20 text-[#ccc]"
+                          className="text-xs font-mono border-white/20 text-[#ccc] py-2"
                         >
                           {focus.grade_guidance ?? 'No grade guidance'}
                         </Badge>
