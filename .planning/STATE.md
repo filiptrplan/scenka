@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 25: User Climbing Context for Prompts
+**Current focus:** Phase 26: Update README with the work done in this milestone
 
 ## Current Position
 
-Phase: 25 of 26 (User Climbing Context for Prompts)
-Plan: 4 of 4 in current phase
+Phase: 26 of 26 (Update README with the work done in this milestone)
+Plan: 1 of 1 in current phase
 Status: Phase verified — complete
-Last activity: 2026-01-19 — Verified Phase 25 goal achievement (13/13 must-haves passed)
+Last activity: 2026-01-19 — Completed Phase 26-01: README Update
 
-Progress: [██████████░] 100%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 67 (v1.0 + v1.1 + v2.0 phase 18-25)
+- Total plans completed: 68 (v1.0 + v1.1 + v2.0 phase 18-26)
 - Average duration: 9 min
-- Total execution time: 9.2 hours
+- Total execution time: 9.4 hours
 
 **By Phase:**
 
@@ -37,6 +37,7 @@ Progress: [██████████░] 100%
 | 23 (Refocus Coach) | 7 | 20 min | 3 min |
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
 | 25 (User Context) | 4 | 17 min | 4 min |
+| 26 (README Update) | 1 | 2 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min
@@ -159,6 +160,13 @@ Recent decisions affecting current work:
 - Phase 25-04: Optional context parameter pattern for backward compatibility (climbingContext?: string | null)
 - Phase 25-04: Null-coalescing for safety (profile?.climbing_context ?? null) to ensure proper null handling
 - Phase 25-04: Climbing context integrated into system prompt after User Profile section and before footer instruction
+- Phase 26-01: Added TODO comments for screenshot capture to avoid broken image links
+- Phase 26-01: Used code blocks for bash commands (supabase secrets set, supabase functions deploy)
+- Phase 26-01: Placed AI Coach section after "What Makes Scenka Different" and before "Tech Stack"
+- Phase 26-01: Placed Upgrade section after Development Notes, Technical Details section at end
+- Phase 26-01: Included all migration file references for developer access
+- Phase 26-01: Listed 4 tables including profiles.climbing_context in schema section
+- Phase 26-01: Described 5-step privacy architecture data flow
 
 ### Pending Todos
 
@@ -170,6 +178,7 @@ None yet.
 - **OPENROUTER_MODEL required:** User must set OPENROUTER_MODEL environment variable via `supabase secrets set OPENROUTER_MODEL=google/gemini-2.5-pro` (documented in 22-01 SUMMARY)
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
 - **Database migration required:** User must run `npx supabase db push` to apply climbing_context migration to profiles table (documented in 25-01 SUMMARY)
+- **Screenshots need capture:** README includes TODO comments for screenshot capture that need to be fulfilled (coach page, chat page)
 
 ### Roadmap Evolution
 
@@ -182,5 +191,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 25-04: Climbing Context Integration for Edge Functions (Phase 25 complete)
+Stopped at: Completed Phase 26-01: README Update (Phase 26 complete)
 Resume file: None
