@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 25 of 25 (User Climbing Context for Prompts)
-Plan: 2 of 4 in current phase
+Plan: 1 of 4 in current phase
 Status: In progress
-Last activity: 2026-01-19 — Completed Phase 25-02: Climbing Context UI
+Last activity: 2026-01-19 — Completed Phase 25-01: User Climbing Context Data Layer
 
 Progress: [██████████░] 97%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 64 (v1.0 + v1.1 + v2.0 phase 18-24, 25-01/25-02)
+- Total plans completed: 65 (v1.0 + v1.1 + v2.0 phase 18-25)
 - Average duration: 9 min
-- Total execution time: 8.9 hours
+- Total execution time: 9.0 hours
 
 **By Phase:**
 
@@ -36,7 +36,7 @@ Progress: [██████████░] 97%
 | 22 (OpenRouter Config) | 1 | 5 min | 5 min |
 | 23 (Refocus Coach) | 7 | 20 min | 3 min |
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
-| 25 (User Context) | 2 | 4 min | 2 min |
+| 25 (User Context) | 2 | 9 min | 5 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min
@@ -146,6 +146,9 @@ Recent decisions affecting current work:
 - Phase 24-03: Added CoachRecommendation interface in useCoach.ts with projecting_focus field for type-safe UI display
 - Phase 24-03: Removed as any casts from Weekly Focus and Drills sections by using proper types
 - Phase 24-03: Purple divider color for Projecting Focus section matching "Recent Successes" in Pattern Analysis tab
+- Phase 25-01: Nullable column (TEXT) for climbing context to support existing users without migration
+- Phase 25-01: 2000 character limit enforced via database check constraint for data consistency
+- Phase 25-01: Database comment added for documentation of field purpose
 - Phase 25-02: Optional climbing_context field in profileSchema to avoid requiring existing users to fill it in immediately
 - Phase 25-02: 2000 character limit follows ChatGPT's 1500-char precedent with more flexibility
 - Phase 25-02: Explicit PII warning in help text to prevent PII leakage to OpenRouter API
@@ -161,6 +164,7 @@ None yet.
 - **Edge Function deployment:** User must run `supabase functions deploy openrouter-chat` and `supabase functions deploy openrouter-coach` to deploy updated model configuration and projecting focus
 - **OPENROUTER_MODEL required:** User must set OPENROUTER_MODEL environment variable via `supabase secrets set OPENROUTER_MODEL=google/gemini-2.5-pro` (documented in 22-01 SUMMARY)
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
+- **Database migration required:** User must run `npx supabase db push` to apply climbing_context migration to profiles table (documented in 25-01 SUMMARY)
 
 ### Roadmap Evolution
 
@@ -172,5 +176,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 25-02: Climbing Context UI
+Stopped at: Completed Phase 25-01: User Climbing Context Data Layer
 Resume file: None
