@@ -6,7 +6,7 @@ import { corsHeaders } from '../_shared/cors.ts'
 const MAX_RETRIES = 3
 
 // Environment variable validation
-const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_ANON_KEY']
+const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'OPENROUTER_MODEL']
 for (const envVar of requiredEnvVars) {
   if (!Deno.env.get(envVar)) {
     throw new Error(`Missing required environment variable: ${envVar}`)
@@ -16,6 +16,7 @@ for (const envVar of requiredEnvVars) {
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const openrouterApiKey = Deno.env.get('OPENROUTER_API_KEY')!
+const model = Deno.env.get('OPENROUTER_MODEL')!
 
 // Initialize Supabase client
 const supabase = createClient(supabaseUrl, supabaseKey)
@@ -307,13 +308,6 @@ function validateResponse(content: string): object {
   return parsed
 }
 
-// Calculate API cost
-function calculateCost(usage: { prompt_tokens: number; completion_tokens: number }): number {
-  const promptCost = (usage.prompt_tokens * 1.25) / 1000000 // $1.25 per 1M tokens
-  const completionCost = (usage.completion_tokens * 10.0) / 1000000 // $10.0 per 1M tokens
-  return promptCost + completionCost
-}
-
 // Edge Function handler
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight
@@ -402,7 +396,7 @@ Deno.serve(async (req: Request) => {
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       try {
         const response = await openai.chat.completions.create({
-          model: 'google/gemini-2.5-pro',
+          model,
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt },
@@ -423,7 +417,7 @@ Deno.serve(async (req: Request) => {
 
         // Success - store recommendations and track API usage
         const generationDate = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
-        const costUsd = calculateCost(lastUsage)
+        const costUsd = lastUsage.cost || 0
 
         // Store validated recommendations
         const { error: insertError } = await supabase.from('coach_recommendations').insert({
@@ -446,7 +440,7 @@ Deno.serve(async (req: Request) => {
           completion_tokens: lastUsage.completion_tokens,
           total_tokens: lastUsage.total_tokens,
           cost_usd: costUsd,
-          model: 'google/gemini-2.5-pro',
+          model,
           endpoint: 'openrouter-coach',
           time_window_start: new Date().toISOString(),
         })
@@ -500,7 +494,7 @@ Deno.serve(async (req: Request) => {
                 completion_tokens: 0,
                 total_tokens: 0,
                 cost_usd: 0,
-                model: 'google/gemini-2.5-pro',
+                model,
                 endpoint: 'openrouter-coach',
                 time_window_start: new Date().toISOString(),
               })
@@ -543,7 +537,7 @@ Deno.serve(async (req: Request) => {
               completion_tokens: 0,
               total_tokens: 0,
               cost_usd: 0,
-              model: 'google/gemini-2.5-pro',
+              model,
               endpoint: 'openrouter-coach',
               time_window_start: new Date().toISOString(),
             })
