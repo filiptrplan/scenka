@@ -4,7 +4,7 @@ import { corsHeaders } from '../_shared/cors.ts'
 import { getChatSystemPrompt } from '../_shared/system-prompt.ts'
 
 // Environment variable validation
-const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'OPENROUTER_MODEL']
+const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'OPENROUTER_MODEL', 'DAILY_CHAT_LIMIT']
 for (const envVar of requiredEnvVars) {
   if (!Deno.env.get(envVar)) {
     throw new Error(`Missing required environment variable: ${envVar}`)
@@ -15,6 +15,7 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const openrouterApiKey = Deno.env.get('OPENROUTER_API_KEY')!
 const model = Deno.env.get('OPENROUTER_MODEL')!
+const dailyChatLimit = parseInt(Deno.env.get('DAILY_CHAT_LIMIT') ?? '10')
 
 // Initialize Supabase client
 const supabase = createClient(supabaseUrl, supabaseKey)
@@ -107,6 +108,53 @@ Deno.serve(async (req: Request) => {
     }
 
     userId = user.id
+
+    // Check daily chat limit BEFORE making LLM API call
+    const { data: limits, error: limitsError } = await supabase
+      .from('user_limits')
+      .select('chat_count, limit_date')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (limitsError) {
+      console.error('Failed to fetch user limits:', limitsError)
+      // Continue anyway - don't block on limit check error
+    }
+
+    const chatCount = limits?.chat_count ?? 0
+    const limitDate = limits?.limit_date ? new Date(limits.limit_date) : new Date('1970-01-01')
+    const today = new Date()
+    today.setUTCHours(0, 0, 0, 0)
+
+    // Reset count if new day (handle same-day check with comparison)
+    const isSameDay = limitDate.toISOString().split('T')[0] === today.toISOString().split('T')[0]
+    const effectiveCount = isSameDay ? chatCount : 0
+
+    if (effectiveCount >= dailyChatLimit) {
+      // Calculate hours until next reset (UTC midnight)
+      const tomorrow = new Date(today)
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+      const hoursUntilReset = Math.ceil((tomorrow.getTime() - Date.now()) / (1000 * 60 * 60))
+
+      const resetMessage = hoursUntilReset <= 1
+        ? 'Next reset in less than 1 hour'
+        : hoursUntilReset < 24
+        ? `Next reset in ${hoursUntilReset} hours`
+        : 'Next reset tomorrow at midnight UTC'
+
+      return new Response(
+        JSON.stringify({
+          error: `You've reached your daily limit. ${resetMessage}`,
+          limit_type: 'chat',
+          current_count: effectiveCount,
+          limit: dailyChatLimit,
+        }),
+        { status: 429, headers: corsHeaders }
+      )
+    }
+
+    // Increment counter BEFORE storing message and making LLM API call
+    await supabase.rpc('increment_chat_count', { p_user_id: userId })
 
     // Parse request body
     const body: RequestBody = await req.json()
