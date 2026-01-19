@@ -205,14 +205,15 @@ ${JSON.stringify(recentClimbs, null, 0)}\n`
 
 Example output format:
 {
-  "weekly_focus": "Focus on improving finger strength through structured hangboard training to address your 40% failure rate on crimp-style holds",
+  "weekly_focus": "Develop precise footwork and body positioning to address 35% failure rate on technical slab climbs",
   "drills": [
     {
-      "name": "7-3-5-3 Hangboard Protocol",
-      "description": "A progressive hangboard protocol that builds contact strength by alternating between 7-second, 3-second, 5-second, and 3-second hangs with 90-second rests. Targets the half-crimp and open-hand grip positions critical for bouldering.",
-      "sets": 4,
-      "reps": "6-8 reps per hold",
-      "rest": "90s"
+      "name": "Silent Feet Ladder",
+      "description": "Climb 10 easy routes focusing entirely on silent foot placements. Each foot must land without making any sound on the holds. If you hear a foot slap, that route doesn't count. This builds deliberate movement patterns and weight transfer awareness.",
+      "sets": 5,
+      "reps": "1 route per set",
+      "rest": "2 minutes",
+      "measurable_outcome": "Complete 10 routes with 100% silent foot placements"
     }
   ]
 }`
