@@ -1,3 +1,4 @@
+export { ChatPage } from './chat-page'
 export { ChartsPage } from './charts-page'
 export { ClimbCard } from './climb-card'
 export { CoachPage } from './coach-page'
