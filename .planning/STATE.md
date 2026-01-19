@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 21 of 21 (Chat Interface)
-Plan: 0 of 5 in current phase
-Status: Ready to plan
-Last activity: 2026-01-18 — Phase 20: LLM Integration completed (3/3 plans, verified)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-01-19 — Phase 21-01: SSE Streaming Edge Function completed
 
-Progress: [░░░░░░░░░░░░░] 0%
+Progress: [██░░░░░░░░░░░░] 20%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 42 (v1.0 + v1.1 + v2.0 phase 18-20)
+- Total plans completed: 43 (v1.0 + v1.1 + v2.0 phase 18-21)
 - Average duration: 9 min
-- Total execution time: 6.3 hours
+- Total execution time: 6.4 hours
 
 **By Phase:**
 
@@ -32,9 +32,10 @@ Progress: [░░░░░░░░░░░░░] 0%
 | 18 (AI Coach) | 6 | 40 min | 7 min |
 | 19 (Coach UI) | 8 | 19 min | 2 min |
 | 20 (LLM Integration) | 3 | 18 min | 6 min |
+| 21 (Chat Interface) | 1 | 1 min | 1 min |
 
 **Recent Trend:**
-- Last 5 plans: 6 min
+- Last 5 plans: 3 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -87,6 +88,10 @@ Recent decisions affecting current work:
 - Phase 20-03: Privacy validation before LLM call prevents PII leakage to external APIs
 - Phase 20-03: Client coach.ts now calls 'openrouter-coach' instead of incorrect 'generate-recommendations'
 - Phase 20-03: Response format includes is_cached flag for UI handling of cached data
+- Phase 21-01: SSE streaming chosen over WebSocket for one-way server-to-client streaming (simpler, built-in reconnection, HTTP-based)
+- Phase 21-01: Message history limit of 20 balances context relevance with token usage
+- Phase 21-01: User message stored before LLM call, assistant message stored after streaming completes (non-blocking on storage errors)
+- Phase 21-01: System prompt module in _shared for reusability and centralized maintenance
 
 ### Pending Todos
 
@@ -95,8 +100,9 @@ None yet.
 ### Blockers/Concerns
 
 - **Supabase CLI authentication:** User must run `npx supabase login` and `npx supabase db push` to apply coach tables migration
+- **Edge Function deployment:** User must run `npx supabase functions deploy openrouter-chat` to deploy new Edge Function
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
-- **Streaming implementation:** @microsoft/fetch-event-source patterns need validation during Phase 21
+- **SSE client implementation:** React Chat UI (Phase 21-02) will consume SSE stream - patterns to validate during next plan
 
 ### Roadmap Evolution
 
@@ -105,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-18
-Stopped at: Completed Phase 20-03: Error Handling with Fallback
+Last session: 2026-01-19
+Stopped at: Completed Phase 21-01: SSE Streaming Edge Function
 Resume file: None
