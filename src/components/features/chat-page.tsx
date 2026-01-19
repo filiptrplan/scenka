@@ -1,11 +1,13 @@
 import { Brain, Send } from 'lucide-react'
 import { useRef, useEffect, useState, type KeyboardEvent } from 'react'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { usePatternAnalysis } from '@/hooks/useCoach'
 import { useCoachMessages } from '@/hooks/useCoachMessages'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
+import { useUserLimits, getTimeUntilNextReset } from '@/hooks/useUserLimits'
 import { getProfile } from '@/services/profiles'
 
 interface MessageBubbleProps {
@@ -91,6 +93,12 @@ export function ChatPage() {
   const { data: messages, isLoading } = useCoachMessages()
   const { data: patterns } = usePatternAnalysis()
   const { sendMessage, streamingResponse, isStreaming, error, cleanup, setError } = useStreamingChat()
+  const { data: limits } = useUserLimits()
+
+  const dailyChatLimit = 10
+  const chatCount = limits?.chat_count ?? 0
+  const chatRemaining = Math.max(0, dailyChatLimit - chatCount)
+  const isChatAtLimit = chatRemaining <= 0
 
   // Fetch profile on mount
   useEffect(() => {
@@ -117,6 +125,11 @@ export function ChatPage() {
   }, [cleanup])
 
   const handleSend = async () => {
+    if (isChatAtLimit) {
+      toast.error('You have reached your daily chat limit')
+      return
+    }
+
     if (!inputValue.trim() || isStreaming) {
       return
     }
@@ -201,15 +214,20 @@ export function ChatPage() {
               isStreaming ? 'opacity-50 cursor-not-allowed' : 'hover:border-white/30'
             }`}
           />
-          <Button
-            onClick={() => void handleSend()}
-            disabled={!inputValue.trim() || isStreaming}
-            className={`h-[44px] w-[44px] flex-shrink-0 bg-white text-black transition-all duration-200 ${
-              !inputValue.trim() || isStreaming ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/90'
-            }`}
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => void handleSend()}
+              disabled={!inputValue.trim() || isStreaming || isChatAtLimit}
+              className={`h-[44px] w-[44px] flex-shrink-0 bg-white text-black transition-all duration-200 ${
+                !inputValue.trim() || isStreaming || isChatAtLimit ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/90'
+              }`}
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+            <span className="text-xs text-[#888] whitespace-nowrap">
+              {chatCount}/{dailyChatLimit} used today
+            </span>
+          </div>
         </div>
         {error !== null && (
           <div className="mt-2 flex items-center gap-2">
@@ -224,6 +242,9 @@ export function ChatPage() {
               </button>
             )}
           </div>
+        )}
+        {isChatAtLimit === true && (
+          <p className="text-xs text-red-400 mt-2">{getTimeUntilNextReset()}</p>
         )}
       </div>
     </div>
