@@ -10,16 +10,16 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 ## Current Position
 
 Phase: 27 of 27 (Impose Daily Limit on Usage)
-Plan: 3 of 6 in current phase
+Plan: 4 of 6 in current phase
 Status: In progress
-Last activity: 2026-01-19 - Completed Phase 27-03: Daily Chat Limit Enforcement
+Last activity: 2026-01-19 - Completed Phase 27-04: Client-side Usage Limits Hooks
 
-Progress: [███░░░░░░░] 50%
+Progress: [████░░░░░░] 67%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 71 (v1.0 + v1.1 + v2.0 phase 18-27)
+- Total plans completed: 72 (v1.0 + v1.1 + v2.0 phase 18-27)
 - Average duration: 9 min
 - Total execution time: 9.6 hours
 
@@ -38,7 +38,7 @@ Progress: [███░░░░░░░] 50%
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
 | 25 (User Context) | 4 | 17 min | 4 min |
 | 26 (README Update) | 1 | 2 min | 2 min |
-| 27 (Daily Limit) | 3 (of 6) | 5 min | 2 min |
+| 27 (Daily Limit) | 4 (of 6) | 7 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: 2 min
@@ -176,6 +176,10 @@ Recent decisions affecting current work:
 - Phase 27-03: Atomic increment via RPC function before any message storage or API calls
 - Phase 27-03: Client-side effectiveCount calculation handles day reset case before RPC function executes
 - Phase 27-03: Time until reset calculation shows user-friendly messages for UTC midnight reset
+- Phase 27-04: staleTime: 0 ensures fresh data on every fetch for accurate limit display
+- Phase 27-04: 30-second gcTime provides performance benefit for rapid successive fetches
+- Phase 27-04: maybeSingle() handles users without limits row gracefully (returns null instead of error)
+- Phase 27-04: Invalidation in useCreateCoachMessage ensures counter refreshes after every chat message
 
 ### Pending Todos
 
@@ -202,5 +206,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed Phase 27-03: Daily Chat Limit Enforcement
+Stopped at: Completed Phase 27-04: Client-side Usage Limits Hooks
 Resume file: None
