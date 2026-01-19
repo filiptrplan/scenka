@@ -4,7 +4,11 @@
 
 A personal climbing tracker built for climbers who want to get better, not just log sends. Exception logging, failure-focused, privacy-first, and offline-ready.
 
-Vibe-coded for personal enjoyment — use if helpful, but no SLA!
+> [!IMPORTANT]
+> This project is completely and utterly vibe-coded. No human-written code here.
+> If that turns you away that's fine. Here's another thing to turn you away:
+> this is completely for my personal enjoyment and I make no guarantees as to
+> how, when and if bugs will be fixed or features will be added.
 
 ## What Makes Scenka Different
 
@@ -22,6 +26,7 @@ Scenka follows an "exception logging" philosophy — only log significant climbs
 Scenka includes an AI-powered climbing coach that analyzes your logged data to provide personalized training guidance. Focuses on technique development with privacy-first design and climbing-specific domain knowledge.
 
 **Features:**
+
 - Weekly Focus: Personalized 1-2 sentence focus based on your failure patterns
 - Training Drills: 3 specific technique drills with sets, reps, and measurable outcomes
 - Pattern Analysis: Visual breakdown of failure reasons, style weaknesses, and climbing frequency
@@ -32,6 +37,7 @@ Scenka includes an AI-powered climbing coach that analyzes your logged data to p
 ### Privacy Safeguards
 
 Your climbing data never leaves without anonymization:
+
 - Gym names and crags anonymized before LLM processing (indoor_gym, outdoor_crags)
 - Profile data (email, name) never included in LLM requests
 - Row Level Security ensures users can only access their own recommendations
@@ -47,12 +53,14 @@ To enable AI Coach features, set up OpenRouter and deploy Edge Functions:
    - Generate API key from dashboard
 
 2. Set OpenRouter secrets in Supabase:
+
    ```bash
    supabase secrets set OPENROUTER_API_KEY=your_key_here
    supabase secrets set OPENROUTER_MODEL=google/gemini-2.5-pro
    ```
 
 3. Deploy Edge Functions:
+
    ```bash
    supabase functions deploy openrouter-coach
    supabase functions deploy openrouter-chat
@@ -73,14 +81,16 @@ To enable AI Coach features, set up OpenRouter and deploy Edge Functions:
 6. Regenerate recommendations weekly for fresh analysis
 
 <!-- TODO: Capture screenshot from app -->
+
 ![Screenshot: Coach page with weekly focus, training drills, and pattern analysis tabs](./docs/screenshots/coach-page.png)
 
-*[Capture from: Navigate to Coach tab, showing Recommendations tab with Weekly Focus, Training Drills, Projecting Focus sections, and Pattern Analysis tab with failure patterns, style weaknesses, and climbing frequency]*
+_[Capture from: Navigate to Coach tab, showing Recommendations tab with Weekly Focus, Training Drills, Projecting Focus sections, and Pattern Analysis tab with failure patterns, style weaknesses, and climbing frequency]_
 
 <!-- TODO: Capture screenshot from app -->
+
 ![Screenshot: Chat interface with streaming conversation about climbing technique](./docs/screenshots/chat-page.png)
 
-*[Capture from: Click "Ask Coach a Question" from coach page, showing chat interface with user/assistant message bubbles, streaming indicator, and text input]*
+_[Capture from: Click "Ask Coach a Question" from coach page, showing chat interface with user/assistant message bubbles, streaming indicator, and text input]_
 
 ## Tech Stack
 
@@ -122,29 +132,34 @@ pnpm preview
 ## Screenshots 📱
 
 <!-- TODO: Capture screenshot from app -->
+
 ![Screenshot: Logger form with grade picker, outcome selection, and multi-select style tags](./docs/screenshots/logger-form.png)
 
-*[Capture from: Open the logger by clicking the + button, showing all form fields including grade scale, grade value, outcome (Sent/Fail), awkwardness slider, style tags multi-select, and failure reasons multi-select]*
+_[Capture from: Open the logger by clicking the + button, showing all form fields including grade scale, grade value, outcome (Sent/Fail), awkwardness slider, style tags multi-select, and failure reasons multi-select]_
 
 <!-- TODO: Capture screenshot from app -->
+
 ![Screenshot: Analytics dashboard showing failure breakdown by category](./docs/screenshots/analytics-dashboard.png)
 
-*[Capture from: Navigate to Analytics tab, showing charts for failure reasons breakdown, grade distribution, and weekly activity]*
+_[Capture from: Navigate to Analytics tab, showing charts for failure reasons breakdown, grade distribution, and weekly activity]_
 
 <!-- TODO: Capture screenshot from app -->
+
 ![Screenshot: Settings page with hold color preferences and grade scale selection](./docs/screenshots/settings-page.png)
 
-*[Capture from: Navigate to Settings, showing enabled hold colors section with toggle switches, grade scale dropdown, and other user preferences]*
+_[Capture from: Navigate to Settings, showing enabled hold colors section with toggle switches, grade scale dropdown, and other user preferences]_
 
 <!-- TODO: Capture screenshot from app -->
+
 ![Screenshot: Climb history view with list of logged climbs and details](./docs/screenshots/climb-history.png)
 
-*[Capture from: Main view showing list of logged climbs with grade, outcome, awkwardness, tags, and hold color indicators]*
+_[Capture from: Main view showing list of logged climbs with grade, outcome, awkwardness, tags, and hold color indicators]_
 
 <!-- TODO: Capture screenshot from app -->
+
 ![Screenshot: Mobile view showing PWA experience on phone](./docs/screenshots/mobile-view.png)
 
-*[Capture from: View on mobile device or browser DevTools mobile simulation, showing responsive layout and PWA full-screen experience]*
+_[Capture from: View on mobile device or browser DevTools mobile simulation, showing responsive layout and PWA full-screen experience]_
 
 ## Development Notes
 
@@ -183,6 +198,7 @@ pnpm vitest run <path-to-test-file> -t "<test-name>"
 **Style:** Slab, Vert, Overhang, Roof, Dyno, Crimp, Sloper, Pinch
 
 **Failure Reasons:**
+
 - Physical: Pumped, Finger Strength, Core, Power
 - Technical: Bad Feet, Body Position, Beta Error, Precision
 - Mental: Fear, Commitment, Focus
@@ -196,9 +212,11 @@ pnpm vitest run <path-to-test-file> -t "<test-name>"
 Existing users upgrading to v2.0:
 
 1. Apply database migrations:
+
    ```bash
    npx supabase db push
    ```
+
    This adds coach tables and the climbing_context column to profiles table.
 
 2. Set up OpenRouter:
@@ -245,6 +263,7 @@ Each user limited to 50k tokens/day (~15-20 recommendation generations or 50-100
 ### Privacy Architecture
 
 Data flow:
+
 1. Client fetches climbs and patterns from Supabase (user data stays in Supabase)
 2. Anonymization removes gym names, crags, and PII before Edge Function call
 3. Edge Function validates JWT and sends anonymized data to OpenRouter
@@ -252,6 +271,7 @@ Data flow:
 5. Recommendations/messages stored in Supabase with RLS (user can only access their own)
 
 Reference migration files for full schema:
+
 - `supabase/migrations/20260117132100_create_coach_tables.sql`
 - `supabase/migrations/20260118081500_add_coach_api_usage_insert_policy.sql`
 - `supabase/migrations/20260119191600_add_climbing_context_to_profiles.sql`
@@ -261,6 +281,7 @@ Reference migration files for full schema:
 This is a personal project built for my own climbing journey. It's actively maintained and may be shared with friends, but it's not designed for public release as a commercial product.
 
 **What this means:**
+
 - Features are driven by my personal needs
 - No external support or guarantees
 - Code quality is important, but shipping fast is prioritized
