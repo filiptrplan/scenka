@@ -219,15 +219,15 @@ Update README.md to document the new AI Coach features including coach recommend
   7. Buttons disabled when limit reached with inline error message showing time until reset
   8. Counters refresh after each action (via TanStack Query invalidation)
 **Plans**: 6 plans
-**Status**: Planned — ready for execution
+**Status**: Complete — verified 2026-01-19
 
 Plans:
 - [x] 27-01-PLAN.md — Database migration for user_limits table and RPC functions
-- [ ] 27-02-PLAN.md — Update openrouter-coach Edge Function with recommendation limit check
-- [ ] 27-03-PLAN.md — Update openrouter-chat Edge Function with chat limit check
-- [ ] 27-04-PLAN.md — Create useUserLimits hook and update hooks to invalidate limits
-- [ ] 27-05-PLAN.md — Update coach-page.tsx with recommendation usage counter
-- [ ] 27-06-PLAN.md — Update chat-page.tsx with chat usage counter
+- [x] 27-02-PLAN.md — Update openrouter-coach Edge Function with recommendation limit check
+- [x] 27-03-PLAN.md — Update openrouter-chat Edge Function with chat limit check
+- [x] 27-04-PLAN.md — Create useUserLimits hook and update hooks to invalidate limits
+- [x] 27-05-PLAN.md — Update coach-page.tsx with recommendation usage counter
+- [x] 27-06-PLAN.md — Update chat-page.tsx with chat usage counter
 
 **Details**:
 Daily usage limits implemented at Edge Function layer to enforce 2 recommendation generations and 10 chat messages per user. Limits checked BEFORE LLM API calls to control costs, counters increment atomically via PostgreSQL upsert pattern with UTC midnight reset. Client-side counters display inline next to action buttons, refresh after each action, and show inline error messages when limit reached.
@@ -269,4 +269,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 �
 | 24. Projecting Focus Recommendations | v2.0 | 3/3 | Complete | 2026-01-19 |
 | 25. User Climbing Context for Prompts | v2.0 | 4/4 | Complete | 2026-01-19 |
 | 26. Update README with Milestone Work | v2.0 | 1/1 | Complete | 2026-01-19 |
-| 27. Impose Daily Limit on Usage | v2.0 | 1/6 | In progress | 2026-01-19 |
+| 27. Impose Daily Limit on Usage | v2.0 | 6/6 | Complete | 2026-01-19 |
