@@ -1,6 +1,7 @@
 import { normalizeGrade } from '@/lib/grades'
 import { supabase } from '@/lib/supabase'
-import type { Climb, PatternAnalysis } from '@/types'
+import type { Climb, PatternAnalysis, AnonymizedClimb } from '@/types'
+import { anonymizeClimbsForAI } from '@/lib/coachUtils'
 
 export async function extractPatterns(userId: string): Promise<PatternAnalysis> {
   if (!supabase) {
@@ -28,6 +29,29 @@ export async function extractPatterns(userId: string): Promise<PatternAnalysis> 
     climbing_frequency: extractClimbingFrequency(climbs),
     recent_successes: extractRecentSuccesses(climbs),
   }
+}
+
+export async function extractRecentClimbs(userId: string): Promise<AnonymizedClimb[]> {
+  if (!supabase) {
+    throw new Error('Supabase client not configured')
+  }
+
+  const { data: climbs, error } = await supabase
+    .from('climbs')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(30)
+
+  if (error) {
+    throw error
+  }
+
+  if (!climbs || climbs.length === 0) {
+    return []
+  }
+
+  return anonymizeClimbsForAI(climbs)
 }
 
 function extractFailurePatterns(climbs: Climb[]) {
