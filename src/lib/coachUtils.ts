@@ -103,6 +103,11 @@ export function validateAnonymizedData(data: unknown): string[] {
         ) {
           piiFields.push(currentPath)
         }
+
+        // Unusually long notes might contain PII
+        if (key.toLowerCase().includes('notes') && value.length > 200) {
+          piiFields.push(currentPath)
+        }
       }
 
       if (typeof value === 'object' && value !== null) {
