@@ -191,6 +191,71 @@ pnpm vitest run <path-to-test-file> -t "<test-name>"
 
 1 = Flow state, 5 = Sketchy/desperate
 
+### v1.1 to v2.0 Upgrade
+
+Existing users upgrading to v2.0:
+
+1. Apply database migrations:
+   ```bash
+   npx supabase db push
+   ```
+   This adds coach tables and the climbing_context column to profiles table.
+
+2. Set up OpenRouter:
+   - Get API key from [openrouter.ai](https://openrouter.ai)
+   - Set secrets: `supabase secrets set OPENROUTER_API_KEY=your_key_here`
+   - Set model: `supabase secrets set OPENROUTER_MODEL=google/gemini-2.5-pro`
+
+3. Deploy Edge Functions:
+   ```bash
+   supabase functions deploy openrouter-coach
+   supabase functions deploy openrouter-chat
+   ```
+
+That's it! Your existing climb data will be analyzed by the coach automatically.
+
+---
+
+## AI Coach Technical Details
+
+### Database Schema
+
+The AI Coach uses three new tables:
+
+- **coach_recommendations**: Stores weekly focus, drills, projecting focus, and metadata (generation_date, is_cached)
+- **coach_messages**: Stores chat conversation history with SSE streaming support
+- **coach_api_usage**: Tracks token usage and costs for rate limiting (50k tokens/day per user)
+- **profiles.climbing_context**: Optional custom context (2000 char limit) for personalization
+
+All tables use JSONB columns for flexible schema evolution and include RLS policies for user isolation.
+
+### Edge Functions
+
+Two Supabase Edge Functions handle LLM communication:
+
+- **openrouter-coach**: Generates weekly recommendations based on pattern analysis and recent climbs
+- **openrouter-chat**: Streams chat responses with climbing-specific domain knowledge
+
+Functions validate JWT tokens, anonymize data before OpenRouter API calls, validate LLM responses against climbing best practices, and store results in Supabase.
+
+### Rate Limiting
+
+Each user limited to 50k tokens/day (~15-20 recommendation generations or 50-100 chat messages) to balance utility with cost control. Usage tracked in coach_api_usage table with real-time enforcement in Edge Functions.
+
+### Privacy Architecture
+
+Data flow:
+1. Client fetches climbs and patterns from Supabase (user data stays in Supabase)
+2. Anonymization removes gym names, crags, and PII before Edge Function call
+3. Edge Function validates JWT and sends anonymized data to OpenRouter
+4. OpenRouter returns JSON response validated against climbing schema
+5. Recommendations/messages stored in Supabase with RLS (user can only access their own)
+
+Reference migration files for full schema:
+- `supabase/migrations/20260117132100_create_coach_tables.sql`
+- `supabase/migrations/20260118081500_add_coach_api_usage_insert_policy.sql`
+- `supabase/migrations/20260119191600_add_climbing_context_to_profiles.sql`
+
 ## Project Status
 
 This is a personal project built for my own climbing journey. It's actively maintained and may be shared with friends, but it's not designed for public release as a commercial product.

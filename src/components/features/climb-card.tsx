@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from 'date-fns'
-import { MapPin, TrendingDown, TrendingUp, Flame, Edit, Trash2, Check } from 'lucide-react'
+import { MapPin, TrendingDown, TrendingUp, Edit, Trash2, Check } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
