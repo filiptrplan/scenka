@@ -1,8 +1,10 @@
 /* eslint-disable import/order */
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import { supabase } from '@/lib/supabase'
 import { useCreateCoachMessage } from '@/hooks/useCoachMessages'
+import { userLimitsKeys } from './useUserLimits'
 
 export interface UseStreamingChatReturn {
   sendMessage: (message: string, patterns?: unknown, climbingContext?: string | null) => Promise<void>
@@ -22,6 +24,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
   const abortControllerRef = useRef<AbortController | null>(null)
   const hasErrorRef = useRef(false)
   const createMessage = useCreateCoachMessage()
+  const queryClient = useQueryClient()
 
   const cleanup = useCallback(() => {
     if (abortControllerRef.current) {
@@ -126,6 +129,10 @@ export function useStreamingChat(): UseStreamingChatReturn {
                 context: {
                   patterns_data: patterns,
                 },
+              })
+              // Invalidate user limits to refresh counter display
+              void queryClient.invalidateQueries({
+                queryKey: userLimitsKeys.current(),
               })
             }
           },

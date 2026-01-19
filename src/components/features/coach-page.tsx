@@ -16,6 +16,7 @@ import {
   usePatternAnalysis,
 } from '@/hooks/useCoach'
 import { useProfile } from '@/hooks/useProfile'
+import { getTimeUntilNextReset, useUserLimits } from '@/hooks/useUserLimits'
 import { type ProjectingFocus } from '@/services/coach'
 
 const safeDate = (dateString: string | undefined | null): Date => {
@@ -33,8 +34,14 @@ export function CoachPage() {
   const { data: recommendations, isLoading, error } = useCoachRecommendations()
   const { data: climbs } = useClimbs()
   const { data: profile } = useProfile()
+  const { data: limits } = useUserLimits()
   const generateRecommendations = useGenerateRecommendations()
   const { data: patterns, isLoading: patternsLoading, error: patternsError } = usePatternAnalysis()
+
+  const dailyRecLimit = 2
+  const recCount = limits?.rec_count ?? 0
+  const recRemaining = Math.max(0, dailyRecLimit - recCount)
+  const isRecAtLimit = recRemaining <= 0
 
   const handleRegenerate = () => {
     generateRecommendations.mutate(
@@ -104,7 +111,7 @@ export function CoachPage() {
                   },
                 })
               }}
-              disabled={generateRecommendations.isPending}
+              disabled={generateRecommendations.isPending || isRecAtLimit}
               className="h-12 px-8 bg-white text-black hover:bg-white/90 font-black uppercase tracking-wider disabled:opacity-50"
             >
               {generateRecommendations.isPending ? (
@@ -116,6 +123,12 @@ export function CoachPage() {
                 'Generate Recommendations'
               )}
             </Button>
+            <span className="text-xs text-[#888]">
+              {recCount}/{dailyRecLimit} used today
+            </span>
+            {isRecAtLimit && (
+              <p className="text-xs text-red-400">{getTimeUntilNextReset()}</p>
+            )}
           </div>
         </div>
       </div>
@@ -272,12 +285,18 @@ export function CoachPage() {
             <div className="flex flex-col gap-3">
               <Button
                 onClick={() => void handleRegenerate()}
-                disabled={generateRecommendations.isPending}
+                disabled={generateRecommendations.isPending || isRecAtLimit}
                 className="w-full h-12 bg-white text-black hover:bg-white/90 font-black uppercase tracking-wider disabled:opacity-50"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 {generateRecommendations.isPending ? 'Generating...' : 'Regenerate Recommendations'}
               </Button>
+              <span className="text-xs text-[#888] text-center">
+                {recCount}/{dailyRecLimit} used today
+              </span>
+              {isRecAtLimit && (
+                <p className="text-xs text-red-400 text-center">{getTimeUntilNextReset()}</p>
+              )}
               <Button
                 variant="outline"
                 onClick={() => void navigate('/coach/chat')}

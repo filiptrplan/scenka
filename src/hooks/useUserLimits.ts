@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+
 import { supabase } from '@/lib/supabase'
 
 export const userLimitsKeys = {
@@ -16,6 +17,10 @@ export function useUserLimits() {
   return useQuery<UserLimits | null>({
     queryKey: userLimitsKeys.current(),
     queryFn: async () => {
+      if (!supabase) {
+        throw new Error('Supabase client not configured')
+      }
+
       const {
         data: { user },
       } = await supabase.auth.getUser()
