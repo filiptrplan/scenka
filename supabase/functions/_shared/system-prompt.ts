@@ -28,7 +28,7 @@ interface PatternAnalysis {
 }
 
 // Generate chat system prompt with climbing-specific context
-export function getChatSystemPrompt(patterns_data?: Record<string, unknown>): string {
+export function getChatSystemPrompt(patterns_data?: Record<string, unknown>, climbingContext?: string | null): string {
   let prompt = `You are an expert climbing coach specializing in bouldering and sport climbing technique. Your expertise covers climbing movement, beta analysis, grade progression, and training methods.
 
 Your role is to help climbers improve through Q&A about technique, beta, grades, training styles, and mental game. Be concise, helpful, and use proper climbing terminology.
@@ -83,6 +83,12 @@ Use these terms naturally:
       prompt += `- Climbing frequency: ${patterns.climbing_frequency.climbs_per_month} climbs/month\n`
       prompt += `- Avg per session: ${patterns.climbing_frequency.avg_climbs_per_session} climbs\n`
     }
+  }
+
+  // Add climbing context if provided
+  if (climbingContext && climbingContext.trim().length > 0) {
+    prompt += '\n\nUser Context:\n'
+    prompt += climbingContext.trim() + '\n'
   }
 
   prompt += `\nProvide helpful, concise answers. Ask clarifying questions if needed to understand the user's specific situation.`
