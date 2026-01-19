@@ -11,6 +11,7 @@ const requiredEnvVars = [
   'SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
   'OPENROUTER_MODEL',
+  'DAILY_REC_LIMIT',
 ]
 for (const envVar of requiredEnvVars) {
   if (!Deno.env.get(envVar)) {
@@ -22,6 +23,7 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 const openrouterApiKey = Deno.env.get('OPENROUTER_API_KEY')!
 const model = Deno.env.get('OPENROUTER_MODEL')!
+const dailyRecLimit = parseInt(Deno.env.get('DAILY_REC_LIMIT') ?? '2')
 
 // Initialize Supabase client
 const supabase = createClient(supabaseUrl, supabaseKey)
@@ -477,6 +479,54 @@ Deno.serve(async (req: Request) => {
     }
 
     userId = user.id
+
+    // Check daily recommendation limit BEFORE making any API calls
+    const { data: limits, error: limitsError } = await supabase
+      .from('user_limits')
+      .select('rec_count, limit_date')
+      .eq('user_id', userId)
+      .maybeSingle() // Use maybeSingle() for users without limits yet
+
+    if (limitsError) {
+      console.error('Failed to fetch user limits:', limitsError)
+      // Continue anyway - limit check is a safety feature, don't block on errors
+    }
+
+    // Calculate if limit exceeded
+    const recCount = limits?.rec_count ?? 0
+    const limitDate = limits?.limit_date ? new Date(limits.limit_date) : new Date('1970-01-01')
+    const today = new Date()
+    today.setUTCHours(0, 0, 0, 0)
+
+    // Reset count if new day (handle same-day check with comparison)
+    const isSameDay = limitDate.toISOString().split('T')[0] === today.toISOString().split('T')[0]
+    const effectiveCount = isSameDay ? recCount : 0
+
+    if (effectiveCount >= dailyRecLimit) {
+      // Calculate hours until next reset (UTC midnight)
+      const tomorrow = new Date(today)
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
+      const hoursUntilReset = Math.ceil((tomorrow.getTime() - Date.now()) / (1000 * 60 * 60))
+
+      const resetMessage = hoursUntilReset <= 1
+        ? 'Next reset in less than 1 hour'
+        : hoursUntilReset < 24
+          ? `Next reset in ${hoursUntilReset} hours`
+          : 'Next reset tomorrow at midnight UTC'
+
+      return new Response(
+        JSON.stringify({
+          error: `You've reached your daily limit. ${resetMessage}`,
+          limit_type: 'recommendations',
+          current_count: effectiveCount,
+          limit: dailyRecLimit,
+        }),
+        { status: 429, headers: corsHeaders }
+      )
+    }
+
+    // Increment counter BEFORE LLM API call to ensure we don't make expensive calls for blocked requests
+    await supabase.rpc('increment_rec_count', { p_user_id: userId })
 
     // Parse request body
     const body: RequestBody = await req.json()
