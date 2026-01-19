@@ -319,6 +319,45 @@ function validateResponse(content: string): object {
     }
   })
 
+  // Validate projecting_focus array
+  if (!Array.isArray(parsed.projecting_focus)) {
+    throw new Error('Missing or invalid field: projecting_focus (must be an array)')
+  }
+
+  if (parsed.projecting_focus.length < 3 || parsed.projecting_focus.length > 4) {
+    throw new Error('Field projecting_focus must contain 3-4 items')
+  }
+
+  // Validate each projecting_focus item
+  parsed.projecting_focus.forEach((item: any, index: number) => {
+    const itemNum = index + 1
+
+    if (!item.focus_area || typeof item.focus_area !== 'string') {
+      throw new Error(`Projecting focus ${itemNum}: Missing or invalid field: focus_area`)
+    }
+    if (item.focus_area.trim().length === 0) {
+      throw new Error(`Projecting focus ${itemNum}: Field focus_area cannot be empty`)
+    }
+
+    if (!item.description || typeof item.description !== 'string') {
+      throw new Error(`Projecting focus ${itemNum}: Missing or invalid field: description`)
+    }
+    if (item.description.trim().length < 20) {
+      throw new Error(`Projecting focus ${itemNum}: Field description must be at least 20 characters`)
+    }
+
+    if (!item.grade_guidance || typeof item.grade_guidance !== 'string') {
+      throw new Error(`Projecting focus ${itemNum}: Missing or invalid field: grade_guidance`)
+    }
+
+    if (!item.rationale || typeof item.rationale !== 'string') {
+      throw new Error(`Projecting focus ${itemNum}: Missing or invalid field: rationale`)
+    }
+    if (item.rationale.trim().length < 15) {
+      throw new Error(`Projecting focus ${itemNum}: Field rationale must be at least 15 characters`)
+    }
+  })
+
   return parsed
 }
 
