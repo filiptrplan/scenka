@@ -6,7 +6,7 @@ A **personal, privacy-focused mobile PWA** for recreational boulderers who are s
 
 **Target User:** Recreational boulderers who want to get better, not just log sends.
 
-**Current Status:** Personal tool for the developer. May share with friends, but not building for public release.
+**Current Status:** Personal tool for developer. May share with friends, but not building for public release.
 
 ## Core Value
 
@@ -23,11 +23,21 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 
 **Priority stack:** Speed > Deep insights > Beautiful/simple UX > Offline-first
 
+## Current Milestone: v2.1 Simplified Logging + AI Auto-Tagging
+
+**Goal:** Simplify climb logging to reduce friction while using AI to auto-extract tags from notes for analytics.
+
+**Target features:**
+- Simplified logger form: grade, outcome, terrain type (8 options), awkwardness (3 options: awkward/normal/smooth), notes
+- AI-powered auto-tagging: analyze notes on save and extract relevant tags automatically
+- Reduced friction: eliminate multi-select decisions from logging flow
+- Notes as primary source: rich free-form text captures everything, AI categorizes for patterns
+
 ## Requirements
 
 ### Validated (Completed)
 
-✓ **Climb logging** — Log climbs with grade, outcome, awkwardness, styles, failure reasons — v1.0
+✓ **Climb logging** — Log climbs with grade, outcome, awkwardness, styles, failure reasons — v1.0 (simplified in v2.1)
 ✓ **Multiple grading scales** — Font, V-Scale, Color Circuit — v1.0
 ✓ **Style tags** — Slab, Vert, Overhang, Roof, Dyno, Crimp, Sloper, Pinch — v1.0
 ✓ **Failure reasons** — Physical (Pumped, Finger Strength, Core, Power); Technical (Bad Feet, Body Position, Beta Error, Precision); Mental (Fear, Commitment, Focus) — v1.0
@@ -55,6 +65,12 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 ✓ **Markdown rendering** — Formatted responses with syntax highlighting for code blocks — v2.0
 
 ### Active
+
+- [ ] Simplified logger form with reduced fields (terrain type, awkwardness, notes)
+- [ ] AI-powered auto-tagging on climb save (analyze notes, extract tags)
+- [ ] Remove manual failure reasons multi-select from logging flow
+- [ ] Keep notes as primary data source for AI analysis
+- [ ] Update analytics to display AI-extracted tags
 
 ### Considered for Future
 
@@ -130,4 +146,4 @@ Settings page exists at `src/components/features/settings-page.tsx` for user pre
 | Markdown rendering for chat | react-markdown + remark-gfm + rehype-highlight | ✓ Formatted responses, code blocks (v2.0) |
 
 ---
-*Last updated: 2026-01-20 after v2.0 milestone completed*
+*Last updated: $(date '+%Y-%m-%d') after v2.1 milestone initialized*
