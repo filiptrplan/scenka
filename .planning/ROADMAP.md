@@ -232,10 +232,43 @@ Plans:
 **Details**:
 Daily usage limits implemented at Edge Function layer to enforce 2 recommendation generations and 10 chat messages per user. Limits checked BEFORE LLM API calls to control costs, counters increment atomically via PostgreSQL upsert pattern with UTC midnight reset. Client-side counters display inline next to action buttons, refresh after each action, and show inline error messages when limit reached.
 
+#### Phase 28: Rework Chat System Prompt and Data Context
+**Goal**: Enhance chat system prompt and include latest recommendations in chatbot context
+**Depends on**: Phase 27
+**Success Criteria** (what must be TRUE):
+  1. Chatbot responds with climbing coach persona (friendly but authoritative)
+  2. Chatbot only references recommendations when user specifically asks about them
+  3. Chatbot explains technique concepts first, then mentions drill names
+  4. Chatbot acknowledges recommendations page when discussing drills (e.g., "From your recommendations page...")
+  5. When user says a drill doesn't work, chatbot offers alternatives without suggesting regeneration
+  6. Chatbot can answer questions about weekly focus, drills, and projecting focus areas
+  7. Chat works for users without recommendations (no errors, graceful degradation)
+  8. Recommendations formatted in LLM-friendly structure (no raw JSON dumps)
+**Plans**: 1 plan
+**Status**: Planned — ready for execution
+
+Plans:
+- [ ] 28-01-PLAN.md — Update system prompt, Edge Function, and hook to include recommendations
+
+**Details**:
+Rework the chat system prompt to improve quality and relevance of responses. Update data passed to chatbot to include the latest generated recommendation so users can discuss and ask questions about their current weekly focus, drills, and projecting focus areas. Establish clear coaching persona with reactive behavior (only reference recommendations when user asks), concept-first explanations (teach technique, then mention drill names), and graceful missing data handling.
+
+#### Phase 29: Add Markdown Rendering to Chat Bubbles
+**Goal**: Render markdown content in chat assistant responses for better formatting
+**Depends on**: Phase 28
+**Plans**: 0 plans
+**Status**: Not planned yet
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 29 to break down)
+
+**Details**:
+Add markdown rendering to chat bubbles so that the AI coach's responses can display formatted text including bold, italics, lists, code blocks, and links. This will make the chat experience more readable and allow the coach to provide better-formatted responses.
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 → 26 → 27
+Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 → 26 → 27 → 28
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -270,3 +303,5 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 �
 | 25. User Climbing Context for Prompts | v2.0 | 4/4 | Complete | 2026-01-19 |
 | 26. Update README with Milestone Work | v2.0 | 1/1 | Complete | 2026-01-19 |
 | 27. Impose Daily Limit on Usage | v2.0 | 6/6 | Complete | 2026-01-19 |
+| 28. Rework Chat System Prompt and Data Context | v2.0 | 0/1 | Planned | - |
+| 29. Add Markdown Rendering to Chat Bubbles | v2.0 | 0/0 | Not started | - |
