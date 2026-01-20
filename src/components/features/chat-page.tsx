@@ -1,6 +1,7 @@
 import { Brain, Send, Trash2 } from 'lucide-react'
 import { useRef, useEffect, useState, type KeyboardEvent } from 'react'
 import ReactMarkdown from 'react-markdown'
+import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
 
@@ -34,7 +35,7 @@ function MessageBubble({ message, isCurrentUser }: MessageBubbleProps) {
         {isCurrentUser ? (
           <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
         ) : (
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+          <ReactMarkdown remarkPlugins={[remarkGfm, rehypeHighlight]} components={markdownComponents}>
             {message.content}
           </ReactMarkdown>
         )}
