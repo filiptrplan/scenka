@@ -1,187 +1,361 @@
-# Project Research Summary
+# Research Summary: AI Auto-Tagging for Scenka v2.1
 
-**Project:** Scenka v2.0 - AI Coach
-**Domain:** AI-powered climbing coach PWA
-**Researched:** 2026-01-17
-**Confidence:** MEDIUM
+**Research Date:** 2026-01-20
+**Overall Confidence:** HIGH
+**Ready for Roadmap:** YES
+
+---
 
 ## Executive Summary
 
-Scenka v2.0 is adding an AI Coach feature to an existing mobile-first PWA for rock climbers. The recommended approach combines OpenRouter's LLM API (gpt-5.1) with a custom chat interface built on existing shadcn/ui components, Supabase PostgreSQL for persistence, and Supabase Edge Functions for secure API proxying. Experts in AI coaching apps recommend pre-processing climbing data into pattern summaries (failure reasons, style weaknesses, frequency) and using those as context for both weekly recommendations and real-time chat - this hybrid approach provides structure while maintaining flexibility.
+AI auto-tagging transforms the climbing logging experience by eliminating manual tag selection friction. Users write free-form notes (e.g., "crimpy overhang, pumped out on dyno") and AI automatically extracts structured tags: `styles[]` (crimp, overhang, dyno) and `failure_reasons[]` (pumped). The research shows this is achievable with async background processing using OpenRouter's Llama 3.1 8B model ($0.0000055/climb) via Supabase Edge Functions, maintaining the app's core value of "quick, frictionless logging" while reducing tagging friction to zero.
 
-Key risks are manageable but require upfront safeguards: implement usage tracking and per-user rate limits from day one to prevent cost spikes, add output validation and adversarial testing to catch hallucinations before users see them, and design offline fallbacks (cached recommendations) since gyms often have poor connectivity. The architecture follows the existing Scenka pattern (service layer → TanStack Query hooks → UI components) which simplifies integration - no breaking changes to current features, only new tables and routes added.
+Critical architecture decisions: (1) Save climb immediately, extract tags in background (never block save), (2) Offline-first design (gyms have zero signal), (3) Human-in-the-loop confirmation (users see extracted tags and can edit), (4) Cost control with per-user quotas and caching. Three-phase implementation recommended: Foundation (infrastructure), Experience (UX and confirmation), Advanced (feedback loops). Key risks are manageable: cost scales linearly but is minimal ($0.55/month for 100k climbs), offline requires queueing extractions, and accuracy depends on prompt engineering (target 80%+ tag acceptance rate).
+
+---
 
 ## Key Findings
 
-### Recommended Stack
+### From STACK.md
 
-The stack extends the existing Scenka PWA without requiring backend servers or infrastructure changes. OpenRouter provides unified LLM access through a single API endpoint, and @microsoft/fetch-event-source handles Server-Sent Events streaming for real-time responses. Supabase Edge Functions secure the API calls (no exposed keys), while PostgreSQL JSONB stores flexible AI data. pg_cron enables weekly recommendation scheduling without external services.
+**Core Technologies:**
+- OpenRouter API (meta-llama/llama-3.1-8b-instruct) - 12.5x-66.7x cheaper than GPT-5-mini, sufficient for entity extraction, fast inference
+- Supabase Edge Functions - Secure API proxy, background processing, hides API keys, no backend servers constraint
+- PostgreSQL + pg_cron - Job queue for async extraction, row-level locking, periodic polling
+- TanStack Query - State management, optimistic updates, cache invalidation
+- Service Worker (PWA) - Offline caching, background sync when online
 
-**Core technologies:**
-- **OpenRouter API (openai/gpt-5.1):** LLM provider with streaming support — Unified API, pay-per-use fits solo dev, 400K context window
-- **@microsoft/fetch-event-source:** SSE streaming library — Supports POST with headers (crucial for API key auth), AbortController for cancellation
-- **Supabase Edge Functions:** Secure API proxy — Hides API keys from client, server-side prompt construction, follows no-backend-servers constraint
-- **PostgreSQL JSONB:** Flexible data storage — Stores drill objects, pattern summaries, chat metadata without schema migrations
-- **shadcn/ui (custom):** Chat UI components — Full control over styling, no heavyweight dependencies, mobile-first design
+**Cost Analysis:**
+- Per climb: ~$0.0000055 (200 input tokens + 50 output tokens)
+- Monthly (100 climbs): ~$0.00055
+- Daily limit: 50-100 climbs/day before meaningful cost
+- Critical requirement: Cost tracking and per-user quotas before launch
 
-### Expected Features
+**Performance Targets:**
+- <2 seconds extraction (PWA requirement)
+- Llama 3.1 8B: ~100-200ms per 1K tokens
+- Total: ~1.5s per climb with network latency
+- Non-blocking: Save immediately, extract in background
 
-The AI Coach should provide both structured weekly guidance and flexible Q&A. Users expect clear weekly focus statements with 3 actionable drills based on their actual climbing data, plus a conversational interface for asking follow-up questions. All recommendations must persist across sessions, and the UI should show climbing patterns (failure reasons, style weaknesses) that inform the AI's advice. Features like video analysis, voice coaching, and complex multi-week planning should be deferred as they add significant complexity without clear user demand.
+**Alternative Rejected:**
+- GPT-5-mini: 12.5x-66.7x more expensive ($0.25/$2.00 per 1M tokens) with marginal accuracy gain
+- DeepSeek: 9.0x-33.3x more expensive, overkill for classification task
+- Redis job queue: Requires additional infrastructure, Postgres sufficient for solo dev
 
-**Must have (table stakes):**
-- Weekly focus statement + 3 personalized drills — Users expect direction, not just generic advice
-- Manual regenerate button — User control prevents unexpected changes
-- Persistent recommendations with generation date — Standard app behavior
-- Chat interface with streaming responses — Expected in 2025 AI products
-- Message bubbles for user/assistant distinction — Visual clarity required
-- Failure patterns, style weaknesses, climbing frequency summaries — Differentiates from generic fitness AI
-- Loading states and error handling — Users expect feedback during API calls
-- Offline access to last recommendations — PWA requirement
+---
 
-**Should have (competitive):**
-- Exception-logging-based pattern analysis — Unique to Scenka, focuses on significant climbs only
-- Climbing-specific domain knowledge — Generic fitness AI lacks beta/grade nuance
-- Minimalist data collection — No lengthy onboarding, uses existing climb logs
-- Pre-processed patterns + real-time chat hybrid — Best of both worlds
-- Privacy-first approach — No social pressure, personal-only experience
-- Drill explanations with context — Links advice to actual user weaknesses
+### From FEATURES.md
 
-**Defer (v2+):**
-- Automated weekly generation — Manual validation first
-- Video analysis/form checking — Complex ML, privacy concerns
-- Voice-based coaching — Awkward in gyms, battery drain
-- 4-week complex periodization — Overwhelming, weekly scope simpler
-- Social features/leaderboards — Doesn't align with personal improvement focus
-- Push notifications — Interrupts gym sessions
-- Complex exercise libraries — Simple descriptions with external references sufficient
+**Table Stakes (Must-Have for MVP):**
+1. Real-time tag extraction on save - Core feature, must work
+2. Transparent extracted tags display - Show styles and failure reasons grouped separately
+3. One-tap tag editing - Add/remove tags with single tap
+4. Confidence indicators - Visual cue showing AI certainty
+5. Manual tag override - Full control over final tags
+6. Graceful offline behavior - Fallback extraction or defer tagging
+7. Integration with existing analytics - Training Priorities and Style Weaknesses must work with AI tags
 
-### Architecture Approach
+**Differentiators (Defer to Post-MVP):**
+- Learn from user corrections - Requires MLOps infrastructure, training loops
+- Suggested tags while typing - More complex, may distract from core flow
+- Tag confidence explanation - Nice-to-have, not critical
+- Multi-language tag mapping - Can start with English climbing terminology
 
-The architecture extends the existing Scenka pattern with a clear separation of concerns: components for UI, hooks (TanStack Query) for state, services for business logic, and Edge Functions for external API integration. A new `patterns.ts` service extracts aggregation logic from charts-page.tsx into reusable functions that calculate failure patterns, style weaknesses, and climbing frequency. The `coach.ts` service handles LLM API calls and prompt construction, while new `coach_recommendations` and `coach_messages` tables persist AI-generated content. All LLM calls route through a Supabase Edge Function to hide API keys and enable secure prompt engineering.
+**Anti-Features (Explicitly Do NOT Build):**
+- Blocking AI tagging during save - Users want frictionless logging
+- Multi-select UI for manual tag selection - This is what v2.1 eliminates
+- Mandatory AI tagging - Breaks offline behavior, allow save without tags
+- Hiding low-confidence tags - Breaks trust, show all with indicators
+- Auto-apply tags without review - Users need control
 
-**Major components:**
-1. **CoachPage** — Main tabbed view with Recommendations and Chat sections
-2. **RecommendationsDisplay** — Shows weekly focus, 3 drills, and pattern analysis
-3. **ChatInterface** — Free-form chat with message bubbles, streaming responses, and quick-reply options
-4. **PatternAnalysis** — Displays pre-processed climbing patterns extracted from logs
-5. **coach.ts service** — LLM API calls, prompt construction, response parsing
-6. **patterns.ts service** — Aggregates climb data into structured pattern summaries
-7. **openrouter-coach Edge Function** — Secure OpenRouter API proxy with climbing-specific prompts
+**Performance Requirements:**
+- Tag extraction: <3 seconds (72% of users cite performance as critical)
+- Non-blocking save: Climb saves immediately, tags appear shortly after
+- Reliability: 95%+ accuracy on clear notes, 85%+ on ambiguous notes
 
-### Critical Pitfalls
+---
 
-The most dangerous pitfalls are cost escalation, bad advice, and poor mobile UX. Without usage tracking and per-user limits, API costs can balloon unexpectedly. AI hallucinations about climbing technique could lead to injury, so output validation and adversarial testing are mandatory. Chat interfaces that don't work well on mobile (poor streaming, no quick replies, bad error handling) cause immediate user dropoff. Privacy violations (sending identifiable climbing data to AI without consent) create GDPR risk. Offline failure is critical for a gym-focused PWA - users must be able to view cached drills even without WiFi.
+### From ARCHITECTURE.md
 
-1. **Uncontrolled API Costs** — Implement usage tracking from day one, set per-user quotas (e.g., 10 chat messages/week), cache recommendations aggressively, and add cost alerting before it becomes a problem
-2. **AI Hallucinations and Bad Advice** — Constrain outputs with structured prompts, validate against climbing best practices, add "This is AI-generated" disclaimers, provide "Report bad advice" feature, and hard-code safe responses for edge cases
-3. **Poor Chat UX Leading to Low Engagement** — Keep responses concise and climbing-specific, pre-populate common questions as quick-reply buttons, show typing indicators, implement graceful streaming with fallback, and test on mobile from day one
-4. **No Offline Fallback for AI Features** — Cache generated recommendations (weekly focus + drills) for offline access, show clear "AI features require internet" message when offline, gracefully disable chat input, and store last recommendations in local storage
-5. **Privacy Violations with Sensitive Health Data** — Anonymize data before sending to AI (remove names, identifiable patterns), get explicit consent for AI processing, explain what data is sent in plain language, use RLS to ensure users only access their own data, and provide "delete my AI data" option
+**Major Components:**
+- SimplifiedLogger (NEW) - Form input without manual tag selectors
+- TagService (NEW) - Orchestrates AI extraction, handles online/offline
+- openrouter-tag-extractor Edge Function (NEW) - Calls OpenRouter API, validates response
+- TagConfirmationDialog (NEW) - Displays extracted tags, allows edit/confirm
+- AnalyticsCharts (MODIFIED) - Updated to show AI-extracted tags
+- offlineQueue (EXTENDED) - Add tags_pending_sync flag, retroactive extraction
+
+**Data Flow (Online):**
+1. User fills simplified logger (grade, outcome, terrain, awkwardness, notes)
+2. User taps save → Form validates
+3. createClimbWithTags creates climb record immediately (without tags)
+4. UI shows "Saved" + "Extracting tags..." indicator (non-blocking)
+5. Edge Function extracts tags via OpenRouter in background
+6. Update climb with extracted tags, invalidate TanStack Query cache
+7. User sees extracted tags, can edit via TagConfirmationDialog
+8. Confirm saves final tags, analytics update automatically
+
+**Data Flow (Offline):**
+1. User saves climb offline → Queued with tags_pending_sync = true
+2. UI shows "Saved (will sync when online)"
+3. When device reconnects → Sync Manager processes offline queue
+4. Retroactive tagging job extracts tags for pending climbs
+5. Updated tags sync back to device
+
+**Database Schema Changes:**
+- climbs table: ADD COLUMN tags_pending_sync BOOLEAN DEFAULT false
+- profiles table: ADD COLUMN tags_migration_completed BOOLEAN DEFAULT false
+- Index on tags_pending_sync for efficient queries
+- Optional: ai_extraction_confidence JSONB for debugging
+
+**Suggested Build Order:**
+1. Database schema migration (low risk, foundation)
+2. openrouter-tag-extractor Edge Function (test in isolation)
+3. TagService layer (orchestration, depends on Edge Function)
+4. SimplifiedLogger component (major UI change, depends on TagService)
+5. TagConfirmationDialog component (trust feature, depends on AI extraction)
+6. Offline queue extension (essential for gym use)
+7. Retroactive tagging for existing climbs (nice-to-have)
+8. Analytics updates (data pipeline works, just UI updates)
+
+---
+
+### From PITFALLS.md
+
+**Top 5 Critical Pitfalls:**
+
+1. **Blocking Save with Synchronous API Calls**
+   - Consequence: App feels frozen, users abandon logging, duplicate saves from repeated taps
+   - Prevention: Save climb first, extract second. Always async. Show extraction status.
+   - Phase to address: Phase 1 (Foundation)
+
+2. **Uncontrolled Per-Climb Costs**
+   - Consequence: API bills 5-10x expected, hit rate limits, forced to disable feature
+   - Prevention: Calculate cost model upfront, set per-user quotas (20 climbs/day), track costs per user, cache extraction results by note hash
+   - Phase to address: Phase 1 (Foundation)
+
+3. **Inaccurate Tag Extraction (False Positives/Negatives)**
+   - Consequence: Users lose trust, analytics polluted, constant frustration from corrections
+   - Prevention: Define clear tag taxonomy, test with diverse real notes, implement confidence thresholds (>80%), allow easy corrections
+   - Phase to address: Phase 1 (Foundation)
+
+4. **No Offline Support (Gyms Have Zero Signal)**
+   - Consequence: Core app feature broken offline, users uninstall app, negative reviews
+   - Prevention: Design offline-first, queue extraction requests when offline, show clear "Offline - tags will extract later" message
+   - Phase to address: Phase 1 (Foundation)
+
+5. **Privacy Violations (PII in Climb Notes)**
+   - Consequence: GDPR violations, user trust broken, legal risk
+   - Prevention: PII detection/anonymization before API call (strip names, locations, gym names), get explicit consent, process notes server-side
+   - Phase to address: Phase 1 (Foundation)
+
+**Moderate Pitfalls:**
+- UX Confusion (where are tags? can I edit them?)
+- No User Correction Feedback Loop (AI doesn't improve)
+- Slow or Unreliable Extraction (feels broken)
+- Tag Pollution (too many tags, low signal)
+- No Cost Per User Visibility (can't identify outliers)
+
+**Anti-Patterns:**
+- Client-side API calls (exposes API key)
+- Synchronous extraction during save (blocks user)
+- No PII detection (privacy violations)
+- No offline queue (breaks gym use)
+- Separate manual/AI tag arrays (unnecessary complexity)
+
+**Technical Debt Never Acceptable:**
+- No PII detection before API call (privacy violation)
+- Client-side API calls (security issue)
+- Synchronous extraction (blocks save flow)
+
+---
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure:
+### Recommended Phase Structure
 
-### Phase 1: AI Coach Foundation
-**Rationale:** Database tables, services, and basic hooks must exist before UI. This phase also addresses the most critical pitfalls (cost tracking, privacy safeguards, rate limiting) which are expensive to retrofit. Building with mock data first validates architecture before committing to LLM integration.
-**Delivers:** Database tables (coach_recommendations, coach_messages), coach.ts and patterns.ts services, useCoach hooks, cost tracking infrastructure, privacy safeguards
-**Addresses:** Features: Persistent recommendations storage, failure patterns summary, style weaknesses analysis, climbing frequency tracking
-**Avoids:** Pitfalls: Uncontrolled API costs (tracking/limits), Privacy violations (anonymization/consent), Rate limiting issues (backoff/quotas)
+Based on dependency analysis and risk profile, a **3-phase structure** is recommended:
 
-### Phase 2: Coach Page + Recommendations UI
-**Rationale:** UI can be built and tested with mock data before connecting to real API. Simpler than chat (single flow), validates component architecture, and delivers core value (weekly drills) quickly. Testing offline behavior here ensures fallbacks work before adding more complex features.
-**Delivers:** CoachPage with tabs, RecommendationsDisplay component, PatternAnalysis component, manual refresh button, loading states, error handling, offline fallback for recommendations
-**Uses:** Stack: shadcn/ui components, TanStack Query for caching
-**Implements:** Architecture: Components layer, hooks layer (useRecommendations), service layer integration
-**Addresses:** Features: Weekly focus statement, 3 personalized drills, manual regenerate button, loading states
-**Avoids:** Pitfalls: No offline fallback (cached recommendations work offline), Poor Chat UX (not implementing chat yet)
+#### Phase 1: Auto-Tag Foundation
 
-### Phase 3: LLM Integration (Edge Function + Real Recommendations)
-**Rationale:** UI is ready to display results, so LLM integration becomes plugging in real data. Edge Function handles security (no exposed keys) and prompt engineering. Testing with real API validates streaming and error handling before adding chat complexity.
-**Delivers:** openrouter-coach Edge Function, prompt templates for recommendations, real API integration, output validation, fallback to previous recommendations on errors
-**Uses:** Stack: OpenRouter API, Supabase Edge Functions, gpt-5.1 model
-**Implements:** Architecture: Edge Function layer, LLM prompt engineering
-**Addresses:** Features: Streaming responses, climbing-specific domain knowledge
-**Avoids:** Pitfalls: AI hallucinations (output validation), Privacy violations (server-side prompt construction)
+**Rationale:** Critical infrastructure and safeguards must be implemented before any user-facing features. Async architecture, offline support, cost control, and privacy are non-negotiable foundation elements. Trying to build UX without these guarantees will require major refactoring.
 
-### Phase 4: Chat Interface
-**Rationale:** Most complex feature requires all previous phases (database, UI, LLM). Chat adds streaming, optimistic updates, and context injection which must be built on solid foundation. Quick-reply buttons and mobile optimization are critical here to avoid engagement dropoff.
-**Delivers:** ChatInterface component, message bubbles, streaming responses with @microsoft/fetch-event-source, optimistic updates via TanStack Query, quick-reply options for common questions, conversation context management
-**Uses:** Stack: @microsoft/fetch-event-source, OpenRouter streaming API, TanStack Query
-**Implements:** Architecture: Chat messages table, message caching, context injection into prompts
-**Addresses:** Features: Chat interface, message bubbles, streaming responses, limited chat history, clear entry points to chat
-**Avoids:** Pitfalls: Poor Chat UX (mobile-optimized, quick replies, typing indicators), Uncontrolled API costs (rate limiting per user)
+**Deliverables:**
+- Database schema migration (tags_pending_sync, tags_migration_completed)
+- openrouter-tag-extractor Edge Function (reuse auth/validation patterns from openrouter-coach)
+- TagService layer (createClimbWithTags, extractTagsAsync, processRetroactiveTagging)
+- Cost tracking and per-user quotas in user_limits table
+- PII detection and anonymization before API calls
+- Offline queue extension (tags_pending_sync flag)
+- Basic testing with sample climbing notes
 
-### Phase 5: Polish + Weekly Automation (Optional)
-**Rationale:** Core AI Coach is complete. This phase adds convenience features (pg_cron for automated weekly recommendations) and UX polish (clear conversation button, better error messaging, more quick-reply options). Can be deferred if needed since manual regenerate already works.
-**Delivers:** pg_cron job for weekly recommendations, weekly recommendation generation function, "Clear Conversation" button, expanded quick-reply options, advanced error handling with recovery options
-**Uses:** Stack: pg_cron extension, PostgreSQL functions
-**Implements:** Architecture: Database scheduling, automated workflows
-**Addresses:** Features: Enhanced error handling, improved chat UX
-**Avoids:** Pitfalls: None - this is optimization phase
+**Features from FEATURES.md:**
+- Real-time tag extraction (backend ready)
+- Graceful offline behavior (queue architecture ready)
 
-### Phase Ordering Rationale
+**Pitfalls Avoided:**
+- Blocking save flow (async from day one)
+- Uncontrolled costs (quotas and tracking implemented)
+- Privacy violations (PII detection active)
+- No offline support (queue architecture designed)
 
-Foundation first is mandatory because database tables, services, and hooks form the substrate that UI depends on. Architecture research identified clear dependencies: components → hooks → services → external APIs. UI before LLM allows building and testing with mock data, which is faster and catches design issues before API complexity. Recommendations before chat follows the simplicity principle - single-flow recommendations validate the entire pipeline (data aggregation → prompt → LLM → display) before adding the complexity of bi-directional chat. Offline support in Phase 2 ensures fallbacks work before adding more complex features that could compound failure modes. Phase 5 is optional because the core value proposition (weekly drills + Q&A) is complete after Phase 4.
+**Estimated Effort:** 3-5 days
 
-### Research Flags
+**Research Flags:**
+- Prompt engineering quality - Needs testing with real climb notes
+- PII detection accuracy - Validate regex patterns on real user notes
 
-Phases likely needing deeper research during planning:
-- **Phase 3 (LLM Integration):** Prompt engineering for climbing domain requires specific knowledge of climbing terminology and training principles. No existing templates found for climbing coaches.
-- **Phase 4 (Chat Interface):** Streaming implementation with @microsoft/fetch-event-source has good docs but few examples for React-specific patterns. Error handling for SSE failures needs validation.
+---
 
-Phases with standard patterns (skip research-phase):
-- **Phase 1 (Foundation):** Database schema follows existing climbs table pattern, RLS policies are standard Supabase, TanStack Query hooks mirror useClimbs.ts.
-- **Phase 2 (UI):** shadcn/ui components are well-documented, mobile-first design follows existing Scenka patterns, TanStack Query caching is standard.
-- **Phase 5 (Polish):** pg_cron has official Supabase docs, database functions are standard PostgreSQL, UI polish patterns are well-established.
+#### Phase 2: Auto-Tag Experience
+
+**Rationale:** Once foundation is solid, build user-facing features that demonstrate value and build trust. Simplified logger removes friction, confirmation dialog ensures control, confidence indicators provide transparency. This is the "magic" users see.
+
+**Deliverables:**
+- SimplifiedLogger component (remove manual tag selectors, add terrain type picker, simplified awkwardness)
+- TagConfirmationDialog component (show extracted tags, allow edit/confirm)
+- Confidence indicators (opacity or percentage, 80% threshold for high confidence)
+- Integration of TagService into simplified logger
+- Visual distinction between AI and manual tags (badges, colors)
+- One-tap tag editing workflow
+- Onboarding: Explain auto-tagging once
+- Tag display in climb detail view
+
+**Features from FEATURES.md:**
+- Transparent extracted tags display
+- One-tap tag editing
+- Confidence indicators
+- Manual tag override
+- Integration with existing analytics
+
+**Pitfalls Avoided:**
+- UX confusion (clear distinction, easy editing)
+- Tag pollution (limit to top 3-5 high-confidence tags)
+- No visual feedback (loading indicators, animations)
+
+**Estimated Effort:** 5-7 days
+
+**Research Flags:**
+- User acceptance of AI corrections - Will users trust AI tags or constantly edit?
+- Confidence threshold calibration - What thresholds work in practice?
+
+---
+
+#### Phase 3: Advanced Tagging
+
+**Rationale:** After UX is validated, add features that improve accuracy over time through learning and optimization. Not critical for MVP, but important for long-term success and cost efficiency.
+
+**Deliverables:**
+- User correction tracking (log every tag edit/add/remove)
+- Extraction accuracy dashboard (acceptance rate, most-corrected tags)
+- A/B testing framework for prompt variations
+- Retroactive tagging for existing climbs (batch job on first v2.1 launch)
+- Extraction caching by note content hash (deduplicate identical notes)
+- Analytics updates (show AI-extracted badge)
+- Tag explanation tooltips (optional)
+- Disable auto-tagging option in settings
+
+**Features from FEATURES.md:**
+- Sync when AI becomes available (retroactive tagging)
+- Learn from user corrections (deferred to Phase 3, not MVP)
+- Tag confidence explanation (deferred)
+
+**Pitfalls Avoided:**
+- No feedback loop (corrections tracked, A/B testing active)
+- Tag pollution (caching reduces duplicate calls)
+- No cost visibility (dashboard shows per-user spend)
+
+**Estimated Effort:** 4-6 days
+
+**Research Flags:**
+- Prompt A/B testing - What prompt variations improve accuracy?
+- Fine-tuning ROI - Should we fine-tune model based on corrections?
+
+---
+
+### Which Phases Need Deeper Research
+
+**Phase 1 Needs Research:**
+- **Prompt Engineering Quality** - What prompts produce the most accurate tag extraction? Requires testing with 50+ real climb notes.
+- **PII Detection Accuracy** - How well does regex-based anonymization work on climbing notes? Test with real user data.
+
+**Phase 2 Needs Research:**
+- **Confidence Threshold Calibration** - What confidence thresholds work best? Requires manual testing on sample notes.
+- **User Education for Confidence Indicators** - How to communicate confidence without cognitive overhead? Requires user testing.
+
+**Phase 3 Needs Research:**
+- **Prompt A/B Testing** - Which prompt variations improve extraction accuracy? Requires running experiments.
+- **Fine-tuning ROI** - Is custom model fine-tuning worth the cost? Requires analysis of correction patterns.
+
+**Standard Patterns (Skip Research):**
+- Database schema migration (well-documented Supabase pattern)
+- Edge Function auth and validation (reuse openrouter-coach pattern)
+- TanStack Query mutations (existing in codebase)
+- Offline queue (existing infrastructure)
+- Component design (shadcn/ui patterns well-established)
+
+---
 
 ## Confidence Assessment
 
-| Area | Confidence | Notes |
-|------|------------|-------|
-| Stack | HIGH | OpenRouter, Supabase Edge Functions, @microsoft/fetch-event-source verified with official docs. Clear rationale for all choices. |
-| Features | MEDIUM | Table stakes confirmed by fitness app research and competitor analysis. Differentiators based on Scenka's unique exception-logging philosophy but lack direct comparison products. Drill database and prompt engineering quality unknown. |
-| Architecture | HIGH | Follows existing Scenka patterns directly observed in codebase. Database schema mirrors climbs table. Component boundaries clear and well-documented. |
-| Pitfalls | MEDIUM | Critical pitfalls verified by multiple sources (cost escalation, hallucinations, privacy). Prevention strategies are sound but require validation during implementation. |
-
-**Overall confidence:** MEDIUM
+| Area | Confidence | Reason |
+|------|------------|--------|
+| **Stack (Technologies)** | HIGH | OpenRouter pricing official, Llama 3.1 benchmarks verified, Supabase documentation authoritative |
+| **Features (What to Build)** | HIGH | User expectations backed by survey data (72% cite performance), human-in-the-loop best practices well-documented |
+| **Architecture (How to Build)** | HIGH | Existing codebase provides clear patterns (openrouter-coach, offline queue), async background processing well-documented in Supabase docs |
+| **Pitfalls (What to Avoid)** | MEDIUM | Cost and offline risks well-documented, but climbing-specific accuracy untested (no real notes yet) |
+| **Overall** | HIGH | Foundation solid, UX patterns clear, risks identified and mitigable |
 
 ### Gaps to Address
 
-- **Climbing drill database:** Research didn't identify authoritative sources for effective drills per weakness (finger strength, power endurance, technique). Handle during Phase 3 planning by compiling climbing training resources and creating structured prompt templates.
-- **Prompt engineering quality:** No verified examples of climbing-specific AI prompts. Handle during Phase 3 by iterative testing with climbing experts, versioning prompts from the start, and adding adversarial tests.
-- **Streaming UX patterns:** Limited examples of React streaming with @microsoft/fetch-event-source specifically. Handle during Phase 4 by prototyping streaming early, testing on slow networks, and implementing fallback to full message.
-- **User testing validation:** Research didn't include actual boulderer feedback on what weekly format works best. Handle during Phase 2-3 by gathering user feedback on mock recommendations before full LLM integration.
+**Before Implementation:**
+1. **Climbing-specific prompt engineering** - No verified examples for climbing entity extraction. Need iterative testing with real climb notes.
+2. **Confidence calibration** - What thresholds (70/80/85%) work best? Requires manual testing on 50+ sample notes.
+3. **PII detection accuracy** - How well does regex-based anonymization work? Test with real user notes.
+
+**During Implementation:**
+4. **User acceptance of AI tags** - Will users trust AI or constantly edit? Requires user testing after Phase 2.
+5. **Cost benchmarking** - What are actual token usage and costs for climbing-specific extraction? Monitor after launch.
+6. **Offline vs online quality gap** - How much accuracy loss from rule-based vs AI extraction? Requires A/B testing.
+
+**Post-Launch:**
+7. **Prompt optimization** - What prompt variations improve accuracy? A/B test in Phase 3.
+8. **Fine-tuning ROI** - Should we fine-tune Llama 3.1 on climbing-specific data? Depends on correction patterns.
+
+---
 
 ## Sources
 
-### Primary (HIGH confidence)
-- OpenRouter Quickstart Guide — API authentication, streaming support, model selection
-- OpenRouter Streaming API — SSE implementation, request/response format
-- OpenRouter Pricing — Cost structure, pay-per-use model
-- OpenRouter Error Handling — Error codes, retry patterns
-- OpenRouter Rate Limits — Rate limit headers, burst handling
-- Supabase Edge Functions — Server-side functions, external API integration, environment variables
-- Supabase pg_cron docs — Database scheduling, cron syntax, function invocation
-- shadcn/ui Components — UI primitives, mobile-first patterns
-- TanStack Query Optimistic Updates — Cache management, mutation patterns
-- Existing Scenka codebase — Service/hook/component patterns, database schema, RLS policies
+### HIGH Confidence (Official/Authoritative)
+- OpenRouter Pricing - Token pricing structure, model catalog
+- Llama 3.1 8B Instruct (OpenRouter) - Model capabilities, pricing ($0.02/$0.05 per 1M tokens)
+- Supabase Edge Functions - Background Tasks - Async operations, `EdgeRuntime.waitUntil()`
+- Supabase Documentation - RLS, Edge Functions, pg_cron
+- Mobile User Expectations in 2025 (Luciq survey) - 72% cite performance as critical
+- Human-in-the-Loop AI (Parseur) - Accuracy rates, hybrid workflows
+- Offline-First Mobile Architecture (ResearchGate) - Research-backed patterns
+- PWA Caching (MDN) - Service worker strategies, offline handling
 
-### Secondary (MEDIUM confidence)
-- Gymscore AI Coaching Toolkit 2025 — Automated program adaptation, AI chat assistants, weekly planning patterns
-- Lattice Training Plans — Performance analytics, coach chat functionality, weakness targeting
-- SensAI Complete Guide to AI Personal Training 2025 — Conversational interface, adaptive algorithms, weekly planning
-- Microsoft fetch-event-source GitHub — Library documentation, usage examples, TypeScript support
-- Fitbit AI Coach reports — Hallucination examples, user expectations, feature comparisons
-- GDPR for digital health apps — Sensitive data requirements, consent patterns, data minimization
-- API Rate Limits Explained (Orq.ai) — Rate limit handling, backoff strategies
+### MEDIUM Confidence (Verified with Official Sources)
+- GPT-5 Mini vs Llama 3.1 8B (Galaxy.ai) - Cost comparison (12.5x-66.7x cheaper), benchmark performance
+- Job Queue Pattern (Jigz.dev) - PostgreSQL job queue, row locking, status states
+- Entity Extraction LLM vs Regex (MDPI) - LLM accuracy vs rule-based approaches
+- Mobile UX Best Practices (SendBird) - Mobile design patterns, real-time interactions
+- Power Platform AI Week (LinkedIn) - Confidence scores as discriminators, human reviewer identity
+- AI Analytics (Zapier, IBM) - Pattern identification, real-time insights
+- LLM Cost Optimization (Helicone, dev.to) - 30-50% cost reduction strategies
+- PII Security in AI (Android Security, CBT Nuggets) - Privacy guidelines, anonymization
 
-### Tertiary (LOW confidence)
-- Streaming text with TypeIt blog — Typewriter effect patterns (needs validation)
-- Common Conversational AI Mistakes (Boost.ai) — UX failure patterns (verified via WebFetch)
-- AI in Fitness Apps feature lists — General feature expectations (needs user testing validation)
-- Climbing training methodology articles — Drill recommendations (unverified, needs expert validation)
+### LOW Confidence (WebSearch Only, Needs Validation)
+- Climbing App Context (TopLogger, Redpoint) - No specific AI auto-tagging details found
+- Confidence Indicator Visual Design - No mobile UI patterns found, design recommendations hypothetical
+- LLM Fine-tuning ROI - Theoretical, requires implementation to validate
+- User Acceptance of AI Corrections - No climbing app data, requires user testing
 
 ---
-*Research completed: 2026-01-17*
-*Ready for roadmap: yes*
+
+**Research complete. Ready for roadmap planning.**
+
+*Synthesized: 2026-01-20*
+*Overall confidence: HIGH*
+*Ready for requirements definition: YES*

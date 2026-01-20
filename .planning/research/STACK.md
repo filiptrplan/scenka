@@ -1,460 +1,307 @@
 # Technology Stack
 
-**Project:** Scenka v2.0 - AI Coach
-**Researched:** 2025-01-17
+**Project:** Scenka v2.1 - AI Auto-Tagging
+**Researched:** 2026-01-20
 
 ## Recommended Stack
 
-### Core Framework
+### Core AI Integration
 | Technology | Version | Purpose | Why |
 |------------|---------|---------|-----|
-| React | ^18.3.1 | UI framework | Already in project, PWA-ready |
-| TypeScript | ^5.6.2 | Type safety | Already in project, strict mode |
-| Vite | ^6.0.1 | Build tool | Already in project, fast dev server |
+| **OpenRouter API** (meta-llama/llama-3.1-8b-instruct) | N/A | LLM provider for tag extraction | 12.5x-66.7x cheaper than GPT-5-mini ($0.02/$0.05 per 1M tokens), sufficient for simple entity extraction, fast inference (118.0 c/s), JSON structured output support |
+| **OpenAI SDK** (via Deno) | ^4.0.0 | API client compatibility | Already in use in openrouter-coach, OpenRouter is OpenAI-compatible, proven pattern, TypeScript support |
+| **Supabase Edge Functions** | ^2.0 | Secure API proxy, background processing | Hides API keys, enables server-side prompt construction, supports background tasks with `EdgeRuntime.waitUntil()`, follows no-backend-servers constraint |
 
-### AI Integration
+### Infrastructure
 | Technology | Version | Purpose | Why |
 |------------|---------|---------|-----|
-| OpenRouter API | Latest | LLM provider access | Unified API for openai/gpt-5.1, no servers needed, pay-per-use fits solo dev |
-| @microsoft/fetch-event-source | ^3.x | SSE streaming for chat responses | Better than native EventSource for POST requests with headers, supports AbortController for cancellation |
-| fetch-event-source alternative | react-fetch-event-source | React-friendly streaming | Alternative if @microsoft version has issues, provides better React integration |
+| **PostgreSQL** (job queue table) | ^15 | Async task processing | Native to Supabase, supports row-level locking for concurrent workers, status tracking (pending/processing/completed/failed), integrates with pg_cron for scheduling |
+| **pg_cron** | ^1.0 | Periodic job queue polling | Already in codebase for weekly recommendations, standard Supabase extension, reliable scheduling without external services |
+| **Background Tasks API** | Supabase Edge Functions v3 | Non-blocking LLM calls | Respond immediately to user while AI processes in background, prevents UI blocking, matches PWA offline-first philosophy |
 
-### Database
+### Frontend Integration
 | Technology | Version | Purpose | Why |
 |------------|---------|---------|-----|
-| PostgreSQL (Supabase) | Latest | Persistent storage | Already in project, RLS for security, JSONB for flexible AI data |
-| pg_cron (Supabase extension) | Latest | Weekly recommendation scheduling | Built into Supabase, no external services needed for scheduled jobs |
-
-### UI Components
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| shadcn/ui | Latest | UI primitives | Already in project, use Card, ScrollArea, Avatar, Input, Button for chat |
-| lucide-react | ^0.562.0 | Icons | Already in project |
+| **TanStack Query** | ^5.90.16 | State management for tagged climbs | Already in codebase, optimistic updates for better UX, automatic cache invalidation, handles loading/error states |
+| **React Hook Form + Zod** | ^7.70.0, ^4.3.5 | Form validation on save | Already in codebase, type-safe validation, ensures quality data before AI processing |
+| **Service Worker** (PWA) | Built-in browser API | Offline caching strategy | PWA requirement, cache tagged climbs locally, sync when online, supports background fetch for queued jobs |
 
 ### Supporting Libraries
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| @tanstack/react-query | ^5.90.16 | Server state management | Already in project, use for chat history, recommendations, optimistic updates |
-| date-fns | ^4.1.0 | Date manipulation | Already in project, use for weekly recommendations timestamps |
-| sonner | ^2.0.7 | Toast notifications | Already in project, use for AI API errors |
+| **date-fns** | ^4.1.0 | Date formatting for job timestamps | Displaying job processing times, grouping by date, already in package.json |
+| **zod** | ^4.3.5 | JSON schema validation | Validate LLM response structure, ensure tags match allowed values (styles, failure reasons) |
+| **lucide-react** | ^0.562.0 | Status icons for job queue | Visual feedback for pending/processing/completed states, already in codebase |
 
 ## Alternatives Considered
 
 | Category | Recommended | Alternative | Why Not |
 |----------|-------------|-------------|---------|
-| **Streaming Library** | @microsoft/fetch-event-source | assistant-ui | assistant-ui is too heavyweight for custom needs, introduces dependencies, shadcn/ui components are sufficient |
-| **Streaming Library** | @microsoft/fetch-event-source | Vercel AI SDK | Vercel AI SDK is server-side focused, requires Next.js edge runtime, incompatible with client-side Vite PWA |
-| **Streaming Library** | @microsoft/fetch-event-source | native EventSource | Native EventSource doesn't support POST with headers (can't send API keys), no body support for chat messages |
-| **AI Provider** | OpenRouter | OpenAI direct API | OpenRouter provides unified API, allows model switching, no separate billing setup, matches "no backend servers" constraint |
-| **Chat UI** | Custom with shadcn/ui | shadcn.io/ai Elements | AI Elements tied to Vercel AI SDK, designed for Next.js, overkill for simple chat interface |
-| **Recommendations Storage** | PostgreSQL JSONB | Redis Cache | Redis requires additional service, Supabase free tier doesn't include Redis, JSONB sufficient for this use case |
-| **Weekly Scheduling** | pg_cron (Supabase) | Edge Functions Cron | pg_cron is built-in, simpler for database operations, no need for separate functions |
-
-## Detailed Technology Decisions
-
-### 1. OpenRouter API (HIGH confidence)
-
-**Why OpenRouter:**
-- Single API endpoint: `https://openrouter.ai/api/v1/chat/completions`
-- Model selection: `model: "openai/gpt-5.1"`
-- Streaming support: Set `stream: true` in request
-- Authentication: `Authorization: Bearer <OPENROUTER_API_KEY>`
-- Pricing: $1.25/M input tokens, $10/M output tokens for gpt-5.1
-- Context window: 400,000 tokens
-- No rate limits on paid models (pay-per-use)
-
-**Key capabilities:**
-- Server-Sent Events (SSE) streaming for real-time responses
-- OpenAI-compatible API format
-- Model switching via simple string change
-- Rate limit checking via `GET https://openrouter.ai/api/v1/key`
-
-**Sources:**
-- [OpenRouter Quickstart Guide](https://openrouter.ai/docs/quickstart) - HIGH confidence (official docs)
-- [OpenRouter Streaming API](https://openrouter.ai/docs/api/reference/streaming) - HIGH confidence (official docs)
-- [GPT-5.1 Model Page](https://openrouter.ai/openai/gpt-5.1) - HIGH confidence (official docs)
-
-### 2. @microsoft/fetch-event-source (MEDIUM confidence)
-
-**Why this library:**
-- Combines fetch API and EventSource capabilities
-- Supports POST requests with headers (crucial for API key auth)
-- Supports AbortController for request cancellation
-- Better retry logic than native EventSource
-- TypeScript support
-
-**Usage pattern:**
-```typescript
-import { fetchEventSource } from '@microsoft/fetch-event-source'
-
-await fetchEventSource('https://openrouter.ai/api/v1/chat/completions', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${apiKey}`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    model: 'openai/gpt-5.1',
-    messages: [...],
-    stream: true,
-  }),
-  onmessage(msg) {
-    // Parse "data: " prefixed SSE chunks
-    // Update UI with streaming text
-  },
-  onerror(err) {
-    // Handle API errors gracefully
-  },
-  signal: abortController.signal, // For cancellation
-})
-```
-
-**Alternative if issues arise:**
-- `react-fetch-event-source` - More React-friendly API
-- Custom fetch implementation with ReadableStream
-
-**Sources:**
-- [Microsoft fetch-event-source](https://github.com/Azure/fetch-event-source) - MEDIUM confidence (GitHub repo, widely used)
-- [Streaming SSE tutorial](https://blog.logrocket.com/using-fetch-event-source-server-sent-events-react/) - MEDIUM confidence (tutorial verification)
-
-### 3. Database Schema (HIGH confidence)
-
-**Chat messages table:**
-```sql
-CREATE TABLE ai_chat_messages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users NOT NULL,
-  content TEXT NOT NULL,
-  role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  metadata JSONB DEFAULT '{}' -- For tokens, model, etc.
-);
-
-CREATE INDEX idx_ai_chat_messages_user_created
-  ON ai_chat_messages(user_id, created_at DESC);
-
--- RLS: Users can only see their own messages
-ALTER TABLE ai_chat_messages ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own messages"
-  ON ai_chat_messages FOR SELECT
-  USING (auth.uid() = user_id);
-```
-
-**Weekly recommendations table:**
-```sql
-CREATE TABLE ai_weekly_recommendations (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES auth.users NOT NULL,
-  week_start_date DATE NOT NULL, -- Monday of the week
-  focus_area TEXT NOT NULL,
-  drills JSONB NOT NULL, -- Array of drill objects
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  UNIQUE(user_id, week_start_date)
-);
-
-CREATE INDEX idx_ai_weekly_recommendations_user_week
-  ON ai_weekly_recommendations(user_id, week_start_date DESC);
-
--- RLS: Users can only view own recommendations
-ALTER TABLE ai_weekly_recommendations ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own recommendations"
-  ON ai_weekly_recommendations FOR SELECT
-  USING (auth.uid() = user_id);
-```
-
-**Why this structure:**
-- Separate tables for chat vs recommendations (different access patterns)
-- TEXT for content (faster queries, indexed)
-- JSONB for flexible structured data (drills, metadata)
-- RLS policies for security (auth.uid() = user_id)
-- Composite indexes for common query patterns
-
-**Sources:**
-- [Supabase RLS policies](https://supabase.com/docs/guides/database/extensions/pg_cron) - HIGH confidence (official docs)
-- Supabase migrations in project - HIGH confidence (existing patterns)
-
-### 4. pg_cron for Weekly Recommendations (HIGH confidence)
-
-**Why pg_cron:**
-- Built into Supabase free tier
-- No external services needed
-- Database-native scheduling
-- Simple cron syntax: `'0 9 * * 1'` (Monday at 9 AM)
-
-**Setup pattern:**
-```sql
--- Enable pg_cron extension
-CREATE EXTENSION IF NOT EXISTS pg_cron;
-
--- Schedule weekly recommendation generation
-SELECT cron.schedule(
-  'generate-weekly-recommendations',
-  '0 9 * * 1', -- Every Monday at 9 AM
-  $$
-  SELECT generate_weekly_recommendations(user_id)
-  FROM auth.users
-  WHERE last_login > NOW() - INTERVAL '7 days'
-  $$
-);
-
--- Function to generate recommendations
-CREATE OR REPLACE FUNCTION generate_weekly_recommendations(p_user_id UUID)
-RETURNS UUID AS $$
-DECLARE
-  v_week_start_date DATE;
-  v_analysis JSONB;
-  v_recommendation_id UUID;
-BEGIN
-  v_week_start_date := date_trunc('week', CURRENT_DATE);
-
-  -- Analyze user's climbing patterns
-  v_analysis := analyze_climbing_patterns(p_user_id);
-
-  -- Insert recommendation
-  INSERT INTO ai_weekly_recommendations (user_id, week_start_date, focus_area, drills)
-  VALUES (
-    p_user_id,
-    v_week_start_date,
-    v_analysis->>'focus_area',
-    v_analysis->'drills'
-  )
-  ON CONFLICT (user_id, week_start_date)
-  DO UPDATE SET
-    focus_area = EXCLUDED.focus_area,
-    drills = EXCLUDED.drills;
-
-  RETURN v_recommendation_id;
-END;
-$$ LANGUAGE plpgsql;
-```
-
-**Sources:**
-- [Supabase pg_cron docs](https://supabase.com/docs/guides/database/extensions/pg_cron) - HIGH confidence (official docs)
-- [Supabase Cron blog](https://supabase.com/blog/supabase-cron) - MEDIUM confidence (official blog)
-
-### 5. UI Components with shadcn/ui (HIGH confidence)
-
-**Why custom over pre-built chat libraries:**
-- Full control over styling and behavior
-- Leverages existing shadcn/ui components
-- No additional dependencies
-- Mobile-first design already established
-
-**Components to use:**
-- `Card` - Message bubbles
-- `ScrollArea` - Chat message list with auto-scroll
-- `Avatar` - User/assistant avatars
-- `Input` - Message input field
-- `Button` - Send button
-- `Separator` - Visual separation
-
-**Example structure:**
-```tsx
-<Card className="flex gap-3">
-  <Avatar>
-    <AvatarImage src="/assistant-avatar.png" />
-  </Avatar>
-  <div className="flex-1">
-    <ScrollArea className="h-96">
-      {messages.map(msg => (
-        <Card key={msg.id}>
-          {msg.content}
-        </Card>
-      ))}
-    </ScrollArea>
-    <form onSubmit={handleSubmit}>
-      <Input placeholder="Ask your climbing coach..." />
-      <Button type="submit">Send</Button>
-    </form>
-  </div>
-</Card>
-```
-
-**Sources:**
-- [shadcn/ui Components](https://ui.shadcn.com/docs/components) - HIGH confidence (official docs)
-- [Shadcn Scroll Area](https://www.shadcn.io/ui/scroll-area) - MEDIUM confidence (community examples)
-
-### 6. Streaming Response Handling (MEDIUM confidence)
-
-**Typewriter effect implementation:**
-```typescript
-// Custom hook for streaming text
-function useStreamingText() {
-  const [text, setText] = useState('')
-  const [isComplete, setIsComplete] = useState(false)
-
-  const updateText = (chunk: string) => {
-    setText(prev => prev + chunk)
-  }
-
-  const reset = () => {
-    setText('')
-    setIsComplete(false)
-  }
-
-  const complete = () => {
-    setIsComplete(true)
-  }
-
-  return { text, isComplete, updateText, reset, complete }
-}
-```
-
-**SSE parsing:**
-```typescript
-function parseSSEChunk(line: string): string | null {
-  if (!line.startsWith('data: ')) return null
-
-  const data = line.slice(6) // Remove "data: " prefix
-
-  try {
-    const parsed = JSON.parse(data)
-    return parsed.choices[0]?.delta?.content || null
-  } catch {
-    return null
-  }
-}
-```
-
-**Sources:**
-- [GetStream AI integrations docs](https://getstream.io/chat/docs/sdk/react/guides/ai-integrations/) - MEDIUM confidence (documentation verification)
-- [Streaming text with TypeIt](https://macarthur.me/posts/streaming-text-with-typeit) - LOW confidence (blog post, not verified)
+| **LLM Model** | meta-llama/llama-3.1-8b-instruct | openai/gpt-5-mini | GPT-5-mini is 12.5x-66.7x more expensive ($0.25/$2.00 per 1M tokens) with marginal accuracy gain for simple entity extraction |
+| **LLM Model** | meta-llama/llama-3.1-8b-instruct | deepseek/deepseek-chat-v3.1 | DeepSeek is 9.0x-33.3x more expensive ($0.27/$1.00 per 1M tokens), overkill for simple classification task |
+| **Processing Strategy** | Per-climb extraction | Batch processing | Batch adds complexity (queue management, progress tracking) with minimal cost savings (~30% token reduction), per-climb is simpler and provides immediate feedback |
+| **Offline Strategy** | Service worker caching | IndexedDB for jobs | IndexedDB is more complex, PWA already uses service worker, cache strategies (cache-first, network-first) well-documented |
+| **Job Queue** | PostgreSQL + pg_cron | Redis + dedicated worker | Redis requires additional infrastructure, Postgres job queue is sufficient for solo dev, pg_cron already integrated |
 
 ## Installation
 
+### Core Dependencies (Already Installed)
 ```bash
-# Core AI streaming library
-pnpm add @microsoft/fetch-event-source
-
-# Types if needed (usually included)
-pnpm add -D @types/node
+# Already in package.json
+npm install @supabase/supabase-js@^2.89.0
+npm install @tanstack/react-query@^5.90.16
+npm install zod@^4.3.5
+npm install react-hook-form@^7.70.0
+npm install @hookform/resolvers@^5.2.2
+npm install date-fns@^4.1.0
 ```
 
-## Database Setup
-
+### New Dependencies
 ```bash
-# Enable pg_cron extension (via Supabase dashboard or SQL)
-npx supabase db push --schema public
-
-# Or via SQL Editor in Supabase dashboard
-CREATE EXTENSION IF NOT EXISTS pg_cron;
+# None required - all libraries already in codebase
+# Service worker is built-in browser API
+# Edge Functions use Deno runtime (supabase CLI handles this)
 ```
 
-## Configuration
-
-**Environment variables:**
+### Supabase Functions Deploy
 ```bash
-# OpenRouter API key
-VITE_OPENROUTER_API_KEY=sk-or-...
+# Deploy auto-tagging function
+npx supabase functions deploy openrouter-autotag --no-verify-jwt
 
-# Supabase (existing)
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_ANON_KEY=...
+# Deploy background worker (optional - use pg_cron polling instead)
+npx supabase functions deploy process-tag-jobs --no-verify-jwt
 ```
 
-**API service pattern:**
-```typescript
-// src/services/openrouter.ts
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions'
-
-export async function generateChatResponse(
-  messages: { role: 'user' | 'assistant'; content: string }[]
-): Promise<AsyncIterable<string>> {
-  // Implementation with fetchEventSource
-}
+### Environment Variables (Add to Supabase Dashboard)
+```bash
+OPENROUTER_API_KEY=your_openrouter_key
+OPENROUTER_MODEL=meta-llama/llama-3.1-8b-instruct
+TAG_JOB_TIMEOUT=30000  # 30 seconds per tag job
+TAG_JOB_RETRY_LIMIT=3  # Max retry attempts
 ```
 
-## Cost Considerations
+## Architecture
 
-**OpenRouter gpt-5.1 pricing:**
-- Input: $1.25 per 1M tokens
-- Output: $10 per 1M tokens
+### Request Flow
 
-**Estimated weekly usage:**
-- Chat: ~1K tokens/day × 7 days = ~7K tokens/week
-- Recommendations: ~3K tokens/week (analysis + generation)
-- Total: ~10K tokens/week
-- Cost: ~$0.01/week (well within free tier or negligible paid tier)
+```
+User saves climb in Logger
+  ↓
+Logger component calls TanStack Query mutation
+  ↓
+Mutation inserts climb with tags: null
+  ↓
+Mutation triggers Edge Function (openrouter-autotag) via RPC or webhook
+  ↓
+Edge Function validates auth, extracts notes + metadata
+  ↓
+Edge Function calls OpenRouter API (Llama 3.1 8B)
+  ↓
+LLM returns JSON: { styles: [], failure_reasons: [] }
+  ↓
+Edge Function validates response against Zod schema
+  ↓
+Edge Function updates climb record with extracted tags
+  ↓
+TanStack Query automatically invalidates cache
+  ↓
+UI shows tagged climb with updated tags
+```
 
-**Sources:**
-- [OpenRouter Pricing](https://openrouter.ai/pricing) - HIGH confidence (official docs)
-- [OpenAI GPT-5.1 pricing](https://platform.openai.com/docs/pricing) - MEDIUM confidence (verified against OpenRouter)
+### Background Job Queue Pattern (For Offline Resilience)
 
-## Security Considerations
+**Table Schema:**
+```sql
+create table tag_jobs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id),
+  climb_id uuid not null references climbs(id),
+  status text not null default 'pending', -- pending | processing | completed | failed
+  notes text not null,
+  metadata jsonb,
+  retry_count int default 0,
+  locked_at timestamptz,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+```
 
-1. **API Key Storage:** Use environment variable (VITE_OPENROUTER_API_KEY), client-side only acceptable for this use case since it's a personal app
-2. **RLS Policies:** Ensure all AI data tables have proper RLS (auth.uid() = user_id)
-3. **Input Validation:** Sanitize user input before sending to AI (prevent prompt injection)
-4. **Error Handling:** Never expose raw API errors to users, use sonner for user-friendly messages
-5. **Rate Limiting:** Implement client-side rate limiting to prevent excessive API calls
+**Job Processing:**
+1. pg_cron triggers Edge Function every minute to process pending jobs
+2. Function locks job row (SELECT ... FOR UPDATE SKIP LOCKED)
+3. Extracts tags via LLM (background task)
+4. Updates climb record with tags
+5. Marks job as completed or failed with retry logic
 
-**Sources:**
-- [OpenRouter Error Handling](https://openrouter.ai/docs/api/reference/errors-and-debugging) - HIGH confidence (official docs)
-- [OpenRouter Rate Limits](https://openrouter.ai/docs/api/reference/limits) - HIGH confidence (official docs)
+### Offline Strategy
 
-## What NOT to Use
+**Service Worker Caching:**
+```javascript
+// Cache climb data on save
+self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url)
+  if (url.pathname.includes('/climbs')) {
+    event.respondWith(
+      caches.open('climbs-v1').then(cache =>
+        cache.match(event.request).then(response => {
+          return response || fetch(event.request).then(fresh => {
+            cache.put(event.request, fresh.clone())
+            return fresh
+          })
+        })
+      )
+    )
+  }
+})
+```
 
-| Technology | Why Not |
-|------------|---------|
-| **Vercel AI SDK** | Requires Next.js edge runtime, incompatible with Vite client-side PWA, server-side focused |
-| **assistant-ui** | Heavyweight library, introduces dependencies, shadcn/ui sufficient for this use case, less control |
-| **Redis Cache** | Supabase free tier doesn't include Redis, adds complexity, PostgreSQL JSONB sufficient |
-| **External cron services** | pg_cron built into Supabase, no additional services needed, database-native |
-| **native EventSource** | Doesn't support POST with headers, can't send API keys, no body support |
-| **WebSocket** | Overkill for request/response chat, SSE is simpler and more appropriate |
-| **Separate backend server** | Violates "no backend servers" constraint, adds deployment complexity, Solo dev constraint |
+**Background Sync Pattern:**
+```javascript
+// Use Background Sync API when offline
+navigator.serviceWorker.ready.then(reg => {
+  reg.sync.register('tag-pending-jobs')
+})
 
-## Development Workflow
+// Service worker handles sync on reconnect
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'tag-pending-jobs') {
+    event.waitUntil(processPendingTagJobs())
+  }
+})
+```
 
-1. **Implement API service:** Create `src/services/openrouter.ts` with fetchEventSource
-2. **Create database tables:** Add migrations for ai_chat_messages and ai_weekly_recommendations
-3. **Build chat UI:** Custom components with shadcn/ui primitives
-4. **Implement streaming:** Add useStreamingText hook and SSE parsing
-5. **Add recommendations:** Build pg_cron job and analysis function
-6. **Integrate with existing analytics:** Pull failure patterns, style weaknesses from current data
-7. **Test offline behavior:** Ensure graceful degradation when OpenRouter unavailable
+### Cost Analysis
 
-## Testing Strategy
+**Per-Climb Tagging Cost:**
+- Input: ~150 tokens (notes + metadata + prompt)
+- Output: ~50 tokens (JSON tags)
+- Model: Llama 3.1 8B ($0.02/$0.05 per 1M tokens)
+- Cost: (150 * 0.02/1M) + (50 * 0.05/1M) = $0.000003 + $0.0000025 = **$0.0000055 per climb**
 
-1. **Mock OpenRouter API:** Use Vitest to mock fetchEventSource responses
-2. **Test SSE parsing:** Verify chunk parsing logic
-3. **Database tests:** Test RLS policies and recommendation generation
-4. **E2E tests:** Verify chat flow from UI to API
-5. **Error scenarios:** Test rate limits, timeouts, network failures
+**Monthly Cost (100 climbs/month):**
+- Cost: 100 * $0.0000055 = **$0.00055/month**
+- Annual: 1200 climbs = **$0.0066/year**
 
-## Migration from Existing Stack
+**Comparison with GPT-5-mini:**
+- Cost per climb: ~$0.00020 (36x more expensive)
+- Annual cost: ~$0.24/month for 100 climbs
 
-**Zero breaking changes:** All additions are new libraries and tables, existing functionality untouched.
+**Daily Limits Recommendation:**
+- Free tier limit: ~50-100 climbs/day before meaningful cost
+- Paid tier: $0.55/month allows ~100,000 climbs/month
+- Use existing user_limits table for per-user quotas (extends v2.0 pattern)
 
-**Phased rollout:**
-1. Phase 1: Chat UI + OpenRouter integration (no persistence yet)
-2. Phase 2: Add database tables and persistence
-3. Phase 3: Implement weekly recommendations with pg_cron
-4. Phase 4: Integrate with existing climbing analytics
+### Performance Targets
 
-## Sources Summary
+**Response Time:**
+- Target: <2 seconds per climb (API latency + LLM inference)
+- Llama 3.1 8B: ~100-200ms per 1K tokens
+- Network: ~500ms average (Edge Functions global distribution)
+- Total: ~1.5s per climb (meets PWA <2s requirement)
 
-### HIGH Confidence (Official Documentation)
-- [OpenRouter Quickstart Guide](https://openrouter.ai/docs/quickstart)
-- [OpenRouter Streaming API](https://openrouter.ai/docs/api/reference/streaming)
-- [GPT-5.1 Model Page](https://openrouter.ai/openai/gpt-5.1)
-- [OpenRouter Pricing](https://openrouter.ai/pricing)
-- [OpenRouter Error Handling](https://openrouter.ai/docs/api/reference/errors-and-debugging)
-- [OpenRouter Rate Limits](https://openrouter.ai/docs/api/reference/limits)
-- [Supabase pg_cron docs](https://supabase.com/docs/guides/database/extensions/pg_cron)
-- [shadcn/ui Components](https://ui.shadcn.com/docs/components)
-- [OpenAI GPT-5.1 pricing](https://platform.openai.com/docs/pricing)
+**UI Blocking Prevention:**
+- Background tasks respond immediately: "Tagging in progress..."
+- TanStack Query optimistic updates show immediate save
+- Real-time updates via Supabase Realtime (optional enhancement)
 
-### MEDIUM Confidence (Verified with Multiple Sources)
-- [Microsoft fetch-event-source](https://github.com/Azure/fetch-event-source)
-- [Streaming SSE tutorial](https://blog.logrocket.com/using-fetch-event-source-server-sent-events-react/)
-- [Supabase Cron blog](https://supabase.com/blog/supabase-cron)
-- [GetStream AI integrations docs](https://getstream.io/chat/docs/sdk/react/guides/ai-integrations/)
-- [Shadcn Scroll Area](https://www.shadcn.io/ui/scroll-area)
-- [OpenRouter Vercel AI SDK Integration](https://openrouter.ai/docs/guides/community/vercel-ai-sdk)
-- [assistant-ui library](https://assistant-ui.com/)
+**Mobile Performance:**
+- 44px touch targets for loading states
+- Skeleton screens for tag preview
+- Offline indicator when network unavailable
+- Progressive loading: show existing tags first, update with AI tags when ready
 
-### LOW Confidence (WebSearch Only)
-- [Streaming text with TypeIt](https://macarthur.me/posts/streaming-text-with-typeit)
-- Various tutorial blogs and community posts
-- AI coaching patterns (no direct technical verification)
+### Anti-Patterns to Avoid
+
+1. **Don't: Block UI while tagging**
+   - Instead: Return 200 OK immediately, process in background
+   - Pattern: `EdgeRuntime.waitUntil(promise)` in Edge Functions
+
+2. **Don't: Use expensive models for simple tasks**
+   - Entity extraction is classification, not reasoning
+   - Llama 3.1 8B sufficient, GPT-5 unnecessary
+
+3. **Don't: Re-tag every climb on app load**
+   - Cache tags in database, only update on user edit
+   - Batch re-tag only when prompt changes or user requests
+
+4. **Don't: Ignore offline scenarios**
+   - Show "AI tagging unavailable offline" message
+   - Allow manual tag selection as fallback
+   - Queue jobs for background sync when online
+
+5. **Don't: Skip validation**
+   - Validate LLM response against allowed tag values
+   - Reject invalid tags, show error to user
+   - Fall back to empty tags, don't corrupt data
+
+## Integration with Existing Stack
+
+**Reuses v2.0 Infrastructure:**
+- OpenRouter integration (same API key, different model)
+- Supabase Edge Functions pattern (follows openrouter-coach)
+- TanStack Query hooks (extend useClimbs pattern)
+- Zod validation (extend climbSchema)
+- User limits tracking (extend coach_api_usage table)
+
+**New Components:**
+- `TagJobMonitor`: Display tagging status in logger
+- `TagBadge`: Visual indicator of AI vs manual tags
+- `TagQueueStatus`: Background job count (optional enhancement)
+
+**New Services:**
+- `tagService.ts`: API calls to openrouter-autotag
+- `jobQueueService.ts`: Monitor background job status
+
+**Database Changes:**
+- `climbs` table: Already has `style[]` and `failure_reasons[]` columns (no migration needed)
+- `tag_jobs` table: New for background queue
+- `user_limits` table: Extend with `tag_count` column
+
+## Sources
+
+### HIGH Confidence (Official/Authoritative)
+- [OpenRouter Pricing](https://openrouter.ai/pricing) - Token pricing structure, model catalog
+- [Llama 3.1 8B Instruct - OpenRouter](https://openrouter.ai/meta-llama/llama-3.1-8b-instruct) - Model capabilities, pricing ($0.02/$0.05 per 1M tokens)
+- [Supabase Edge Functions - Background Tasks](https://supabase.com/docs/guides/functions/background-tasks) - `EdgeRuntime.waitUntil()`, async operations, error handling
+- [PWA Caching - MDN](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Caching) - Service worker strategies, offline handling
+- [Llama 3.1 8B - llm-stats](https://llm-stats.com/models/llama-3.1-8b-instruct) - Performance metrics (118.0 c/s), context window, pricing
+
+### MEDIUM Confidence (Verified with Official Sources)
+- [GPT-5 Mini vs Llama 3.1 8B - Galaxy.ai](https://blog.galaxy.ai/compare/gpt-5-mini-vs-llama-3-1-8b-instruct) - Cost comparison (12.5x-66.7x cheaper), benchmark performance
+- [GPT-5 Mini vs Llama 3.1 8B - airank.dev](https://airank.dev/models/compare/gpt-5-mini-vs-llama-3-1-8b-instruct) - 51.9% higher benchmark score vs Llama, context window comparison
+- [Job Queue Pattern - Jigz.dev](https://www.jigz.dev/blogs/how-i-solved-background-jobs-using-supabase-tables-and-edge-functions) - PostgreSQL job queue pattern, row locking, status states
+- [Entity Extraction LLM vs Regex - MDPI](https://www.mdpi.com/2673-7426/5/3/50) - LLM accuracy vs rule-based approaches
+- [Top AI Models 2026 - TeamDay.ai](https://www.teamday.ai/blog/top-ai-models-openrouter-2026) - Model comparison, cost analysis
+
+### LOW Confidence (WebSearch Only, Needs Validation)
+- [Mobile UX Best Practices - SendBird](https://sendbird.com/blog/mobile-app-ux-best-practices) - Mobile design patterns, real-time interactions
+- [PWA Offline Strategies - MagicBell](https://www.magicbell.com/blog/offline-first-pwas-service-worker-caching-strategies) - Service worker caching patterns (cache-first vs network-first)
+- [LLM Entity Extraction - Reddit](https://www.reddit.com/r/LocalLLaMA/comments/1boblzb/llm_for_entity_extraction/) - Community discussion on LLM vs regex (needs validation)
+
+### Research Gaps
+
+1. **Prompt Engineering Quality:**
+   - No verified examples for climbing-specific entity extraction
+   - Need iterative testing with real climb notes
+   - Tag mapping accuracy unknown (how often does Llama misclassify "crimp" vs "pinch"?)
+
+2. **Background Job Scalability:**
+   - pg_cron polling every minute may not scale to many users
+   - Consider dedicated worker for production scale
+   - Solo dev: Polling acceptable, monitor performance
+
+3. **Real-time Updates:**
+   - TanStack Query polling vs Supabase Realtime
+   - Realtime adds complexity but better UX
+   - Start with polling, upgrade to Realtime if needed
+
+4. **Tag Dispute Resolution:**
+   - User disagrees with AI tags
+   - Allow manual override with flag
+   - Track "AI confidence" for future fine-tuning
+
+---
+
+*Research completed: 2026-01-20*
+*Overall confidence: MEDIUM*
+*Ready for roadmap: yes*
