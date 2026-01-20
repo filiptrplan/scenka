@@ -263,6 +263,7 @@ Deno.serve(async (req: Request) => {
             model,
             messages,
             stream: true,
+            temperature: 0.3,
           })
 
           let assistantContent = ''
