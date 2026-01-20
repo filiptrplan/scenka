@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import { supabase } from '@/lib/supabase'
 import { useCreateCoachMessage } from '@/hooks/useCoachMessages'
+import { useCoachRecommendations } from '@/hooks/useCoach'
 import { userLimitsKeys } from './useUserLimits'
 
 export interface UseStreamingChatReturn {
@@ -25,6 +26,9 @@ export function useStreamingChat(): UseStreamingChatReturn {
   const hasErrorRef = useRef(false)
   const createMessage = useCreateCoachMessage()
   const queryClient = useQueryClient()
+
+  // Fetch recommendations (leverages TanStack Query cache with 24h staleTime)
+  const { data: recommendations } = useCoachRecommendations()
 
   const cleanup = useCallback(() => {
     if (abortControllerRef.current) {
@@ -89,6 +93,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
             message,
             patterns_data: patterns,
             climbing_context: climbingContext,
+            recommendations,
           }),
           signal: abortController.signal,
 
@@ -152,7 +157,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
         console.error('Message send error:', e)
       }
     },
-    [isStreaming, createMessage]
+    [isStreaming, createMessage, recommendations]
   )
 
   // Cleanup on unmount
