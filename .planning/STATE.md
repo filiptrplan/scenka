@@ -9,17 +9,17 @@ See: .planning/PROJECT.md (updated 2026-01-17)
 
 ## Current Position
 
-Phase: 29 of 29 (Add Markdown Rendering to Chat Bubbles)
-Plan: 1 of 1 in current phase
-Status: In progress — active 2026-01-20
-Last activity: 2026-01-20 - Completed Phase 29-01: Install Markdown Rendering Libraries and Create Dark-Themed Components
+Phase: 29 of 29 (Add Markdown Rendering to Chat Bubbles) - Complete
+Plan: 2 of 2 in current phase - Complete
+Status: Phase complete — 2026-01-20
+Last activity: 2026-01-20 - Completed Phase 29-02: Add Markdown Rendering to Chat Bubbles
 
-Progress: [█████████░] 98% (65/66 plans complete)
+Progress: [██████████] 100% (66/66 plans complete) - PROJECT COMPLETE
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 76 (v1.0 + v1.1 + v2.0 phase 18-29)
+- Total plans completed: 66 (v1.0 + v1.1 + v2.0 phase 18-29)
 - Average duration: 9 min
 - Total execution time: 10.0 hours
 
@@ -40,7 +40,7 @@ Progress: [█████████░] 98% (65/66 plans complete)
 | 26 (README Update) | 1 | 2 min | 2 min |
 | 27 (Daily Limit) | 6 | 11 min | 2 min |
 | 28 (Chat System Prompt) | 1 | 8 min | 8 min |
-| 29 (Markdown Rendering) | 1 | 1 min | 1 min |
+| 29 (Markdown Rendering) | 2 | 4 min | 2 min |
 
 **Recent Trend:**
 - Last 5 plans: 3 min
@@ -203,6 +203,8 @@ Recent decisions affecting current work:
 - Phase 29-01: Renamed markdown-components.ts to markdown-components.tsx for JSX syntax support
 - Phase 29-01: Code block detection via className presence (rehype-highlight adds language-specific classes)
 - Phase 29-01: Dark-themed components match app's color system (#09090b background, white/gray text)
+- Phase 29-02: Conditional markdown rendering only for assistant messages (user messages remain plain text)
+- Phase 29-02: User expectation: "what you type is what you see" - avoid markdown interpretation for user input
 
 ### Pending Todos
 
@@ -230,5 +232,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed Phase 29-01: Install Markdown Rendering Libraries and Create Dark-Themed Components
+Stopped at: Completed Phase 29-02: Add Markdown Rendering to Chat Bubbles
+Status: Project complete (66/66 plans finished)
 Resume file: None
