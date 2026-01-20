@@ -1,5 +1,7 @@
+import packageJson from '../../../package.json'
+
 export function Footer() {
-  const version = '1.1.0'
+  const version = packageJson.version
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 py-2 z-40">
