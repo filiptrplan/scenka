@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 27: Impose daily limit of 2 recommendation generations and 10 chat messages per day
+**Current focus:** Phase 28: Rework Chat System Prompt and Data Context
 
 ## Current Position
 
-Phase: 27 of 27 (Impose Daily Limit on Usage)
-Plan: 6 of 6 in current phase
-Status: Phase complete
-Last activity: 2026-01-19 - Completed Phase 27-06: Chat Usage Counter UI
+Phase: 28 of 28 (Rework Chat System Prompt and Data Context)
+Plan: 1 of 1 in current phase
+Status: Plan 28-01 complete (awaiting Edge Function deployment)
+Last activity: 2026-01-20 - Completed Phase 28-01: Rework Chat System Prompt and Data Context
 
-Progress: [██████████] 100%
+Progress: [███████████░] 98% (64/65 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 74 (v1.0 + v1.1 + v2.0 phase 18-27)
+- Total plans completed: 75 (v1.0 + v1.1 + v2.0 phase 18-28)
 - Average duration: 9 min
-- Total execution time: 9.8 hours
+- Total execution time: 9.9 hours
 
 **By Phase:**
 
@@ -38,10 +38,11 @@ Progress: [██████████] 100%
 | 24 (Projecting Focus) | 3 | 17 min | 6 min |
 | 25 (User Context) | 4 | 17 min | 4 min |
 | 26 (README Update) | 1 | 2 min | 2 min |
-| 27 (Daily Limit) | 6 (of 6) | 11 min | 2 min |
+| 27 (Daily Limit) | 6 | 11 min | 2 min |
+| 28 (Chat System Prompt) | 1 | 8 min | 8 min |
 
 **Recent Trend:**
-- Last 5 plans: 2 min
+- Last 5 plans: 3 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -190,6 +191,13 @@ Recent decisions affecting current work:
 - Phase 27-06: Inline error message when at limit shows time until reset via getTimeUntilNextReset helper
 - Phase 27-06: whitespace-nowrap on counter text prevents wrapping on small screens
 - Phase 27-06: Explicit boolean check (isChatAtLimit === true) for ESLint compliance with strict-boolean-expressions rule
+- Phase 28-01: Exported Drill, ProjectingFocus, RecommendationsContent, and RecommendationsData interfaces to enable Edge Function import
+- Phase 28-01: Used formatRecommendationsForLLM helper to structure recommendations with clear headers (Weekly Focus, Drills, Projecting Focus Areas)
+- Phase 28-01: Concept-first format: 'What to work on: [description]' before drill name in drill sections
+- Phase 28-01: Conditional recommendations section only added if recommendations.content exists (graceful degradation)
+- Phase 28-01: fetchRecommendationsIfMissing checks body.recommendations first before database query (client-optimized)
+- Phase 28-01: Added logging for recommendation fetch status ('Recommendations found' / 'No recommendations available')
+- Phase 28-01: useCoachRecommendations hook leverages existing 24h TanStack Query cache (minimal refetch overhead)
 
 ### Pending Todos
 
@@ -197,12 +205,11 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Edge Function deployment:** User must run `supabase functions deploy openrouter-chat` and `supabase functions deploy openrouter-coach` to deploy updated model configuration and projecting focus
+- **Edge Function deployment (UPDATED):** User must run `supabase functions deploy openrouter-chat` to deploy updated system prompt with recommendations support (after Phase 28-01). Also run `supabase functions deploy openrouter-coach` for projecting focus (if not already deployed)
 - **OPENROUTER_MODEL required:** User must set OPENROUTER_MODEL environment variable via `supabase secrets set OPENROUTER_MODEL=google/gemini-2.5-pro` (documented in 22-01 SUMMARY)
 - **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
 - **Database migration required:** User must run `npx supabase db push` to apply climbing_context migration to profiles table (documented in 25-01 SUMMARY)
 - **Screenshots need capture:** README includes TODO comments for screenshot capture that need to be fulfilled (coach page, chat page)
-- **Edge Functions need deployment:** After daily limits are implemented, Edge Functions must be deployed with limit checking logic
 
 ### Roadmap Evolution
 
@@ -212,9 +219,11 @@ None yet.
 - Phase 25 added: User climbing context for prompts (allow users to describe what kind of climber they are)
 - Phase 26 added: Update README with the work done in this milestone
 - Phase 27 added: Impose daily limit of 2 recommendation generations and 10 chat messages per day
+- Phase 28 added: Rework chat system prompt and data context (include latest recommendations in chatbot context)
+- Phase 29 added: Add markdown rendering to chat bubbles for better formatted responses
 
 ## Session Continuity
 
-Last session: 2026-01-19
-Stopped at: Completed Phase 27-06: Chat Usage Counter UI
+Last session: 2026-01-20
+Stopped at: Completed Phase 28-01: Rework Chat System Prompt and Data Context
 Resume file: None
