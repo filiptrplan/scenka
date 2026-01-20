@@ -1,5 +1,7 @@
 import { Brain, Send, Trash2 } from 'lucide-react'
 import { useRef, useEffect, useState, type KeyboardEvent } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -8,6 +10,7 @@ import { usePatternAnalysis } from '@/hooks/useCoach'
 import { useClearCoachMessages, useCoachMessages } from '@/hooks/useCoachMessages'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { useUserLimits, getTimeUntilNextReset } from '@/hooks/useUserLimits'
+import { markdownComponents } from '@/lib/markdown-components'
 import { getProfile } from '@/services/profiles'
 
 interface MessageBubbleProps {
@@ -27,7 +30,13 @@ function MessageBubble({ message, isCurrentUser }: MessageBubbleProps) {
             : 'bg-gray-700 text-gray-100 rounded-bl-sm hover:brightness-105'
         }`}
       >
-        <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
+        {isCurrentUser ? (
+          <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
+        ) : (
+          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+            {message.content}
+          </ReactMarkdown>
+        )}
         <div
           className={`text-xs mt-1 ${isCurrentUser ? 'text-blue-200' : 'text-gray-400'}`}
         >
