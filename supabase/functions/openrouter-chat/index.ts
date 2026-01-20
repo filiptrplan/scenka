@@ -93,6 +93,16 @@ async function fetchRecommendationsIfMissing(
   return null
 }
 
+// Helper function to estimate token count (rough approximation: ~1.3 tokens per word, or ~4 chars per token)
+function estimateTokenCount(text: string): number {
+  // Count words (split by whitespace, filter empty)
+  const wordCount = text.trim().split(/\s+/).filter(w => w.length > 0).length
+  // Or count characters / 4 for English text approximation
+  const charBasedEstimate = Math.ceil(text.length / 4)
+  // Use the higher of the two to be conservative
+  return Math.max(wordCount, charBasedEstimate)
+}
+
 // Edge Function handler with SSE streaming
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight
@@ -216,6 +226,45 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({ error: 'Message cannot exceed 5000 characters' }),
         {
           status: 400,
+          headers: corsHeaders,
+        }
+      )
+    }
+
+    // Check token limit (10k tokens) to prevent abuse
+    const MAX_TOKENS = 10000
+
+    // Estimate tokens from message
+    const messageTokens = estimateTokenCount(body.message)
+
+    // Estimate tokens from optional context data
+    let contextTokens = 0
+    if (body.patterns_data) {
+      contextTokens += estimateTokenCount(JSON.stringify(body.patterns_data))
+    }
+    if (body.climbing_context) {
+      contextTokens += estimateTokenCount(body.climbing_context)
+    }
+    if (body.recommendations && body.recommendations.content) {
+      contextTokens += estimateTokenCount(JSON.stringify(body.recommendations.content))
+    }
+
+    // Estimate tokens from system prompt (rough estimate)
+    const systemPrompt = getChatSystemPrompt(body.patterns_data, body.climbing_context, body.recommendations)
+    const systemPromptTokens = estimateTokenCount(systemPrompt)
+
+    // Total estimated tokens for this request
+    const estimatedTotalTokens = messageTokens + contextTokens + systemPromptTokens
+
+    if (estimatedTotalTokens > MAX_TOKENS) {
+      return new Response(
+        JSON.stringify({
+          error: `Request exceeds maximum token limit (${MAX_TOKENS} tokens). Estimated: ${estimatedTotalTokens} tokens. Please reduce the length of your message or context.`,
+          estimated_tokens: estimatedTotalTokens,
+          max_tokens: MAX_TOKENS,
+        }),
+        {
+          status: 413,
           headers: corsHeaders,
         }
       )

@@ -148,6 +148,7 @@ export function ChatPage() {
     const message = inputValue.trim()
     setLastMessage(message)
     setInputValue('')
+    textareaRef.current?.focus()
     await sendMessage(message, patterns, profile?.climbing_context ?? null)
   }
 
@@ -231,11 +232,8 @@ export function ChatPage() {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Coach a question..."
-            disabled={isStreaming}
             rows={1}
-            className={`flex-1 min-h-[44px] resize-none bg-white/[0.02] border-white/20 transition-all duration-200 ${
-              isStreaming ? 'opacity-50 cursor-not-allowed' : 'hover:border-white/30'
-            }`}
+            className="flex-1 min-h-[44px] resize-none bg-white/[0.02] border-white/20 transition-all duration-200 hover:border-white/30"
           />
           <div className="flex items-center gap-2">
             <Button
