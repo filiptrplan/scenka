@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-17)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 28: Rework Chat System Prompt and Data Context
+**Current focus:** Phase 29: Add Markdown Rendering to Chat Bubbles
 
 ## Current Position
 
-Phase: 28 of 28 (Rework Chat System Prompt and Data Context)
+Phase: 29 of 29 (Add Markdown Rendering to Chat Bubbles)
 Plan: 1 of 1 in current phase
-Status: Plan 28-01 complete (awaiting Edge Function deployment)
-Last activity: 2026-01-20 - Completed Phase 28-01: Rework Chat System Prompt and Data Context
+Status: In progress — active 2026-01-20
+Last activity: 2026-01-20 - Completed Phase 29-01: Install Markdown Rendering Libraries and Create Dark-Themed Components
 
-Progress: [███████████░] 98% (64/65 plans complete)
+Progress: [█████████░] 98% (65/66 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 75 (v1.0 + v1.1 + v2.0 phase 18-28)
+- Total plans completed: 76 (v1.0 + v1.1 + v2.0 phase 18-29)
 - Average duration: 9 min
-- Total execution time: 9.9 hours
+- Total execution time: 10.0 hours
 
 **By Phase:**
 
@@ -40,6 +40,7 @@ Progress: [███████████░] 98% (64/65 plans complete)
 | 26 (README Update) | 1 | 2 min | 2 min |
 | 27 (Daily Limit) | 6 | 11 min | 2 min |
 | 28 (Chat System Prompt) | 1 | 8 min | 8 min |
+| 29 (Markdown Rendering) | 1 | 1 min | 1 min |
 
 **Recent Trend:**
 - Last 5 plans: 3 min
@@ -198,6 +199,10 @@ Recent decisions affecting current work:
 - Phase 28-01: fetchRecommendationsIfMissing checks body.recommendations first before database query (client-optimized)
 - Phase 28-01: Added logging for recommendation fetch status ('Recommendations found' / 'No recommendations available')
 - Phase 28-01: useCoachRecommendations hook leverages existing 24h TanStack Query cache (minimal refetch overhead)
+- Phase 29-01: Used npm instead of pnpm for package installation (pnpm not available in environment)
+- Phase 29-01: Renamed markdown-components.ts to markdown-components.tsx for JSX syntax support
+- Phase 29-01: Code block detection via className presence (rehype-highlight adds language-specific classes)
+- Phase 29-01: Dark-themed components match app's color system (#09090b background, white/gray text)
 
 ### Pending Todos
 
@@ -225,5 +230,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed Phase 28-01: Rework Chat System Prompt and Data Context
+Stopped at: Completed Phase 29-01: Install Markdown Rendering Libraries and Create Dark-Themed Components
 Resume file: None
