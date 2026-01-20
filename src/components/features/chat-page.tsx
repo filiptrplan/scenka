@@ -1,11 +1,11 @@
-import { Brain, Send } from 'lucide-react'
+import { Brain, Send, Trash2 } from 'lucide-react'
 import { useRef, useEffect, useState, type KeyboardEvent } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { usePatternAnalysis } from '@/hooks/useCoach'
-import { useCoachMessages } from '@/hooks/useCoachMessages'
+import { useClearCoachMessages, useCoachMessages } from '@/hooks/useCoachMessages'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { useUserLimits, getTimeUntilNextReset } from '@/hooks/useUserLimits'
 import { getProfile } from '@/services/profiles'
@@ -94,6 +94,7 @@ export function ChatPage() {
   const { data: patterns } = usePatternAnalysis()
   const { sendMessage, streamingResponse, isStreaming, error, cleanup, setError } = useStreamingChat()
   const { data: limits } = useUserLimits()
+  const clearMessages = useClearCoachMessages()
 
   const dailyChatLimit = 10
   const chatCount = limits?.chat_count ?? 0
@@ -152,6 +153,15 @@ export function ChatPage() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       void handleSend()
+    }
+  }
+
+  const handleClearChat = () => {
+    // eslint-disable-next-line no-alert
+    if (window.confirm('Clear all chat history? This cannot be undone.')) {
+      void clearMessages.mutateAsync(undefined, {
+        onSuccess: () => toast.success('Chat history cleared'),
+      })
     }
   }
 
@@ -224,6 +234,18 @@ export function ChatPage() {
             >
               <Send className="h-4 w-4" />
             </Button>
+            {messages !== undefined && messages.length > 0 ? (
+              <Button
+                onClick={handleClearChat}
+                disabled={isStreaming}
+                variant="ghost"
+                size="icon"
+                className="h-[44px] w-[44px] text-gray-400 hover:text-red-400 hover:bg-white/5 transition-colors"
+                aria-label="Clear chat history"
+              >
+                <Trash2 className="h-5 w-5" />
+              </Button>
+            ) : null}
             <span className="text-xs text-[#888] whitespace-nowrap">
               {chatCount}/{dailyChatLimit} used today
             </span>
