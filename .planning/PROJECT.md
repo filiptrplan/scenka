@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A **personal, privacy-focused mobile PWA** for recreational boulderers who are serious about improving. Scenka helps climbers track their technique failures through an "exception logging" philosophy—only logging significant climbs (failed projects, awkward sends) rather than every session.
+A **personal, privacy-focused mobile PWA** for recreational boulderers who are serious about improving. Scenka helps climbers track their technique failures through an "exception logging" philosophy—only logging significant climbs (failed projects, awkward sends) rather than every session. v2.0 added AI-powered coaching with weekly recommendations and pattern analysis.
 
 **Target User:** Recreational boulderers who want to get better, not just log sends.
 
@@ -27,19 +27,15 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 
 ### Validated (Completed)
 
-✓ **Climb logging** — Log climbs with grade, outcome, awkwardness, styles, failure reasons
-✓ **Multiple grading scales** — Font, V-Scale, Color Circuit
-✓ **Style tags** — Slab, Vert, Overhang, Roof, Dyno, Crimp, Sloper, Pinch
-✓ **Failure reasons** — Physical (Pumped, Finger Strength, Core, Power); Technical (Bad Feet, Body Position, Beta Error, Precision); Mental (Fear, Commitment, Focus)
-✓ **Offline-first PWA** — Service worker, offline queue, sync manager
-✓ **Authentication** — Supabase Auth
-✓ **Profile management** — User settings and preferences
-✓ **Basic analytics** — Climb history visualization and charts
-✓ **Hold color settings page** — User can enable/disable colors from a wide variety of options — v1.0
-✓ **Hold color selection in logger** — Color picker field in climb logging form (from enabled colors only) — v1.0
-✓ **Color persistence** — Store selected color with climb data in Supabase — v1.0
-✓ **Color display in history** — Show hold color on logged climbs in climb list/detail views — v1.0
-✓ **Default color set** — Pre-populate settings with common climbing gym hold colors (red, green, blue, yellow, black, white, orange, purple, pink) — v1.0
+✓ **Climb logging** — Log climbs with grade, outcome, awkwardness, styles, failure reasons — v1.0
+✓ **Multiple grading scales** — Font, V-Scale, Color Circuit — v1.0
+✓ **Style tags** — Slab, Vert, Overhang, Roof, Dyno, Crimp, Sloper, Pinch — v1.0
+✓ **Failure reasons** — Physical (Pumped, Finger Strength, Core, Power); Technical (Bad Feet, Body Position, Beta Error, Precision); Mental (Fear, Commitment, Focus) — v1.0
+✓ **Offline-first PWA** — Service worker, offline queue, sync manager — v1.0
+✓ **Authentication** — Supabase Auth — v1.0
+✓ **Profile management** — User settings and preferences — v1.0
+✓ **Basic analytics** — Climb history visualization and charts — v1.0
+✓ **Hold color tracking** — Settings page, color picker in logger, color display in history — v1.0
 ✓ **Logger form auto-reset** — Form automatically clears after successful submission for rapid logging — v1.1
 ✓ **Logger window close preference** — User can choose if logger closes after adding climbs — v1.1
 ✓ **Training Priorities analytics** — Failure breakdown chart with percentages, positioned first for actionable insights — v1.1
@@ -48,25 +44,15 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 ✓ **Unified UI components** — SelectionButton, FormSection, FormLabel with cva pattern for consistency — v1.1
 ✓ **Version footer** — Footer displaying version number for reference — v1.1
 ✓ **README documentation** — Polished README with logo and emojis — v1.1
-✓ **Weekly recommendations** — User can view weekly focus statement and 3 personalized drills with name, description, sets/reps/rest — v2.0
-✓ **Manual regeneration** — User can manually regenerate recommendations via button — v2.0
-✓ **Recommendations persistence** — Weekly recommendations persist across sessions with generation date displayed — v2.0
-✓ **Recommendations loading states** — Loading states show during AI generation — v2.0
-✓ **Recommendations error handling** — Error handling with fallback to previous recommendations on API failure — v2.0
-✓ **Recommendations offline support** — Recommendations work offline (last cached recommendations accessible without internet) — v2.0
-✓ **Pattern analysis** — User can view failure patterns summary, style weaknesses analysis, climbing frequency tracking, and recent successes context — v2.0
-✓ **Streaming chat interface** — User can send messages through text input with send button, view message bubbles with visual distinction between user and assistant, chat responses stream in real-time using Server-Sent Events — v2.0
-✓ **Chat context** — Chat retains limited message history (last 10-20 messages) for context and includes pre-processed patterns (failure, styles, frequency) — v2.0
-✓ **Chat entry points** — Clear entry points to chat from recommendations page — v2.0
-✓ **Chat error handling** — Graceful error handling with helpful fallback messages — v2.0
-✓ **Climbing-specific knowledge** — Chat provides climbing-specific domain knowledge (understands beta, grades, styles) — v2.0
-✓ **Projecting focus recommendations** — Add projecting focus section to help users select boulders to project on each week — v2.0
-✓ **User climbing context** — Allow users to add their own context to system prompts like what kind of climber they are — v2.0
-✓ **Daily usage limits** — Impose daily limit of 2 recommendation generations and 10 chat messages per user — v2.0
-✓ **Enhanced chat prompts** — Rework chat system prompt and include latest recommendations in chatbot context — v2.0
-✓ **Markdown rendering** — Render markdown content in chat assistant responses for better formatting including headers, lists, code blocks, and links — v2.0
-✓ **Pattern analysis based on exception logging** — Pattern analysis based on exception-logging (only significant climbs, no noise) — v2.0
-✓ **Recommendations link to redemption tracking** — Recommendations link to user's redemption tracking (drills reference actual climbs) — v2.0
+✓ **AI Coach with weekly recommendations** — User can view weekly focus statement and 3 personalized drills with name, description, sets/reps/rest — v2.0
+✓ **Pattern analysis** — Failure patterns summary, style weaknesses analysis, climbing frequency tracking, and recent successes context — v2.0
+✓ **Streaming chat interface** — Real-time chat with message bubbles, SSE streaming, typing indicators — v2.0
+✓ **Climbing-specific knowledge** — Chat understands beta, grades, styles with domain expertise — v2.0
+✓ **Projecting focus recommendations** — Help users select boulders to project on each week — v2.0
+✓ **User climbing context** — Allow users to describe climbing style and goals — v2.0
+✓ **Daily usage limits** — 2 recommendations/day, 10 chat messages/day for cost control — v2.0
+✓ **Enhanced chat prompts** — Role-based coaching with recommendation context — v2.0
+✓ **Markdown rendering** — Formatted responses with syntax highlighting for code blocks — v2.0
 
 ### Active
 

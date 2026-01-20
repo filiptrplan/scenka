@@ -2,7 +2,7 @@
 
 ## Overview
 
-Scenka is a personal, privacy-focused mobile PWA for recreational boulderers who are serious about improving. v2.0 added AI-powered climbing coach with weekly recommendations, streaming chat, pattern analysis, and daily usage limits. The application prioritizes quick, frictionless climb logging with exception logging philosophy—only significant climbs (failed projects, awkward sends) are logged.
+Scenka is a personal, privacy-focused mobile PWA for recreational boulderers who are serious about improving. The application prioritizes quick, frictionless climb logging with exception logging philosophy—only significant climbs (failed projects, awkward sends) are logged.
 
 ## Milestones
 
@@ -52,27 +52,14 @@ Scenka is a personal, privacy-focused mobile PWA for recreational boulderers who
 <details>
 <summary>✅ v2.0 AI Coach (Phases 18-29) — SHIPPED 2026-01-20</summary>
 
-- [x] Phase 18: AI Coach Foundation (5/5 plans) — completed 2026-01-17
-- [x] Phase 19: Coach Page + Recommendations UI (6/6 plans) — completed 2026-01-17
-- [x] Phase 20: LLM Integration (3/3 plans) — completed 2026-01-18
-- [x] Phase 21: Chat Interface (5/5 plans) — completed 2026-01-19
-- [x] Phase 22: OpenRouter Model Configuration (1/1 plan) — completed 2026-01-19
-- [x] Phase 23: Refocus Coach on Technique (7/7 plans) — completed 2026-01-19
-- [x] Phase 24: Projecting Focus Recommendations (3/3 plans) — completed 2026-01-19
-- [x] Phase 25: User Climbing Context for Prompts (4/4 plans) — completed 2026-01-19
-- [x] Phase 26: Update README with Milestone Work (1/1 plan) — completed 2026-01-19
-- [x] Phase 27: Impose Daily Limit on Usage (6/6 plans) — completed 2026-01-19
-- [x] Phase 28: Rework Chat System Prompt and Data Context (1/1 plan) — completed 2026-01-20
-- [x] Phase 29: Add Markdown Rendering to Chat Bubbles (3/3 plans) — completed 2026-01-20
-
 **Full details:** [milestones/v2.0-ROADMAP.md](milestones/v2.0-ROADMAP.md)
 
 </details>
 
 ## Progress
 
-| Phase | Milestone | Plans Complete | Status | Completed |
-|-------|-----------|----------------|--------|-----------|
-| 1-4 | v1.0 | 6/6 | Complete | 2026-01-15 |
-| 5-17 | v1.1 | 23/23 | Complete | 2026-01-17 |
-| 18-29 | v2.0 | 47/47 | Complete | 2026-01-20 |
+| Phase | Milestone | Plans Complete | Status      | Completed  |
+|-------|-----------|----------------|--------------|------------|
+| 1-4   | v1.0      | 6/6            | Complete     | 2026-01-15 |
+| 5-17  | v1.1      | 23/23           | Complete     | 2026-01-17 |
+| 18-29  | v2.0      | 47/47           | Complete     | 2026-01-20 |
