@@ -245,10 +245,10 @@ Daily usage limits implemented at Edge Function layer to enforce 2 recommendatio
   7. Chat works for users without recommendations (no errors, graceful degradation)
   8. Recommendations formatted in LLM-friendly structure (no raw JSON dumps)
 **Plans**: 1 plan
-**Status**: Planned — ready for execution
+**Status**: Complete — verified 2026-01-20
 
 Plans:
-- [ ] 28-01-PLAN.md — Update system prompt, Edge Function, and hook to include recommendations
+- [x] 28-01-PLAN.md — Update system prompt, Edge Function, and hook to include recommendations
 
 **Details**:
 Rework the chat system prompt to improve quality and relevance of responses. Update data passed to chatbot to include the latest generated recommendation so users can discuss and ask questions about their current weekly focus, drills, and projecting focus areas. Establish clear coaching persona with reactive behavior (only reference recommendations when user asks), concept-first explanations (teach technique, then mention drill names), and graceful missing data handling.
@@ -256,19 +256,27 @@ Rework the chat system prompt to improve quality and relevance of responses. Upd
 #### Phase 29: Add Markdown Rendering to Chat Bubbles
 **Goal**: Render markdown content in chat assistant responses for better formatting
 **Depends on**: Phase 28
-**Plans**: 0 plans
-**Status**: Not planned yet
+**Success Criteria** (what must be TRUE):
+  1. Assistant messages render markdown (headers, lists, code blocks, links)
+  2. User messages remain plain text (no markdown rendering)
+  3. Markdown rendering works for both stored messages and streaming responses
+  4. Links open in new tab with security attributes
+  5. Code blocks have dark background and proper syntax highlighting
+  6. All styling matches app's dark theme
+**Plans**: 2 plans
+**Status**: Ready to execute
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 29 to break down)
+- [ ] 29-01-PLAN.md — Install markdown libraries and create styled components
+- [ ] 29-02-PLAN.md — Update MessageBubble to use markdown rendering
 
 **Details**:
-Add markdown rendering to chat bubbles so that the AI coach's responses can display formatted text including bold, italics, lists, code blocks, and links. This will make the chat experience more readable and allow the coach to provide better-formatted responses.
+Add markdown rendering to chat bubbles so that the AI coach's responses can display formatted text including bold, italics, lists, code blocks, and links. This will make the chat experience more readable and allow the coach to provide better-formatted responses. Uses react-markdown (industry standard, secure by default), remark-gfm (for tables/tasklists), and rehype-highlight (code syntax highlighting). Only renders markdown for assistant messages; user messages remain plain text to meet "what you type is what you see" expectations.
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 → 26 → 27 → 28
+Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 → 26 → 27 → 28 → 29
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -303,5 +311,5 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 �
 | 25. User Climbing Context for Prompts | v2.0 | 4/4 | Complete | 2026-01-19 |
 | 26. Update README with Milestone Work | v2.0 | 1/1 | Complete | 2026-01-19 |
 | 27. Impose Daily Limit on Usage | v2.0 | 6/6 | Complete | 2026-01-19 |
-| 28. Rework Chat System Prompt and Data Context | v2.0 | 0/1 | Planned | - |
-| 29. Add Markdown Rendering to Chat Bubbles | v2.0 | 0/0 | Not started | - |
+| 28. Rework Chat System Prompt and Data Context | v2.0 | 1/1 | Complete | 2026-01-20 |
+| 29. Add Markdown Rendering to Chat Bubbles | v2.0 | 0/2 | Ready to execute | - |
