@@ -48,23 +48,27 @@ Scenka prioritizes speed above all—climbers want to record failures and get ba
 ✓ **Unified UI components** — SelectionButton, FormSection, FormLabel with cva pattern for consistency — v1.1
 ✓ **Version footer** — Footer displaying version number for reference — v1.1
 ✓ **README documentation** — Polished README with logo and emojis — v1.1
+✓ **Weekly recommendations** — User can view weekly focus statement and 3 personalized drills with name, description, sets/reps/rest — v2.0
+✓ **Manual regeneration** — User can manually regenerate recommendations via button — v2.0
+✓ **Recommendations persistence** — Weekly recommendations persist across sessions with generation date displayed — v2.0
+✓ **Recommendations loading states** — Loading states show during AI generation — v2.0
+✓ **Recommendations error handling** — Error handling with fallback to previous recommendations on API failure — v2.0
+✓ **Recommendations offline support** — Recommendations work offline (last cached recommendations accessible without internet) — v2.0
+✓ **Pattern analysis** — User can view failure patterns summary, style weaknesses analysis, climbing frequency tracking, and recent successes context — v2.0
+✓ **Streaming chat interface** — User can send messages through text input with send button, view message bubbles with visual distinction between user and assistant, chat responses stream in real-time using Server-Sent Events — v2.0
+✓ **Chat context** — Chat retains limited message history (last 10-20 messages) for context and includes pre-processed patterns (failure, styles, frequency) — v2.0
+✓ **Chat entry points** — Clear entry points to chat from recommendations page — v2.0
+✓ **Chat error handling** — Graceful error handling with helpful fallback messages — v2.0
+✓ **Climbing-specific knowledge** — Chat provides climbing-specific domain knowledge (understands beta, grades, styles) — v2.0
+✓ **Projecting focus recommendations** — Add projecting focus section to help users select boulders to project on each week — v2.0
+✓ **User climbing context** — Allow users to add their own context to system prompts like what kind of climber they are — v2.0
+✓ **Daily usage limits** — Impose daily limit of 2 recommendation generations and 10 chat messages per user — v2.0
+✓ **Enhanced chat prompts** — Rework chat system prompt and include latest recommendations in chatbot context — v2.0
+✓ **Markdown rendering** — Render markdown content in chat assistant responses for better formatting including headers, lists, code blocks, and links — v2.0
+✓ **Pattern analysis based on exception logging** — Pattern analysis based on exception-logging (only significant climbs, no noise) — v2.0
+✓ **Recommendations link to redemption tracking** — Recommendations link to user's redemption tracking (drills reference actual climbs) — v2.0
 
 ### Active
-
-## Current Milestone: v2.0 AI Coach
-
-**Goal:** Build AI-powered climbing coach that analyzes logged data and provides actionable training guidance through weekly dashboard recommendations and free-form chat.
-
-**Target features:**
-- Separate Coach page with weekly focus + 3 drills, regenerated manually
-- Free-form classic chat interface with limited message history
-- Pre-processed climbing patterns: Failure Patterns, Style Weaknesses, Climbing Frequency (structured sections)
-- Comprehensive summary includes recent successes for context
-- OpenRouter API (openai/gpt-5.1 model) with LLM general climbing knowledge
-- Persistent recommendations saved to database table with created_at
-- Suggestions evolve over time based on data improvements + user feedback (combined approach)
-- User can ask: practice details, drill explanations, alternatives, projecting tactics
-- Suggestions are actionable: for warmup or as focus areas during sessions
 
 ### Considered for Future
 
@@ -133,6 +137,11 @@ Settings page exists at `src/components/features/settings-page.tsx` for user pre
 | Unified UI components (SelectionButton, FormSection, FormLabel) | Centralize styling patterns using cva, reduce duplication | ✓ Reduced className duplication by >200 occurrences (v1.1) |
 | Ghost variant in Button component | Extend existing component vs create separate GhostButton | ✓ Single source of truth for Button styling (v1.1) |
 | Minimal Toggle component size (h-4 w-7) | Smaller than standard Switch, less jarring UI | ✓ Better visual hierarchy, unobtrusive (v1.1) |
+| Edge Functions for LLM calls | Server-side API calls with JWT auth, no client secrets | ✓ OpenRouter integration with secure auth (v2.0) |
+| SSE streaming for chat | Server-Sent Events for real-time responses | ✓ Simpler than WebSockets, HTTP-based (v2.0) |
+| Daily usage limits via RPC functions | Atomic counters with UTC midnight reset | ✓ Cost control, thread-safe reset (v2.0) |
+| Technique-first coaching | Strength failures = technique gaps to reframe | ✓ Focuses on movement, not just power (v2.0) |
+| Markdown rendering for chat | react-markdown + remark-gfm + rehype-highlight | ✓ Formatted responses, code blocks (v2.0) |
 
 ---
-*Last updated: 2026-01-17 after v2.0 milestone planning started*
+*Last updated: 2026-01-20 after v2.0 milestone completed*

@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-01-17)
+See: .planning/PROJECT.md (updated 2026-01-20)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Phase 29: Add Markdown Rendering to Chat Bubbles
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 29 of 29 (Add Markdown Rendering to Chat Bubbles) - Complete
-Plan: 3 of 3 in current phase - Complete
-Status: Phase complete — 2026-01-20
-Last activity: 2026-01-20 - Completed Phase 29-03: Wire Up rehype-highlight for Syntax Highlighting
+Phase: Next phase not started
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-20 — v2.0 milestone complete
 
-Progress: [██████████] 100% (67/67 plans complete) - PROJECT COMPLETE
+Progress: [██████████] 100% (67/67 plans complete) - v2.0 shipped
 
 ## Performance Metrics
 
