@@ -7,6 +7,8 @@ import { useCreateCoachMessage } from '@/hooks/useCoachMessages'
 import { useCoachRecommendations } from '@/hooks/useCoach'
 import { userLimitsKeys } from './useUserLimits'
 
+import type { CoachMessage } from './useCoachMessages'
+
 export interface UseStreamingChatReturn {
   sendMessage: (message: string, patterns?: unknown, climbingContext?: string | null) => Promise<void>
   streamingResponse: string
@@ -14,11 +16,18 @@ export interface UseStreamingChatReturn {
   error: string | null
   setError: (error: string | null) => void
   cleanup: () => void
+  addUserMessage: (message: CoachMessage) => void
+  addAssistantMessage: (message: CoachMessage) => void
+}
+
+interface UseStreamingChatOptions {
+  addUserMessage: (message: CoachMessage) => void
+  addAssistantMessage: (message: CoachMessage) => void
 }
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 
-export function useStreamingChat(): UseStreamingChatReturn {
+export function useStreamingChat({ addUserMessage, addAssistantMessage }: UseStreamingChatOptions): UseStreamingChatReturn {
   const [streamingResponse, setStreamingResponse] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -26,6 +35,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
   const hasErrorRef = useRef(false)
   const createMessage = useCreateCoachMessage()
   const queryClient = useQueryClient()
+  const isSendingRef = useRef(false) // Guard against duplicate operations
 
   // Fetch recommendations (leverages TanStack Query cache with 24h staleTime)
   const { data: recommendations } = useCoachRecommendations()
@@ -39,32 +49,53 @@ export function useStreamingChat(): UseStreamingChatReturn {
 
   const sendMessage = useCallback(
     async (message: string, patterns: unknown = null, climbingContext: string | null = null) => {
-      if (!message.trim()) {
-        setError('Message cannot be empty')
+      // Guard check FIRST - before any state modification
+      if (isSendingRef.current) {
         return
       }
-
-      if (isStreaming) {
-        setError('Already streaming. Please wait for the current response to complete.')
-        return
-      }
-
-      const abortController = new AbortController()
-      abortControllerRef.current = abortController
-      hasErrorRef.current = false
-
-      setIsStreaming(true)
-      setStreamingResponse('')
-      setError(null)
+      isSendingRef.current = true
 
       try {
-        // Save user message to database
-        await createMessage.mutateAsync({
+        if (!message.trim()) {
+          setError('Message cannot be empty')
+          return
+        }
+
+        if (isStreaming) {
+          setError('Already streaming. Please wait for the current response to complete.')
+          return
+        }
+
+        const abortController = new AbortController()
+        abortControllerRef.current = abortController
+        hasErrorRef.current = false
+
+        setIsStreaming(true)
+        setStreamingResponse('')
+        setError(null)
+
+        // Optimistically add user message to local state immediately
+        const tempTimestamp = new Date().toISOString()
+        addUserMessage({
+          id: `temp-${tempTimestamp}`,
+          user_id: 'temp',
+          role: 'user',
+          content: message,
+          created_at: tempTimestamp,
+          context: {
+            patterns_data: patterns,
+          },
+        })
+
+        // Save user message to database (background, no invalidation)
+        createMessage.mutateAsync({
           role: 'user',
           content: message,
           context: {
             patterns_data: patterns,
           },
+        }).catch((err) => {
+          setError(`Failed to save message: ${err instanceof Error ? err.message : 'Unknown error'}`)
         })
 
         // Get session for auth
@@ -126,15 +157,34 @@ export function useStreamingChat(): UseStreamingChatReturn {
             setIsStreaming(false)
             abortControllerRef.current = null
 
-            // Save assistant message after streaming completes
+            // Optimistically add assistant message to local state immediately
             if (fullResponse && !hasErrorRef.current) {
-              void createMessage.mutateAsync({
+              const assistantTimestamp = new Date().toISOString()
+              addAssistantMessage({
+                id: `temp-assistant-${assistantTimestamp}`,
+                user_id: 'temp',
+                role: 'assistant',
+                content: fullResponse,
+                created_at: assistantTimestamp,
+                context: {
+                  patterns_data: patterns,
+                },
+              })
+
+              // Clear streaming response since the message is now in local state
+              setStreamingResponse('')
+
+              // Save assistant message to database (background, no invalidation)
+              createMessage.mutateAsync({
                 role: 'assistant',
                 content: fullResponse,
                 context: {
                   patterns_data: patterns,
                 },
+              }).catch((err) => {
+                setError(`Failed to save message: ${err instanceof Error ? err.message : 'Unknown error'}`)
               })
+
               // Invalidate user limits to refresh counter display
               void queryClient.invalidateQueries({
                 queryKey: userLimitsKeys.current(),
@@ -147,17 +197,20 @@ export function useStreamingChat(): UseStreamingChatReturn {
             abortControllerRef.current = null
             hasErrorRef.current = true
             setError(err instanceof Error ? err.message : 'An unknown error occurred')
+            // Clear streaming response on error so it doesn't persist
+            setStreamingResponse('')
             // Return to prevent automatic retry
-            console.error('SSE error:', err)
           },
         })
       } catch (e) {
         setIsStreaming(false)
         setError(e instanceof Error ? e.message : 'Failed to send message')
-        console.error('Message send error:', e)
+      } finally {
+        // ALWAYS reset guard, regardless of success/failure
+        isSendingRef.current = false
       }
     },
-    [isStreaming, createMessage, recommendations]
+    [isStreaming, createMessage, recommendations, addUserMessage, addAssistantMessage, queryClient]
   )
 
   // Cleanup on unmount
@@ -174,5 +227,7 @@ export function useStreamingChat(): UseStreamingChatReturn {
     error,
     setError,
     cleanup,
+    addUserMessage,
+    addAssistantMessage,
   }
 }

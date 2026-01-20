@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { StrictMode } from 'react'
+// import { StrictMode } from 'react' // Temporarily disabled for debugging
 import { createRoot } from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 
@@ -37,12 +37,12 @@ const queryClient = new QueryClient({
 const rootElement = document.getElementById('root')
 if (rootElement) {
   createRoot(rootElement).render(
-    <StrictMode>
+    // <StrictMode> // Temporarily disabled for debugging
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <App />
         </AuthProvider>
       </QueryClientProvider>
-    </StrictMode>
+    // </StrictMode>
   )
 }

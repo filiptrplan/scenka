@@ -224,18 +224,7 @@ Deno.serve(async (req: Request) => {
     // Fetch recommendations if not provided in request body
     const recommendations = await fetchRecommendationsIfMissing(userId, body.recommendations)
 
-    // Store user message in database
-    const { error: insertError } = await supabase.from('coach_messages').insert({
-      user_id: userId,
-      role: 'user',
-      content: body.message,
-      context: body.patterns_data || {},
-    })
-
-    if (insertError) {
-      console.error('Failed to store user message:', insertError)
-      // Continue streaming - don't fail the whole request
-    }
+    // NOTE: User message is saved by the client, not here to avoid duplicates
 
     // Fetch message history for context
     const messageHistory = await getMessageHistory(userId)
@@ -287,18 +276,7 @@ Deno.serve(async (req: Request) => {
             }
           }
 
-          // Store assistant message in database
-          if (assistantContent) {
-            const { error: insertError } = await supabase.from('coach_messages').insert({
-              user_id: userId,
-              role: 'assistant',
-              content: assistantContent,
-              context: body.patterns_data || {},
-            })
-            if (insertError) {
-              console.error('Failed to store assistant message:', insertError)
-            }
-          }
+          // NOTE: Assistant message is saved by the client, not here to avoid duplicates
 
           // Track API usage with OpenRouter's cost
           if (finalUsage) {

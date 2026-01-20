@@ -91,8 +91,8 @@ export function useCreateCoachMessage() {
   return useMutation({
     mutationFn: createCoachMessage,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: coachMessagesKeys.lists() })
-      // Invalidate user limits to refresh counter display after chat message
+      // Don't invalidate coachMessages anymore - local state is source of truth
+      // Only invalidate user limits to refresh counter display
       void queryClient.invalidateQueries({
         queryKey: userLimitsKeys.current(),
       })

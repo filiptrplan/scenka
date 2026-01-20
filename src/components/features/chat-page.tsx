@@ -7,7 +7,8 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { usePatternAnalysis } from '@/hooks/useCoach'
-import { useClearCoachMessages, useCoachMessages } from '@/hooks/useCoachMessages'
+import { useClearCoachMessages } from '@/hooks/useCoachMessages'
+import { useLocalChatMessages } from '@/hooks/useLocalChatMessages'
 import { useStreamingChat } from '@/hooks/useStreamingChat'
 import { useUserLimits, getTimeUntilNextReset } from '@/hooks/useUserLimits'
 import { markdownComponents } from '@/lib/markdown-components'
@@ -99,11 +100,11 @@ export function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const { data: messages, isLoading } = useCoachMessages()
   const { data: patterns } = usePatternAnalysis()
-  const { sendMessage, streamingResponse, isStreaming, error, cleanup, setError } = useStreamingChat()
+  const { messages, isLoading, addUserMessage, addAssistantMessage, clearMessages: clearLocalMessages } = useLocalChatMessages()
+  const { sendMessage, streamingResponse, isStreaming, error, cleanup, setError } = useStreamingChat({ addUserMessage, addAssistantMessage })
   const { data: limits } = useUserLimits()
-  const clearMessages = useClearCoachMessages()
+  const clearMessagesMutation = useClearCoachMessages()
 
   const dailyChatLimit = 10
   const chatCount = limits?.chat_count ?? 0
@@ -168,11 +169,13 @@ export function ChatPage() {
   const handleClearChat = () => {
     // eslint-disable-next-line no-alert
     if (window.confirm('Clear all chat history? This cannot be undone.')) {
-      void clearMessages.mutateAsync(undefined, {
+      clearLocalMessages()
+      void clearMessagesMutation.mutateAsync(undefined, {
         onSuccess: () => toast.success('Chat history cleared'),
       })
     }
   }
+
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5] flex flex-col">
@@ -180,7 +183,7 @@ export function ChatPage() {
       <div className="flex-1 overflow-y-auto p-4">
         {isLoading ? (
           <LoadingSkeleton />
-        ) : messages && messages.length > 0 ? (
+        ) : messages.length > 0 ? (
           <>
             {messages.map((message) => (
               <MessageBubble
@@ -203,6 +206,7 @@ export function ChatPage() {
         {/* Streaming bubble */}
         {streamingResponse.length > 0 && (
           <MessageBubble
+            key="streaming-response"
             message={{
               content: streamingResponse,
               created_at: new Date().toISOString(),
@@ -243,7 +247,7 @@ export function ChatPage() {
             >
               <Send className="h-4 w-4" />
             </Button>
-            {messages !== undefined && messages.length > 0 ? (
+            {messages.length > 0 ? (
               <Button
                 onClick={handleClearChat}
                 disabled={isStreaming}
