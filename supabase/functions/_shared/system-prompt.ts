@@ -28,7 +28,7 @@ interface PatternAnalysis {
 }
 
 // Types for recommendations data
-interface Drill {
+export interface Drill {
   name: string
   description: string
   sets: number
@@ -37,20 +37,20 @@ interface Drill {
   measurable_outcome: string
 }
 
-interface ProjectingFocus {
+export interface ProjectingFocus {
   focus_area: string
   description: string
   grade_guidance: string
   rationale: string
 }
 
-interface RecommendationsContent {
+export interface RecommendationsContent {
   weekly_focus: string
   drills: Drill[]
   projecting_focus: ProjectingFocus[]
 }
 
-interface RecommendationsData {
+export interface RecommendationsData {
   content: RecommendationsContent
   created_at?: string
 }
