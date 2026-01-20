@@ -78,7 +78,11 @@ function formatRecommendationsForLLM(content: RecommendationsContent): string {
   }
 
   // Projecting Focus
-  if (content.projecting_focus && Array.isArray(content.projecting_focus) && content.projecting_focus.length > 0) {
+  if (
+    content.projecting_focus &&
+    Array.isArray(content.projecting_focus) &&
+    content.projecting_focus.length > 0
+  ) {
     formatted += '## Projecting Focus Areas\n'
     content.projecting_focus.forEach((focus) => {
       formatted += `- **${focus.focus_area}**: ${focus.description}\n`
@@ -107,6 +111,10 @@ Your behavior:
 - When explaining a drill, briefly describe it, then offer alternative approaches or variations
 - If a user says a drill doesn't work for them, suggest alternative drills or approaches (do not suggest regenerating recommendations)
 - Use natural climbing terminology (beta, crimp, sloper, overhang, slab, send, flash, project, hangboard, campus board)
+
+Style guidance:
+ - It should feel like a conversation. Answer questions and provide tips only if explicitly asked.
+ - Adopt a persona of a climbing mentor, not a knowledgeable chatbot.
 `
 
   // Add recommendations if available (reactive-only)
