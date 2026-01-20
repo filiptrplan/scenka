@@ -263,13 +263,13 @@ Rework the chat system prompt to improve quality and relevance of responses. Upd
   4. Links open in new tab with security attributes
   5. Code blocks have dark background and proper syntax highlighting
   6. All styling matches app's dark theme
-**Plans**: 3 plans (2 completed + 1 gap closure)
-**Status**: In progress — gap closure pending execution
+**Plans**: 3 plans
+**Status**: Complete — verified 2026-01-20
 
 Plans:
 - [x] 29-01-PLAN.md — Install markdown libraries and create styled components
 - [x] 29-02-PLAN.md — Update MessageBubble to use markdown rendering
-- [ ] 29-03-PLAN.md — Wire up rehype-highlight for syntax highlighting (gap closure)
+- [x] 29-03-PLAN.md — Wire up rehype-highlight for syntax highlighting (gap closure)
 
 **Details**:
 Add markdown rendering to chat bubbles so that the AI coach's responses can display formatted text including bold, italics, lists, code blocks, and links. This will make the chat experience more readable and allow the coach to provide better-formatted responses. Uses react-markdown (industry standard, secure by default), remark-gfm (for tables/tasklists), and rehype-highlight (code syntax highlighting). Only renders markdown for assistant messages; user messages remain plain text to meet "what you type is what you see" expectations.
@@ -313,4 +313,4 @@ Phases execute in numeric order: 18 → 19 → 20 → 21 → 23 → 24 → 25 �
 | 26. Update README with Milestone Work | v2.0 | 1/1 | Complete | 2026-01-19 |
 | 27. Impose Daily Limit on Usage | v2.0 | 6/6 | Complete | 2026-01-19 |
 | 28. Rework Chat System Prompt and Data Context | v2.0 | 1/1 | Complete | 2026-01-20 |
-| 29. Add Markdown Rendering to Chat Bubbles | v2.0 | 2/3 | Gap closure pending | 2026-01-20 |
+| 29. Add Markdown Rendering to Chat Bubbles | v2.0 | 3/3 | Complete | 2026-01-20 |
