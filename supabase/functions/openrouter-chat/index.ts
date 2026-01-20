@@ -1,7 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import OpenAI from 'npm:openai@4'
 import { corsHeaders } from '../_shared/cors.ts'
-import { getChatSystemPrompt } from '../_shared/system-prompt.ts'
+import { getChatSystemPrompt, type RecommendationsData } from '../_shared/system-prompt.ts'
 
 // Environment variable validation
 const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'OPENROUTER_MODEL', 'DAILY_CHAT_LIMIT']
@@ -31,6 +31,7 @@ interface RequestBody {
   message: string
   patterns_data?: Record<string, unknown>
   climbing_context?: string | null
+  recommendations?: RecommendationsData | null
 }
 
 interface Message {
@@ -57,6 +58,39 @@ async function getMessageHistory(userId: string): Promise<Message[]> {
 
   // Reverse to get chronological order
   return (data as Message[]).reverse()
+}
+
+// Helper function to fetch recommendations if not provided
+async function fetchRecommendationsIfMissing(
+  userId: string,
+  recommendations?: RecommendationsData | null
+): Promise<RecommendationsData | null> {
+  // If recommendations already provided in request body, return them directly
+  if (recommendations && recommendations.content) {
+    return recommendations
+  }
+
+  // Fetch from database if not provided
+  const { data, error } = await supabase
+    .from('coach_recommendations')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (error || !data) {
+    console.log('No recommendations available')
+    return null
+  }
+
+  // Only return if there's valid content
+  if (data && data.content && Object.keys(data.content).length > 0) {
+    console.log('Recommendations found')
+    return data as RecommendationsData
+  }
+
+  return null
 }
 
 // Edge Function handler with SSE streaming
@@ -187,6 +221,9 @@ Deno.serve(async (req: Request) => {
       )
     }
 
+    // Fetch recommendations if not provided in request body
+    const recommendations = await fetchRecommendationsIfMissing(userId, body.recommendations)
+
     // Store user message in database
     const { error: insertError } = await supabase.from('coach_messages').insert({
       user_id: userId,
@@ -205,7 +242,10 @@ Deno.serve(async (req: Request) => {
 
     // Build messages array for LLM
     const messages = [
-      { role: 'system' as const, content: getChatSystemPrompt(body.patterns_data, body.climbing_context) },
+      {
+        role: 'system' as const,
+        content: getChatSystemPrompt(body.patterns_data, body.climbing_context, recommendations),
+      },
       ...messageHistory.map((msg) => ({
         role: msg.role as 'user' | 'assistant',
         content: msg.content,
