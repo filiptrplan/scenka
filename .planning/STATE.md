@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-01-20)
 
 ## Current Position
 
-Phase: Phase 30 - Simplified Logger Foundation (1 of 4 plans)
-Plan: 30-01 - Simplified Validation Schema
+Phase: Phase 30 - Simplified Logger Foundation (2 of 4 plans)
+Plan: 30-02 - Build SimplifiedLogger Component
 Status: In progress
-Last activity: 2026-01-21 — Completed 30-01-PLAN.md
+Last activity: 2026-01-21 — Completed 30-02-PLAN.md
 
-Progress: [          ] 3% (1/32 requirements complete) - v2.1 in progress
+Progress: [██       ] 6% (2/32 requirements complete) - v2.1 in progress
 
 ## Performance Metrics
 
@@ -213,6 +213,9 @@ Recent decisions affecting current work:
 - Phase 30: Simplified logger form removes manual tag selectors, preserves v1.1 auto-reset behavior
 - Phase 30: Terrain type uses 8 standard options (Slab, Vert, Overhang, Roof, Dyno, Crimp, Sloper, Pinch)
 - Phase 30: Awkwardness simplified to 3 options (awkward/normal/smooth) instead of 5-point scale
+- Phase 30-02: Terrain type as primary classifier - physical characteristics (objective) vs movement patterns (subjective)
+- Phase 30-02: Color-coded awkwardness buttons: green (smooth), white (normal), red (awkward)
+- Phase 30-02: No edit mode support for old climbs yet - defaults terrain_type to 'Vert', awkwardness to 'normal'
 - Phase 31: Async tag extraction never blocks save flow - core value is frictionless logging
 - Phase 31: Cost tracking and per-user quotas (50 climbs/day) prevent runaway expenses
 - Phase 31: PII detection before API calls protects user privacy
@@ -241,6 +244,6 @@ None identified yet.
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Completed 30-01-PLAN.md (Simplified Validation Schema)
-Status: Ready to continue with 30-02-PLAN.md
+Stopped at: Completed 30-02-PLAN.md (Build SimplifiedLogger Component)
+Status: Ready to continue with next plan
 Resume file: None
