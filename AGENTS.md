@@ -4,6 +4,12 @@
 
 When asking multiple questions, always use the question tool!
 
+## Supabase commands
+
+You don't have direct access to Supabase commands so always provide a summary of
+what commands need to be executed in order to make a specific feature work so
+the user can execute them themselves.
+
 ## Project Overview
 
 Mobile-first PWA for rock climbers tracking technique failures using React + TypeScript + Vite + Tailwind + shadcn/ui + Supabase.
