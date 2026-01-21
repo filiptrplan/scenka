@@ -21,14 +21,14 @@ Requirements for simplified logging + AI auto-tagging. Each maps to roadmap phas
 
 ### AI Tag Extraction
 
-- [ ] **EXTR-01**: System extracts styles from notes on climb save
-- [ ] **EXTR-02**: System extracts failure reasons from notes on climb save
-- [ ] **EXTR-03**: Tag extraction happens asynchronously (non-blocking save flow)
-- [ ] **EXTR-04**: Climb saves immediately, tags appear after extraction completes
-- [ ] **EXTR-05**: System tracks AI extraction costs per user in user_limits table
-- [ ] **EXTR-06**: System enforces per-user tag extraction quota (50 climbs/day default)
-- [ ] **EXTR-07**: Extraction completes within 3 seconds on online device with good connectivity
-- [ ] **EXTR-08**: Extraction fails gracefully if AI service unavailable (no crash, user informed)
+- [x] **EXTR-01**: System extracts styles from notes on climb save
+- [x] **EXTR-02**: System extracts failure reasons from notes on climb save
+- [x] **EXTR-03**: Tag extraction happens asynchronously (non-blocking save flow)
+- [x] **EXTR-04**: Climb saves immediately, tags appear after extraction completes
+- [x] **EXTR-05**: System tracks AI extraction costs per user in user_limits table
+- [x] **EXTR-06**: System enforces per-user tag extraction quota (50 climbs/day default)
+- [x] **EXTR-07**: Extraction completes within 3 seconds on online device with good connectivity
+- [x] **EXTR-08**: Extraction fails gracefully if AI service unavailable (no crash, user informed)
 
 ### Tag Display & Editing
 
@@ -105,14 +105,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SIMP-07 | Phase 30 | Complete |
 | SIMP-08 | Phase 30 | Complete |
 | SIMP-09 | Phase 30 | Complete |
-| EXTR-01 | Phase 31 | Pending |
-| EXTR-02 | Phase 31 | Pending |
-| EXTR-03 | Phase 31 | Pending |
-| EXTR-04 | Phase 31 | Pending |
-| EXTR-05 | Phase 31 | Pending |
-| EXTR-06 | Phase 31 | Pending |
-| EXTR-07 | Phase 31 | Pending |
-| EXTR-08 | Phase 31 | Pending |
+| EXTR-01 | Phase 31 | Complete |
+| EXTR-02 | Phase 31 | Complete |
+| EXTR-03 | Phase 31 | Complete |
+| EXTR-04 | Phase 31 | Complete |
+| EXTR-05 | Phase 31 | Complete |
+| EXTR-06 | Phase 31 | Complete |
+| EXTR-07 | Phase 31 | Complete |
+| EXTR-08 | Phase 31 | Complete |
 | DISP-01 | Phase 32 | Pending |
 | DISP-02 | Phase 32 | Pending |
 | DISP-03 | Phase 32 | Pending |
