@@ -11,7 +11,8 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "deploy-functions": "npx supabase functions deploy openrouter-coach --no-verify-jwt && npx supabase functions deploy openrouter-chat --no-verify-jwt"
+    "deploy-functions": "npx supabase functions deploy openrouter-coach --no-verify-jwt && npx supabase functions deploy openrouter-chat --no-verify-jwt && npx supabase functions deploy openrouter-tag-extract --no-verify-jwt",
+    "db-push": "supabase db push"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
