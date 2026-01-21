@@ -13,7 +13,16 @@ export const STYLE_OPTIONS: Style[] = [
   'Tension',
 ]
 
-export const TERRAIN_OPTIONS = ['Slab', 'Vert', 'Overhang', 'Roof', 'Dyno', 'Crimp', 'Sloper', 'Pinch'] as const
+export const TERRAIN_OPTIONS = [
+  'Slab',
+  'Vert',
+  'Overhang',
+  'Roof',
+  'Dyno',
+  'Crimp',
+  'Sloper',
+  'Pinch',
+] as const
 export const AWKWARDNESS_OPTIONS = ['smooth', 'normal', 'awkward'] as const
 
 export const PHYSICAL_REASONS: FailureReason[] = [
@@ -117,4 +126,4 @@ export const DEFAULT_LOCATION = 'My Gym'
 
 // Tag extraction (Phase 31) - happens async after climb save (EXTR-03)
 export const DAILY_TAG_LIMIT = 50
-export const TAG_EXTRACTION_TIMEOUT_MS = 5000 // Edge Function invocation timeout
+export const TAG_EXTRACTION_TIMEOUT_MS = 20000 // Edge Function invocation timeout
