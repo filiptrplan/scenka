@@ -64,6 +64,7 @@ To enable AI Coach features, set up OpenRouter and deploy Edge Functions:
    ```bash
    supabase functions deploy openrouter-coach
    supabase functions deploy openrouter-chat
+   supabase functions deploy openrouter-tag-extract
    ```
 
 4. Apply database migrations (adds coach tables and climbing_context):
@@ -85,6 +86,51 @@ To enable AI Coach features, set up OpenRouter and deploy Edge Functions:
 ![Screenshot: Coach page with weekly focus, training drills, and pattern analysis tabs](./docs/screenshots/coach-page.png)
 
 _[Capture from: Navigate to Coach tab, showing Recommendations tab with Weekly Focus, Training Drills, Projecting Focus sections, and Pattern Analysis tab with failure patterns, style weaknesses, and climbing frequency]_
+
+## Auto-Tagging (New in v2.0) 🏷️
+
+Scenka includes AI-powered automatic tag extraction that analyzes your climb notes to suggest relevant style tags and failure reasons. Reduces logging friction while maintaining control over your data.
+
+**Features:**
+
+- **Smart Extraction**: Analyzes your free-form notes to extract climbing tags automatically
+- **Style Tags**: Detects Slab, Vert, Overhang, Roof, Dyno, Crimp, Sloper, Pinch from descriptions
+- **Failure Reasons**: Identifies Physical (Pumped, Finger Strength, Core, Power), Technical (Bad Feet, Body Position, Beta Error, Precision), and Mental (Fear, Commitment, Focus) patterns
+- **Smart Merging**: AI tags merge with your manual selections (union, not replacement) — you always have final control
+- **Privacy-First**: Notes are anonymized before AI processing
+- **Fast**: Completes within 3 seconds with 70%+ confidence threshold
+- **Non-Blocking**: Fire-and-forget operation — your climb saves immediately, tagging happens in background
+
+### Privacy Safeguards
+
+Your notes are protected during AI processing:
+
+- Gym names and specific location references anonymized before LLM processing
+- Profile data (email, name) never included in AI requests
+- All data sent to OpenRouter via secure Edge Functions (no client-side API calls)
+- 70% confidence threshold ensures only high-confidence tags are auto-applied
+- Maximum 1000 tokens per extraction limits data exposure
+
+### Usage
+
+1. When logging a climb, write detailed notes about the route or problem
+2. Save the climb — tags are extracted automatically in the background
+3. AI-suggested tags merge with any manual tags you selected
+4. Remove or modify any tags you disagree with — you always have control
+
+### Daily Quota
+
+Each user limited to 50 tag extractions/day to balance utility with cost control. Quota resets at UTC midnight automatically.
+
+### Example
+
+**Note:** "Pumped out on the crimps at the top, but the feet were bad the whole time. Overhung section at the start felt easy."
+
+**Auto-Extracted Tags:**
+- Style: Overhang, Crimp
+- Failure Reasons: Physical: Pumped, Technical: Bad Feet
+
+---
 
 ## Tech Stack
 
@@ -208,6 +254,7 @@ Existing users upgrading to v2.0:
    ```bash
    supabase functions deploy openrouter-coach
    supabase functions deploy openrouter-chat
+   supabase functions deploy openrouter-tag-extract
    ```
 
 That's it! Your existing climb data will be analyzed by the coach automatically.
@@ -255,6 +302,52 @@ Reference migration files for full schema:
 - `supabase/migrations/20260117132100_create_coach_tables.sql`
 - `supabase/migrations/20260118081500_add_coach_api_usage_insert_policy.sql`
 - `supabase/migrations/20260119191600_add_climbing_context_to_profiles.sql`
+
+## Auto-Tagging Technical Details
+
+### Database Schema
+
+The auto-tagging system uses two tables for quota management:
+
+- **user_limits**: Stores daily tag extraction quota (50/day per user) with automatic UTC midnight reset
+- **api_usage**: Tracks API token usage and costs for analytics and cost monitoring
+
+Tables use JSONB columns for flexible schema evolution and include RLS policies for user isolation.
+
+### Edge Function
+
+One Supabase Edge Function handles tag extraction:
+
+- **openrouter-tag-extract**: Analyzes climb notes and extracts style tags and failure reasons
+
+The function:
+- Validates JWT tokens for authentication
+- Anonymizes notes before sending to OpenRouter (removes gym names, locations, PII)
+- Applies 70% confidence threshold — only high-confidence tags are returned
+- Limits input to 1000 tokens to control costs
+- Implements retry logic with exponential backoff (2 retries: 1s, 2s delays)
+- Merges AI-extracted tags with user-selected tags (union operation)
+
+### Rate Limiting
+
+Each user limited to 50 tag extractions/day. Usage tracked in user_limits table with real-time enforcement in the Edge Function. Quota resets automatically at UTC midnight.
+
+### Error Handling
+
+- Network errors trigger retry with exponential backoff
+- Invalid LLM responses fail silently (no tags added, climb still saves)
+- Rate limit exceeded returns clear error message to user
+- All errors logged for debugging without exposing sensitive data
+
+### Integration Flow
+
+1. User saves climb with notes
+2. Client creates climb record in Supabase (immediate)
+3. Client triggers tag extraction via Edge Function (background)
+4. Edge Function anonymizes notes and sends to OpenRouter
+5. OpenRouter returns extracted tags with confidence scores
+6. Edge Function merges tags with user selections (union)
+7. Climb record updated with final tag set
 
 ## Project Status
 
