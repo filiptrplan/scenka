@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { CreateClimbInput } from '@/lib/validation'
 import { offlineQueue } from '@/services/offlineQueue'
-import { triggerTagExtraction } from '@/services/tagExtraction'
+import { triggerTagExtraction, type TagExtractionResult } from '@/services/tagExtraction'
 import type { Climb, TablesInsert, TablesUpdate } from '@/types'
 
 export const climbsKeys = {
@@ -65,10 +65,17 @@ export async function createClimb(input: CreateClimbInput): Promise<Climb> {
 
   // Trigger tag extraction AFTER save succeeds (non-blocking)
   // Do NOT await - extraction happens in background
-  triggerTagExtraction(climb, user.id).catch(err => {
-    console.error('Failed to trigger tag extraction:', err)
-    // Continue - extraction failure doesn't break climb save
-  })
+  triggerTagExtraction(climb, user.id)
+    .then((result: TagExtractionResult) => {
+      if (!result.success && result.errorType !== undefined) {
+        // Log error for debugging - UI handles toast display
+        console.log(`Tag extraction failed: ${result.errorType}`)
+      }
+    })
+    .catch(err => {
+      console.error('Failed to trigger tag extraction:', err)
+      // Continue - extraction failure doesn't break climb save
+    })
 
   return climb
 }
@@ -108,10 +115,17 @@ export async function updateClimb(id: string, updates: Partial<CreateClimbInput>
 
   // Trigger tag extraction if notes were changed (non-blocking)
   if (updates.notes !== undefined) {
-    triggerTagExtraction(climb, user.id).catch(err => {
-      console.error('Failed to trigger tag extraction:', err)
-      // Continue - extraction failure doesn't break update
-    })
+    triggerTagExtraction(climb, user.id)
+      .then((result: TagExtractionResult) => {
+        if (!result.success && result.errorType !== undefined) {
+          // Log error for debugging - UI handles toast display
+          console.log(`Tag extraction failed: ${result.errorType}`)
+        }
+      })
+      .catch(err => {
+        console.error('Failed to trigger tag extraction:', err)
+        // Continue - extraction failure doesn't break update
+      })
   }
 
   return climb
