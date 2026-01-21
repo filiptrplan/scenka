@@ -1,9 +1,6 @@
+import { DAILY_TAG_LIMIT, TAG_EXTRACTION_TIMEOUT_MS } from '@/lib/constants'
 import { supabase } from '@/lib/supabase'
 import type { Climb } from '@/types'
-
-// Constants will be added in Task 3 - define locally for now
-const DAILY_TAG_LIMIT = 50
-const TAG_EXTRACTION_TIMEOUT_MS = 5000
 
 /**
  * Triggers asynchronous AI tag extraction for a newly saved climb.
