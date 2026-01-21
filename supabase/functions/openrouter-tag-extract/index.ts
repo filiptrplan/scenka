@@ -435,7 +435,7 @@ Example output:
         const { error: updateError } = await supabase
           .from('climbs')
           .update({
-            style_tags: styleTags,
+            style: styleTags,
             failure_reasons: failureReasons,
             tags_extracted_at: new Date().toISOString(),
           })
@@ -470,7 +470,7 @@ Example output:
           JSON.stringify({
             success: true,
             tags_extracted: true,
-            style_tags: styleTags,
+            style: styleTags,
             failure_reasons: failureReasons,
           }),
           {
