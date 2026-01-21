@@ -2,6 +2,7 @@ import { formatDistanceToNow } from 'date-fns'
 import { MapPin, TrendingDown, TrendingUp, Edit, Trash2, Check } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
+import { getAwkwardnessLabel } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
 import { FormLabel } from '@/components/ui/form-label'
 import { FormSection } from '@/components/ui/form-section'
@@ -143,7 +144,7 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
 
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <FormLabel>Awkwardness: {climb.awkwardness}/5</FormLabel>
+          <FormLabel>Awkwardness: {getAwkwardnessLabel(climb.awkwardness)}</FormLabel>
         </div>
       </div>
 

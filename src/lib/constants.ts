@@ -108,18 +108,34 @@ export function getFailureReasons(outcome: Outcome): FailureReason[] {
 export function getAwkwardnessLabel(value: number): string {
   switch (value) {
     case 1:
-      return 'Flow State'
-    case 2:
       return 'Smooth'
     case 3:
       return 'Normal'
-    case 4:
-      return 'Awkward'
     case 5:
-      return 'Sketchy'
+      return 'Awkward'
     default:
       return ''
   }
+}
+
+export const AWKWARDNESS_VALUE_MAPPING: Record<number, 'smooth' | 'normal' | 'awkward'> = {
+  1: 'smooth',
+  3: 'normal',
+  5: 'awkward',
+}
+
+export const AWKWARDNESS_LABEL_TO_VALUE: Record<string, number> = {
+  smooth: 1,
+  normal: 3,
+  awkward: 5,
+}
+
+// Normalize database awkwardness value to valid 1, 3, or 5
+// Maps 1-2 → 1 (smooth), 3 → 3 (normal), 4-5 → 5 (awkward)
+export function normalizeAwkwardnessValue(value: number): 1 | 3 | 5 {
+  if (value <= 2) return 1
+  if (value === 3) return 3
+  return 5
 }
 
 export const DEFAULT_LOCATION = 'My Gym'

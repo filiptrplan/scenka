@@ -33,7 +33,7 @@ export const climbSchema = z.object({
     )
     .min(0),
   outcome: z.enum(['Sent', 'Fail']),
-  awkwardness: z.number().int().min(1).max(5),
+  awkwardness: z.literal(1).or(z.literal(3)).or(z.literal(5)),
   failure_reasons: z
     .array(
       z.enum([

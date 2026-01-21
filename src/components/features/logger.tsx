@@ -17,10 +17,14 @@ import {
 } from '@/components/ui/select'
 import { SelectionButton } from '@/components/ui/selection-button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
 import { useProfile } from '@/hooks/useProfile'
-import { STYLE_OPTIONS, getFailureReasons, getAwkwardnessLabel } from '@/lib/constants'
+import {
+  STYLE_OPTIONS,
+  getFailureReasons,
+  AWKWARDNESS_VALUE_MAPPING,
+  normalizeAwkwardnessValue,
+} from '@/lib/constants'
 import { getGradesForScale, COLOR_CIRCUIT } from '@/lib/grades'
 import { cn } from '@/lib/utils'
 import { climbSchema, type CreateClimbInput } from '@/lib/validation'
@@ -47,7 +51,7 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
   const [gradeScale, setGradeScale] = useState<GradeScale>('color_circuit')
   const [discipline, setDiscipline] = useState<Discipline>('boulder')
   const [outcome, setOutcome] = useState<Outcome>('Fail')
-  const [awkwardness, setAwkwardness] = useState<number>(3)
+  const [awkwardness, setAwkwardness] = useState<'smooth' | 'normal' | 'awkward'>('normal')
   const [selectedStyles, setSelectedStyles] = useState<Style[]>([])
   const [selectedReasons, setSelectedReasons] = useState<FailureReason[]>([])
 
@@ -81,24 +85,25 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
 
   useEffect(() => {
     if (climb !== null && climb !== undefined) {
+      const normalizedAwkwardness = normalizeAwkwardnessValue(climb.awkwardness)
       reset({
         climb_type: climb.climb_type as Discipline,
         grade_scale: climb.grade_scale as GradeScale,
         grade_value: climb.grade_value,
         outcome: climb.outcome as Outcome,
-        awkwardness: climb.awkwardness,
-        style: climb.style,
-        failure_reasons: climb.failure_reasons,
+        awkwardness: normalizedAwkwardness,
+        style: climb.style as Style[],
+        failure_reasons: climb.failure_reasons as FailureReason[],
         location: climb.location,
         notes: climb.notes ?? '',
-        hold_color: climb.hold_color,
+        hold_color: climb.hold_color as HoldColor | undefined,
       })
       setGradeScale(climb.grade_scale as GradeScale)
       setDiscipline(climb.climb_type as Discipline)
       setOutcome(climb.outcome as Outcome)
-      setAwkwardness(climb.awkwardness)
-      setSelectedStyles(climb.style)
-      setSelectedReasons(climb.failure_reasons)
+      setAwkwardness(AWKWARDNESS_VALUE_MAPPING[normalizedAwkwardness] ?? 'normal')
+      setSelectedStyles(climb.style as Style[])
+      setSelectedReasons(climb.failure_reasons as FailureReason[])
     }
   }, [climb, reset])
 
@@ -118,7 +123,7 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
     setGradeScale('color_circuit')
     setDiscipline('boulder')
     setOutcome('Fail')
-    setAwkwardness(3)
+    setAwkwardness('normal')
     setSelectedStyles([])
     setSelectedReasons([])
   }
@@ -360,19 +365,54 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
               </div>
 
               <div className="space-y-2">
-                <FormLabel>Awkwardness: {getAwkwardnessLabel(awkwardness)}</FormLabel>
-                <Slider
-                  value={[awkwardness]}
-                  onValueChange={(value) => {
-                    const newValue = value[0] ?? 3
-                    setAwkwardness(newValue)
-                    setValue('awkwardness', newValue)
-                  }}
-                  min={1}
-                  max={5}
-                  step={1}
-                  className="py-4"
-                />
+                <FormLabel>Awkwardness</FormLabel>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAwkwardness('smooth')
+                      setValue('awkwardness', 1 as const, { shouldValidate: true })
+                    }}
+                    className={cn(
+                      'flex-1 px-4 py-3 border-2 transition-all',
+                      awkwardness === 'smooth'
+                        ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400'
+                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
+                    )}
+                  >
+                    <span className="text-xs font-black uppercase tracking-wider">Smooth</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAwkwardness('normal')
+                      setValue('awkwardness', 3 as const, { shouldValidate: true })
+                    }}
+                    className={cn(
+                      'flex-1 px-4 py-3 border-2 transition-all',
+                      awkwardness === 'normal'
+                        ? 'bg-white/10 border-white/30 text-white'
+                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
+                    )}
+                  >
+                    <span className="text-xs font-black uppercase tracking-wider">Normal</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAwkwardness('awkward')
+                      setValue('awkwardness', 5 as const, { shouldValidate: true })
+                    }}
+                    className={cn(
+                      'flex-1 px-4 py-3 border-2 transition-all',
+                      awkwardness === 'awkward'
+                        ? 'bg-amber-500/10 border-amber-500/50 text-amber-400'
+                        : 'border-white/20 hover:border-white/40 bg-white/[0.02] text-[#aaa]'
+                    )}
+                  >
+                    <span className="text-xs font-black uppercase tracking-wider">Awkward</span>
+                  </button>
+                </div>
               </div>
             </div>
 
