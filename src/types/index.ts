@@ -192,6 +192,10 @@ export type Discipline = 'boulder' | 'sport'
 
 export type Outcome = 'Sent' | 'Fail'
 
+export type TerrainType = 'Slab' | 'Vert' | 'Overhang' | 'Roof' | 'Dyno' | 'Crimp' | 'Sloper' | 'Pinch'
+
+export type AwkwardnessLevel = 'smooth' | 'normal' | 'awkward'
+
 export type Style = 'Slab' | 'Vert' | 'Overhang' | 'Roof' | 'Dyno' | 'Crimp' | 'Sloper' | 'Pinch' | 'Compression' | 'Tension'
 
 export type PhysicalReason = 'Pumped' | 'Finger Strength' | 'Core' | 'Power' | 'Flexibility' | 'Balance' | 'Endurance'
