@@ -13,6 +13,9 @@ export const STYLE_OPTIONS: Style[] = [
   'Tension',
 ]
 
+export const TERRAIN_OPTIONS = ['Slab', 'Vert', 'Overhang', 'Roof', 'Dyno', 'Crimp', 'Sloper', 'Pinch'] as const
+export const AWKWARDNESS_OPTIONS = ['smooth', 'normal', 'awkward'] as const
+
 export const PHYSICAL_REASONS: FailureReason[] = [
   'Pumped',
   'Finger Strength',
