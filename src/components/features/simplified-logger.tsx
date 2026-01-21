@@ -18,6 +18,7 @@ import { SelectionButton } from '@/components/ui/selection-button'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { useProfile } from '@/hooks/useProfile'
+import { useTagExtractionFeedback } from '@/hooks/useTagExtractionFeedback'
 import { TERRAIN_OPTIONS } from '@/lib/constants'
 import { getGradesForScale, COLOR_CIRCUIT } from '@/lib/grades'
 import { cn } from '@/lib/utils'
@@ -41,6 +42,7 @@ interface SimplifiedLoggerProps {
 const SimplifiedLogger = forwardRef<SimplifiedLoggerHandle, SimplifiedLoggerProps>(
   ({ open, onOpenChange, onSubmit, isSaving, climb }, ref) => {
     const { data: profile } = useProfile()
+    const { quotaCount, isQuotaReached, isLoading: isQuotaLoading } = useTagExtractionFeedback()
     const [gradeScale, setGradeScale] = useState<GradeScale>('color_circuit')
     const [discipline, setDiscipline] = useState<Discipline>('boulder')
     const [outcome, setOutcome] = useState<Outcome>('Fail')
@@ -432,6 +434,18 @@ const SimplifiedLogger = forwardRef<SimplifiedLoggerHandle, SimplifiedLoggerProp
             </form>
 
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#09090b] border-t border-white/10 z-50 sm:relative sm:border-0 sm:bg-transparent sm:static sm:p-0 sm:z-auto">
+              <div className="mb-3">
+                {isQuotaLoading ? (
+                  <p className="text-xs text-center text-muted-foreground">Loading quota...</p>
+                ) : (
+                  <p className={cn(
+                    'text-xs text-center',
+                    isQuotaReached ? 'text-amber-500' : 'text-muted-foreground'
+                  )}>
+                    Tags extracted today: {quotaCount}/50
+                  </p>
+                )}
+              </div>
               <Button
                 type="submit"
                 form="climb-form"
