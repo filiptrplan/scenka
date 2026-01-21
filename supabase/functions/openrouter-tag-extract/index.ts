@@ -316,8 +316,63 @@ Deno.serve(async (req: Request) => {
     const anonymizedNotes = anonymizeNotes(notes)
 
     // System prompt for tag extraction
-    const systemPrompt =
-      'Extract climbing tags from notes. Return JSON with style_tags and failure_reasons arrays. Each tag must have name (enum) and confidence (0-100). Only include tags with confidence >= 70. Maximum 3 styles + 3 failure reasons. At least 1 failure reason required.'
+    const systemPrompt = `Extract climbing tags from the user's notes. Return ONLY raw JSON with no markdown code blocks, no explanations, no additional text.
+
+Output format:
+{
+  "style_tags": [
+    { "name": "TAG_NAME", "confidence": 85 }
+  ],
+  "failure_reasons": [
+    { "name": "TAG_NAME", "confidence": 72 }
+  ]
+}
+
+IMPORTANT: You MUST use ONLY the exact tag names listed below. Do NOT invent, modify, or spell differently.
+
+Valid style tags (use exactly these words):
+- \`Slab\`: Less-than-vertical climbing where body tension and balance are primary
+- \`Vert\`: Vertical or near-vertical terrain, often featuring face climbing
+- \`Overhang\`: Steep terrain requiring strength to stay on the wall
+- \`Roof\`: Horizontal ceiling section requiring core tension
+- \`Dyno\`: Dynamic jumping movements between holds
+- \`Crimp\`: Small, sharp holds requiring finger strength
+- \`Sloper\`: Rounded, featureless holds requiring open-hand strength and friction
+- \`Pinch\`: Holds gripped between thumb and fingers
+
+Valid failure reasons (use exactly these words):
+
+Physical:
+- \`Pumped\`: Forearm fatigue causing inability to hold on
+- \`Finger Strength\`: Insufficient finger power for small holds
+- \`Core\`: Inability to maintain body position due to weak core
+- \`Power\`: Lack of explosive strength for difficult moves
+
+Technical:
+- \`Bad Feet\`: Poor foot placement or foot slipping
+- \`Body Position\`: Suboptimal body positioning relative to the wall
+- \`Beta Error\`: Wrong sequence of moves or technique
+- \`Precision\`: Difficulty hitting small or distant holds accurately
+
+Mental:
+- \`Fear\`: Anxiety about falling or injury affecting performance
+- \`Commitment\`: Hesitation or lack of full commitment to moves
+- \`Focus\`: Loss of concentration or mind wandering
+
+Rules:
+- Return ONLY the JSON object, nothing else
+- Maximum 3 style tags, maximum 3 failure reasons (minimum 1 failure reason)
+- Include tags with confidence >= 70 only
+- Confidence scores 0-100 based on how strongly the notes indicate that tag
+- Climbing is complex and nuanced - add tags even if they don't match 100%
+- Notes may be brief or ambiguous - use your judgment
+
+Example notes: "Pumped out at the crux, couldn't hold the small crimp"
+Example output:
+{
+  "style_tags": [{"name": "Crimp", "confidence": 85}],
+  "failure_reasons": [{"name": "Pumped", "confidence": 90}]
+}`
 
     // User message with notes
     const userMessage = `Notes: ${anonymizedNotes}`
