@@ -11,7 +11,15 @@ import {
 } from 'react-router-dom'
 import { Toaster, toast } from 'sonner'
 
-import { ChartsPage, ClimbCard, CoachPage, Logger, ProtectedRoute, SettingsPage, ChatPage } from '@/components/features'
+import {
+  ChartsPage,
+  ClimbCard,
+  CoachPage,
+  Logger,
+  ProtectedRoute,
+  SettingsPage,
+  ChatPage,
+} from '@/components/features'
 import type { LoggerHandle } from '@/components/features/logger'
 import { Button } from '@/components/ui/button'
 import { ErrorBanner } from '@/components/ui/error-banner'
@@ -65,7 +73,12 @@ function Dashboard() {
   return (
     <div className="flex flex-col gap-4 mb-24">
       {climbs.map((climb) => (
-        <ClimbCard key={climb.id} climb={climb} onEditClick={onEditClick} onDeleteClick={onDeleteClick} />
+        <ClimbCard
+          key={climb.id}
+          climb={climb}
+          onEditClick={onEditClick}
+          onDeleteClick={onDeleteClick}
+        />
       ))}
     </div>
   )

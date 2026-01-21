@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { CreateClimbInput } from '@/lib/validation'
 import { offlineQueue } from '@/services/offlineQueue'
-import { triggerTagExtraction, type TagExtractionErrorType, type TagExtractionResult } from '@/services/tagExtraction'
+import { triggerTagExtraction, type TagExtractionResult } from '@/services/tagExtraction'
 import type { Climb, TablesInsert, TablesUpdate } from '@/types'
 
 export const climbsKeys = {
@@ -28,7 +28,7 @@ export async function getClimbs(): Promise<Climb[]> {
 
 export async function createClimb(
   input: CreateClimbInput,
-  onExtractionError?: (errorType: TagExtractionErrorType) => void // eslint-disable-line no-unused-vars
+  onExtractionResult?: (result: TagExtractionResult) => void // eslint-disable-line no-unused-vars
 ): Promise<Climb> {
   if (!supabase) {
     throw new Error('Supabase client not configured')
@@ -70,13 +70,12 @@ export async function createClimb(
   // Do NOT await - extraction happens in background
   triggerTagExtraction(climb, user.id)
     .then((result: TagExtractionResult) => {
+      // Pass the full result (including tags) to the callback for cache update
+      onExtractionResult?.(result)
+
       if (!result.success && result.errorType !== undefined) {
         // Log error for debugging
         console.warn(`Tag extraction failed: ${result.errorType}`)
-        // Notify UI via callback (exclude quota_exceeded since handled separately)
-        if (result.errorType !== 'quota_exceeded') {
-          onExtractionError?.(result.errorType)
-        }
       }
     })
     .catch(err => {

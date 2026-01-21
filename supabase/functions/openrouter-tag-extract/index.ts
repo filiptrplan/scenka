@@ -91,7 +91,10 @@ interface RequestBody {
  */
 function estimateTokenCount(text: string): number {
   // Count words (split by whitespace, filter empty)
-  const wordCount = text.trim().split(/\s+/).filter((w) => w.length > 0).length
+  const wordCount = text
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 0).length
   // Character-based estimate (approx 4 chars per token for English)
   const charBasedEstimate = Math.ceil(text.length / 4)
   // Use the higher of the two to be conservative
@@ -135,9 +138,7 @@ function validateTagResponse(content: string): TagExtractionResult {
       throw new Error(`Invalid style tag: ${tag.name}`)
     }
     if (typeof tag.confidence !== 'number' || tag.confidence < 0 || tag.confidence > 100) {
-      throw new Error(
-        `Style tag ${tagNum}: Confidence must be number 0-100, got ${tag.confidence}`
-      )
+      throw new Error(`Style tag ${tagNum}: Confidence must be number 0-100, got ${tag.confidence}`)
     }
   })
 
@@ -193,10 +194,13 @@ Deno.serve(async (req: Request) => {
 
   // Only accept POST requests
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', {
-      status: 405,
-      headers: corsHeaders,
-    })
+    return new Response(
+      JSON.stringify({ error: 'Method not allowed', success: false }),
+      {
+        status: 405,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    )
   }
 
   let userId: string | null = null
@@ -205,10 +209,13 @@ Deno.serve(async (req: Request) => {
     // Extract and validate JWT token
     const authHeader = req.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
-        status: 401,
-        headers: corsHeaders,
-      })
+      return new Response(
+        JSON.stringify({ error: 'Missing authorization header' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
     }
 
     const token = authHeader.replace('Bearer ', '')
@@ -220,10 +227,13 @@ Deno.serve(async (req: Request) => {
     } = await supabase.auth.getUser(token)
 
     if (claimsError || !user) {
-      return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
-        status: 401,
-        headers: corsHeaders,
-      })
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
     }
 
     userId = user.id
@@ -239,17 +249,20 @@ Deno.serve(async (req: Request) => {
         }),
         {
           status: 400,
-          headers: corsHeaders,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
     }
 
     // Verify user_id matches token
     if (body.user_id !== userId) {
-      return new Response(JSON.stringify({ error: 'User ID mismatch' }), {
-        status: 403,
-        headers: corsHeaders,
-      })
+      return new Response(
+        JSON.stringify({ error: 'User ID mismatch' }),
+        {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
     }
 
     // Check daily tag limit BEFORE making any API calls
@@ -280,11 +293,12 @@ Deno.serve(async (req: Request) => {
       tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
       const hoursUntilReset = Math.ceil((tomorrow.getTime() - Date.now()) / (1000 * 60 * 60))
 
-      const resetMessage = hoursUntilReset <= 1
-        ? 'Next reset in less than 1 hour'
-        : hoursUntilReset < 24
-          ? `Next reset in ${hoursUntilReset} hours`
-          : 'Next reset tomorrow at midnight UTC'
+      const resetMessage =
+        hoursUntilReset <= 1
+          ? 'Next reset in less than 1 hour'
+          : hoursUntilReset < 24
+            ? `Next reset in ${hoursUntilReset} hours`
+            : 'Next reset tomorrow at midnight UTC'
 
       return new Response(
         JSON.stringify({
@@ -293,7 +307,7 @@ Deno.serve(async (req: Request) => {
           current_count: effectiveCount,
           limit: DAILY_TAG_LIMIT,
         }),
-        { status: 429, headers: corsHeaders }
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
@@ -474,7 +488,7 @@ Example output:
             failure_reasons: failureReasons,
           }),
           {
-            headers: corsHeaders,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           }
         )
       } catch (error: any) {
@@ -495,18 +509,16 @@ Example output:
         )
 
         // Track failed attempt with cost=0
-        const { error: failedUsageError } = await supabase
-          .from('api_usage')
-          .insert({
-            user_id: userId,
-            prompt_tokens: 0,
-            completion_tokens: 0,
-            total_tokens: 0,
-            cost_usd: 0,
-            model: tagModel,
-            endpoint: 'openrouter-tag-extract',
-            time_window_start: new Date().toISOString(),
-          })
+        const { error: failedUsageError } = await supabase.from('api_usage').insert({
+          user_id: userId,
+          prompt_tokens: 0,
+          completion_tokens: 0,
+          total_tokens: 0,
+          cost_usd: 0,
+          model: tagModel,
+          endpoint: 'openrouter-tag-extract',
+          time_window_start: new Date().toISOString(),
+        })
 
         if (failedUsageError) {
           console.error('Failed to track failed usage:', failedUsageError)
@@ -521,7 +533,7 @@ Example output:
             error: 'Tag extraction failed, you can add tags manually',
           }),
           {
-            headers: corsHeaders,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           }
         )
       }
@@ -540,7 +552,7 @@ Example output:
       }),
       {
         status: 500,
-        headers: corsHeaders,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     )
   }

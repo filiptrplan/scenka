@@ -15,6 +15,8 @@ export type TagExtractionErrorType = 'quota_exceeded' | 'api_error' | 'network_e
 export interface TagExtractionResult {
   success: boolean
   errorType?: TagExtractionErrorType
+  style?: string[] // Extracted style tags
+  failure_reasons?: string[] // Extracted failure reasons
 }
 
 /**
@@ -36,7 +38,10 @@ export interface TagExtractionResult {
  *
  * @returns Promise<TagExtractionResult> - Result object with success flag and optional error type
  */
-export async function triggerTagExtraction(climb: Climb, userId: string): Promise<TagExtractionResult> {
+export async function triggerTagExtraction(
+  climb: Climb,
+  userId: string
+): Promise<TagExtractionResult> {
   if (!supabase) {
     console.error('Cannot trigger tag extraction: Supabase client not configured')
     return { success: false, errorType: 'unknown' }
@@ -66,8 +71,8 @@ export async function triggerTagExtraction(climb: Climb, userId: string): Promis
       new Promise<{ data: null; error: Error }>((_, reject) =>
         setTimeout(
           () => reject(new Error(`Tag extraction timeout after ${TAG_EXTRACTION_TIMEOUT_MS}ms`)),
-          TAG_EXTRACTION_TIMEOUT_MS,
-        ),
+          TAG_EXTRACTION_TIMEOUT_MS
+        )
       ),
     ])
 
@@ -96,8 +101,18 @@ export async function triggerTagExtraction(climb: Climb, userId: string): Promis
     }
 
     if (data !== null && data !== undefined) {
-      console.warn(`Tag extraction triggered successfully for climb ${climb.id}:`, data)
-      return { success: true }
+      // Extract tags from response if extraction succeeded
+      console.log(typeof data)
+      const tags =
+        data.style || data.failure_reasons
+          ? {
+              style: data.style as string[] | undefined,
+              failure_reasons: data.failure_reasons as string[] | undefined,
+            }
+          : undefined
+
+      console.warn(`Tag extraction triggered successfully for climb ${climb.id}:`, tags)
+      return { success: true, ...tags }
     }
 
     return { success: true }
@@ -107,7 +122,11 @@ export async function triggerTagExtraction(climb: Climb, userId: string): Promis
     console.error(`Failed to trigger tag extraction for climb ${climb.id}:`, errorMessage)
 
     // Determine error type based on message
-    if (errorMessage.includes('Network') || errorMessage.includes('fetch') || errorMessage.includes('timeout')) {
+    if (
+      errorMessage.includes('Network') ||
+      errorMessage.includes('fetch') ||
+      errorMessage.includes('timeout')
+    ) {
       return { success: false, errorType: 'network_error' }
     }
 

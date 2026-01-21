@@ -118,10 +118,13 @@ Deno.serve(async (req: Request) => {
 
   // Only accept POST requests
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', {
-      status: 405,
-      headers: corsHeaders,
-    })
+    return new Response(
+      JSON.stringify({ error: 'Method not allowed', success: false }),
+      {
+        status: 405,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    )
   }
 
   let userId: string | null = null
@@ -130,10 +133,13 @@ Deno.serve(async (req: Request) => {
     // Extract and validate JWT token
     const authHeader = req.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
-        status: 401,
-        headers: corsHeaders,
-      })
+      return new Response(
+        JSON.stringify({ error: 'Missing authorization header' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
     }
 
     const token = authHeader.replace('Bearer ', '')
@@ -145,10 +151,13 @@ Deno.serve(async (req: Request) => {
     } = await supabase.auth.getUser(token)
 
     if (claimsError || !user) {
-      return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
-        status: 401,
-        headers: corsHeaders,
-      })
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
     }
 
     userId = user.id
@@ -193,7 +202,7 @@ Deno.serve(async (req: Request) => {
           current_count: effectiveCount,
           limit: dailyChatLimit,
         }),
-        { status: 429, headers: corsHeaders }
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
@@ -209,16 +218,19 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({ error: 'Message is required and must be a string' }),
         {
           status: 400,
-          headers: corsHeaders,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
     }
 
     if (body.message.trim().length === 0) {
-      return new Response(JSON.stringify({ error: 'Message cannot be empty' }), {
-        status: 400,
-        headers: corsHeaders,
-      })
+      return new Response(
+        JSON.stringify({ error: 'Message cannot be empty' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
     }
 
     if (body.message.length > 5000) {
@@ -226,7 +238,7 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({ error: 'Message cannot exceed 5000 characters' }),
         {
           status: 400,
-          headers: corsHeaders,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
     }
@@ -265,7 +277,7 @@ Deno.serve(async (req: Request) => {
         }),
         {
           status: 413,
-          headers: corsHeaders,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
     }
@@ -375,9 +387,12 @@ Deno.serve(async (req: Request) => {
   } catch (error: any) {
     console.error('Error in openrouter-chat:', error.message, error.stack)
 
-    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
-      status: 500,
-      headers: corsHeaders,
-    })
+    return new Response(
+      JSON.stringify({ error: error.message || 'Internal server error' }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    )
   }
 })
