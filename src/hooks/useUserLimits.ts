@@ -10,6 +10,7 @@ export const userLimitsKeys = {
 export interface UserLimits {
   rec_count: number
   chat_count: number
+  tag_count: number
   limit_date: string
 }
 
@@ -31,7 +32,7 @@ export function useUserLimits() {
 
       const { data, error } = await supabase
         .from('user_limits')
-        .select('rec_count, chat_count, limit_date')
+        .select('rec_count, chat_count, tag_count, limit_date')
         .eq('user_id', user.id)
         .maybeSingle()
 

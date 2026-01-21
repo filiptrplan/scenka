@@ -69,7 +69,7 @@ export async function createClimb(input: CreateClimbInput): Promise<Climb> {
     .then((result: TagExtractionResult) => {
       if (!result.success && result.errorType !== undefined) {
         // Log error for debugging - UI handles toast display
-        console.log(`Tag extraction failed: ${result.errorType}`)
+        console.warn(`Tag extraction failed: ${result.errorType}`)
       }
     })
     .catch(err => {
@@ -119,7 +119,7 @@ export async function updateClimb(id: string, updates: Partial<CreateClimbInput>
       .then((result: TagExtractionResult) => {
         if (!result.success && result.errorType !== undefined) {
           // Log error for debugging - UI handles toast display
-          console.log(`Tag extraction failed: ${result.errorType}`)
+          console.warn(`Tag extraction failed: ${result.errorType}`)
         }
       })
       .catch(err => {

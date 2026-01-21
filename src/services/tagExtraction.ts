@@ -48,14 +48,12 @@ export async function triggerTagExtraction(climb: Climb, userId: string): Promis
     return { success: false, errorType: 'unknown' }
   }
 
-  if (!climb.notes || climb.notes.trim().length === 0) {
+  if (climb.notes === null || climb.notes.trim().length === 0) {
     // Skip extraction for climbs without notes
     return { success: true }
   }
 
   try {
-    console.log(`Triggering tag extraction for climb: ${climb.id}`)
-
     // Call Edge Function with timeout
     const { data, error } = await Promise.race([
       supabase.functions.invoke('openrouter-tag-extract', {
@@ -79,21 +77,26 @@ export async function triggerTagExtraction(climb: Climb, userId: string): Promis
       if (errorMessage.includes('403')) {
         console.error(`Unauthorized tag extraction request for climb ${climb.id}`)
         return { success: false, errorType: 'api_error' }
-      } else if (errorMessage.includes('429')) {
+      }
+      if (errorMessage.includes('429')) {
         console.error(`Quota exceeded for user ${userId} (limit: ${DAILY_TAG_LIMIT}/day)`)
         return { success: false, errorType: 'quota_exceeded' }
-      } else if (errorMessage.includes('timeout')) {
+      }
+      if (errorMessage.includes('timeout')) {
         console.error(`Tag extraction timeout for climb ${climb.id}: ${errorMessage}`)
         return { success: false, errorType: 'network_error' }
-      } else if (errorMessage.includes('Network') || errorMessage.includes('fetch')) {
+      }
+      if (errorMessage.includes('Network') || errorMessage.includes('fetch')) {
         console.error(`Network error triggering extraction for climb ${climb.id}: ${errorMessage}`)
         return { success: false, errorType: 'network_error' }
-      } else {
-        console.error(`Tag extraction error for climb ${climb.id}:`, error)
-        return { success: false, errorType: 'api_error' }
       }
-    } else if (data !== null && data !== undefined) {
-      console.log(`Tag extraction triggered successfully for climb ${climb.id}:`, data)
+
+      console.error(`Tag extraction error for climb ${climb.id}:`, error)
+      return { success: false, errorType: 'api_error' }
+    }
+
+    if (data !== null && data !== undefined) {
+      console.warn(`Tag extraction triggered successfully for climb ${climb.id}:`, data)
       return { success: true }
     }
 
