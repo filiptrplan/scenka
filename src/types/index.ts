@@ -1,8 +1,91 @@
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
-export interface Database {
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.1"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
+      api_usage: {
+        Row: {
+          completion_tokens: number
+          cost_usd: number
+          created_at: string
+          endpoint: string
+          id: string
+          model: string
+          prompt_tokens: number
+          time_window_start: string
+          total_tokens: number
+          user_id: string
+        }
+        Insert: {
+          completion_tokens: number
+          cost_usd?: number
+          created_at?: string
+          endpoint: string
+          id?: string
+          model: string
+          prompt_tokens: number
+          time_window_start: string
+          total_tokens: number
+          user_id: string
+        }
+        Update: {
+          completion_tokens?: number
+          cost_usd?: number
+          created_at?: string
+          endpoint?: string
+          id?: string
+          model?: string
+          prompt_tokens?: number
+          time_window_start?: string
+          total_tokens?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       climbs: {
         Row: {
           awkwardness: number
@@ -18,6 +101,7 @@ export interface Database {
           outcome: string
           redemption_at: string | null
           style: string[]
+          tags_extracted_at: string | null
           user_id: string
         }
         Insert: {
@@ -34,6 +118,7 @@ export interface Database {
           outcome: string
           redemption_at?: string | null
           style?: string[]
+          tags_extracted_at?: string | null
           user_id: string
         }
         Update: {
@@ -50,257 +135,292 @@ export interface Database {
           outcome?: string
           redemption_at?: string | null
           style?: string[]
+          tags_extracted_at?: string | null
           user_id?: string
         }
-      }
-      profiles: {
-        Row: {
-          id: string
-          preferred_discipline: string
-          preferred_grade_scale: string
-          home_gym: string | null
-          onboarding_completed: boolean
-          updated_at: string
-          enabled_hold_colors: string[]
-          climbing_context: string | null
-        }
-        Insert: {
-          id: string
-          preferred_discipline?: string
-          preferred_grade_scale?: string
-          home_gym?: string | null
-          onboarding_completed?: boolean
-          updated_at?: string
-          enabled_hold_colors?: string[]
-          climbing_context?: string | null
-        }
-        Update: {
-          id?: string
-          preferred_discipline?: string
-          preferred_grade_scale?: string
-          home_gym?: string | null
-          onboarding_completed?: boolean
-          updated_at?: string
-          enabled_hold_colors?: string[]
-          climbing_context?: string | null
-        }
-      }
-      coach_recommendations: {
-        Row: {
-          id: string
-          user_id: string
-          created_at: string
-          content: Json
-          is_cached: boolean
-          error_message: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          created_at?: string
-          content?: Json
-          is_cached?: boolean
-          error_message?: string | null
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          created_at?: string
-          content?: Json
-          is_cached?: boolean
-          error_message?: string | null
-        }
+        Relationships: []
       }
       coach_messages: {
         Row: {
-          id: string
-          user_id: string
-          created_at: string
-          role: 'user' | 'assistant'
           content: string
-          context: Json
+          context: Json | null
+          created_at: string
+          id: string
+          role: string
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
-          created_at?: string
-          role: 'user' | 'assistant'
           content: string
-          context?: Json
+          context?: Json | null
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          created_at?: string
-          role?: 'user' | 'assistant'
           content?: string
-          context?: Json
+          context?: Json | null
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "coach_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      coach_api_usage: {
+      coach_recommendations: {
         Row: {
-          id: string
-          user_id: string
+          content: Json
           created_at: string
-          prompt_tokens: number
-          completion_tokens: number
-          total_tokens: number
-          cost_usd: number
-          model: string
-          endpoint: string
-          time_window_start: string
+          error_message: string | null
+          id: string
+          is_cached: boolean
+          user_id: string
         }
         Insert: {
-          id?: string
-          user_id: string
+          content?: Json
           created_at?: string
-          prompt_tokens: number
-          completion_tokens: number
-          total_tokens: number
-          cost_usd: number
-          model: string
-          endpoint: string
-          time_window_start?: string
+          error_message?: string | null
+          id?: string
+          is_cached?: boolean
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
+          content?: Json
           created_at?: string
-          prompt_tokens?: number
-          completion_tokens?: number
-          total_tokens?: number
-          cost_usd?: number
-          model?: string
-          endpoint?: string
-          time_window_start?: string
+          error_message?: string | null
+          id?: string
+          is_cached?: boolean
+          user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "coach_recommendations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
+      profiles: {
+        Row: {
+          climbing_context: string | null
+          close_logger_after_add: boolean
+          enabled_hold_colors: string[]
+          home_gym: string | null
+          id: string
+          onboarding_completed: boolean
+          preferred_discipline: string
+          preferred_grade_scale: string
+          updated_at: string
+        }
+        Insert: {
+          climbing_context?: string | null
+          close_logger_after_add?: boolean
+          enabled_hold_colors?: string[]
+          home_gym?: string | null
+          id: string
+          onboarding_completed?: boolean
+          preferred_discipline?: string
+          preferred_grade_scale?: string
+          updated_at?: string
+        }
+        Update: {
+          climbing_context?: string | null
+          close_logger_after_add?: boolean
+          enabled_hold_colors?: string[]
+          home_gym?: string | null
+          id?: string
+          onboarding_completed?: boolean
+          preferred_discipline?: string
+          preferred_grade_scale?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_limits: {
+        Row: {
+          chat_count: number
+          limit_date: string
+          rec_count: number
+          tag_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chat_count?: number
+          limit_date?: string
+          rec_count?: number
+          tag_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chat_count?: number
+          limit_date?: string
+          rec_count?: number
+          tag_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_limits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      increment_chat_count: { Args: { p_user_id: string }; Returns: undefined }
+      increment_rec_count: { Args: { p_user_id: string }; Returns: undefined }
+      increment_tag_count: { Args: { p_user_id: string }; Returns: undefined }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }
 
-export type TablesInsert<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Insert']
-export type TablesUpdate<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Update']
-export type TablesRow<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row']
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-export type GradeScale = 'font' | 'v_scale' | 'color_circuit'
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
-export type Discipline = 'boulder' | 'sport'
-
-export type Outcome = 'Sent' | 'Fail'
-
-export type TerrainType = 'Slab' | 'Vert' | 'Overhang' | 'Roof' | 'Dyno' | 'Crimp' | 'Sloper' | 'Pinch'
-
-export type AwkwardnessLevel = 'smooth' | 'normal' | 'awkward'
-
-export type Style = 'Slab' | 'Vert' | 'Overhang' | 'Roof' | 'Dyno' | 'Crimp' | 'Sloper' | 'Pinch' | 'Compression' | 'Tension'
-
-export type PhysicalReason = 'Pumped' | 'Finger Strength' | 'Core' | 'Power' | 'Flexibility' | 'Balance' | 'Endurance'
-export type TechnicalReason =
-  | 'Bad Feet'
-  | 'Body Position'
-  | 'Beta Error'
-  | 'Precision'
-  | 'Precision (Feet)'
-  | 'Precision (Hands)'
-  | 'Coordination (Hands)'
-  | 'Coordination (Feet)'
-  | 'Foot Swap'
-  | 'Heel Hook'
-  | 'Toe Hook'
-  | 'Rockover'
-  | 'Pistol Squat'
-  | 'Drop Knee'
-  | 'Twist Lock'
-  | 'Flagging'
-  | 'Dyno'
-  | 'Deadpoint'
-  | 'Latch'
-  | 'Mantle'
-  | 'Undercling'
-  | 'Gaston'
-  | 'Match'
-  | 'Cross'
-export type MentalReason = 'Fear' | 'Commitment' | 'Focus'
-
-export type FailureReason = PhysicalReason | TechnicalReason | MentalReason
-
-export type HoldColor = 'red' | 'green' | 'blue' | 'yellow' | 'black' | 'white' | 'orange' | 'purple' | 'pink' | 'teal'
-
-// Pattern Analysis Types (for AI Coach)
-export interface FailurePatterns {
-  most_common_failure_reasons: Array<{
-    reason: string
-    count: number
-    percentage: number
-  }>
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
-export interface StyleWeaknesses {
-  struggling_styles: Array<{
-    style: string
-    fail_count: number
-    total_attempts: number
-    fail_rate: number
-  }>
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
-export interface ClimbingFrequency {
-  climbs_per_week: Array<{
-    week: string
-    count: number
-  }>
-  climbs_per_month: number
-  avg_climbs_per_session: number
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
-export interface RecentSuccesses {
-  recent_sends: Climb[]
-  grade_progression: Array<{
-    grade: string
-    date: string
-  }>
-  redemption_count: number
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
-export interface PatternAnalysis {
-  failure_patterns: FailurePatterns
-  style_weaknesses: StyleWeaknesses
-  climbing_frequency: ClimbingFrequency
-  recent_successes: RecentSuccesses
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
 }
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
-// AI Coach Types (Privacy-Safe for External APIs)
-export interface AnonymizedClimb {
-  location: string
-  grade_scale: string
-  grade_value: string
-  climb_type: string
-  style: Style[]
-  outcome: string
-  awkwardness: number
-  failure_reasons: FailureReason[]
-  notes?: string | null
-  date: string
-}
-
-export type Climb = TablesRow<'climbs'> & {
-  style: Style[]
-  failure_reasons: FailureReason[]
-  hold_color?: HoldColor
-}
-
-export interface Profile {
-  id: string
-  preferred_grade_scale: GradeScale
-  preferred_discipline: Discipline
-  home_gym: string | null
-  onboarding_completed: boolean
-  updated_at: string
-  enabled_hold_colors: HoldColor[]
-  close_logger_after_add: boolean
-  climbing_context: string | null
-}
+export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
+    Enums: {},
+  },
+} as const
