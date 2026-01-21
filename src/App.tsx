@@ -19,6 +19,7 @@ import { Footer } from '@/components/ui/footer'
 import { OfflineStatus } from '@/components/ui/offline-status'
 import { useClimbs, useCreateClimb, useUpdateClimb, useDeleteClimb } from '@/hooks/useClimbs'
 import { useProfile } from '@/hooks/useProfile'
+import { useTagExtractionFeedback } from '@/hooks/useTagExtractionFeedback'
 import { useAuth } from '@/lib/auth'
 import { initSyncManager } from '@/lib/syncManager'
 import type { CreateClimbInput } from '@/lib/validation'
@@ -78,6 +79,7 @@ function Layout() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { signOut } = useAuth()
   const { data: profile } = useProfile()
+  const { isQuotaReached, showQuotaReached } = useTagExtractionFeedback()
   const createClimb = useCreateClimb()
   const updateClimb = useUpdateClimb()
   const deleteClimb = useDeleteClimb()
@@ -109,10 +111,17 @@ function Layout() {
         onSuccess: () => {
           loggerRef.current?.resetAllState()
           // Check user preference for closing logger after add
-          if (profile?.close_logger_after_add) {
+          if (profile?.close_logger_after_add === true) {
             setLoggerOpen(false)
           }
           toast.success('Climb logged successfully')
+
+          // Show quota warning if reached
+          // The useTagExtractionFeedback hook tracks quota state
+          // When quota is reached, show warning toast with reset time
+          if (isQuotaReached === true) {
+            showQuotaReached()
+          }
         },
         onError: (error) => {
           console.error('Failed to create climb:', error)
