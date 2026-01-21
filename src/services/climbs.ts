@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { CreateClimbInput } from '@/lib/validation'
 import { offlineQueue } from '@/services/offlineQueue'
+import { triggerTagExtraction } from '@/services/tagExtraction'
 import type { Climb, TablesInsert, TablesUpdate } from '@/types'
 
 export const climbsKeys = {
@@ -49,6 +50,7 @@ export async function createClimb(input: CreateClimbInput): Promise<Climb> {
     } as Climb
   }
 
+  // Save climb first
   const { data, error } = await supabase
     .from('climbs')
     .insert({ ...input, user_id: user.id } as TablesInsert<'climbs'>)
@@ -58,12 +60,30 @@ export async function createClimb(input: CreateClimbInput): Promise<Climb> {
   if (error) {
     throw error
   }
-  return data as Climb
+
+  const climb = data as Climb
+
+  // Trigger tag extraction AFTER save succeeds (non-blocking)
+  // Do NOT await - extraction happens in background
+  triggerTagExtraction(climb, user.id).catch(err => {
+    console.error('Failed to trigger tag extraction:', err)
+    // Continue - extraction failure doesn't break climb save
+  })
+
+  return climb
 }
 
 export async function updateClimb(id: string, updates: Partial<CreateClimbInput>): Promise<Climb> {
   if (!supabase) {
     throw new Error('Supabase client not configured')
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error('Not authenticated')
   }
 
   // If offline, queue the mutation
@@ -72,6 +92,7 @@ export async function updateClimb(id: string, updates: Partial<CreateClimbInput>
     return { id, ...updates, updated_at: new Date().toISOString() } as unknown as Climb
   }
 
+  // Update climb
   const { data, error } = await supabase
     .from('climbs')
     .update(updates as TablesUpdate<'climbs'>)
@@ -82,7 +103,18 @@ export async function updateClimb(id: string, updates: Partial<CreateClimbInput>
   if (error) {
     throw error
   }
-  return data as Climb
+
+  const climb = data as Climb
+
+  // Trigger tag extraction if notes were changed (non-blocking)
+  if (updates.notes !== undefined) {
+    triggerTagExtraction(climb, user.id).catch(err => {
+      console.error('Failed to trigger tag extraction:', err)
+      // Continue - extraction failure doesn't break update
+    })
+  }
+
+  return climb
 }
 
 export async function deleteClimb(id: string): Promise<void> {
