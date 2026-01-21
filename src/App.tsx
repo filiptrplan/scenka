@@ -79,16 +79,24 @@ function Layout() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { signOut } = useAuth()
   const { data: profile } = useProfile()
-  const { isQuotaReached, showQuotaReached } = useTagExtractionFeedback()
+  const { isQuotaReached, showQuotaReached, showExtractionError } = useTagExtractionFeedback()
   const createClimb = useCreateClimb()
   const updateClimb = useUpdateClimb()
   const deleteClimb = useDeleteClimb()
+  const extractionError = createClimb.extractionError
   const loggerRef = useRef<LoggerHandle>(null)
 
   // Initialize sync manager on mount
   useEffect(() => {
     initSyncManager()
   }, [])
+
+  // Show extraction error toast when extraction fails (excluding quota_exceeded which is handled separately)
+  useEffect(() => {
+    if (extractionError !== undefined && extractionError !== 'quota_exceeded') {
+      showExtractionError(extractionError)
+    }
+  }, [extractionError, showExtractionError])
 
   const handleClimbSubmit = (data: CreateClimbInput) => {
     if (editingClimb) {
