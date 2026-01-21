@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-20)
 ## Current Position
 
 Phase: Phase 31 - AI Tag Extraction Service (in progress 2026-01-21)
-Plan: Plan 03 (Client Service and Wiring) completed, 1 remaining
-Status: Plan 03 complete, Client service wired, Edge Function not yet deployed
-Last activity: 2026-01-21 — Completed 31-03-PLAN.md (Client service and wiring)
+Plan: Plan 04 (User Feedback and Edge Function Deployment) completed, 0 remaining
+Status: Plan 04 complete, Error handling and quota indicator implemented, Edge Function not yet deployed
+Last activity: 2026-01-21 — Completed 31-04-PLAN.md (User feedback and error handling)
 
-Progress: [████     ] 38% (12/32 requirements complete) - v2.1 in progress
+Progress: [████████ ] 62% (20/32 requirements complete) - v2.1 in progress
 
 ## Performance Metrics
 
@@ -43,7 +43,7 @@ Progress: [████     ] 38% (12/32 requirements complete) - v2.1 in progre
 | 28 (Chat System Prompt) | 1 | 8 min | 8 min |
 | 29 (Markdown Rendering) | 3 | 6 min | 2 min |
 | 30 (Simplified Logger) | 2 | 5 min | 2 min |
-| 31 (AI Tag Extraction) | 3 | 12 min | 4 min |
+| 31 (AI Tag Extraction) | 4 | 20 min | 5 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min
@@ -232,6 +232,11 @@ Recent decisions affecting current work:
 - Phase 31-02: Retry logic (2 attempts, exponential backoff 1s/2s) handles transient API failures
 - Phase 31-02: API duration measurement with performance logging warns if exceeds 3-second target (EXTR-07)
 - Phase 31-02: Track cost via OpenRouter usage.cost field after successful API call (no manual calculation)
+- Phase 31-04: Clean architecture - service layer returns error type object, UI layer handles toast display
+- Phase 31-04: Tag extraction error types (quota_exceeded, api_error, network_error, unknown) map to user-friendly toast messages
+- Phase 31-04: Quota indicator (X/50) displays in simplified logger form below submit button
+- Phase 31-04: TanStack Query for quota tracking with staleTime: 0 ensures fresh data
+- Phase 31-04: Non-blocking error handling - tag extraction failures logged but don't break climb save flow
 - Phase 31: Async tag extraction never blocks save flow - core value is frictionless logging
 - Phase 31: Cost tracking and per-user quotas (50 climbs/day) prevent runaway expenses
 - Phase 31: PII detection before API calls protects user privacy
@@ -246,7 +251,7 @@ None yet.
 
 ### Blockers/Concerns
 
-None identified yet.
+**Plan 31-04 Note:** Toast notifications for extraction errors are implemented in useTagExtractionFeedback hook but not yet wired to climb save flow in App.tsx. Optional: Call showExtractionError() in handleClimbSubmit after successful save to show extraction errors immediately. This is a minor integration task, not a blocker.
 
 ### Roadmap Evolution
 
@@ -260,7 +265,7 @@ None identified yet.
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Completed 31-03-PLAN.md (Client Service and Wiring)
-Status: Ready to continue with Phase 31-04 (User Feedback & Edge Function Deployment)
-Note: Edge Function created and client wired, but not yet deployed - requires `npx supabase functions deploy openrouter-tag-extract --no-verify-jwt`
+Stopped at: Completed 31-04-PLAN.md (User feedback and error handling)
+Status: Ready to continue with Phase 31-04 completion, or Phase 32-01 (Tag Display UI)
+Note: Edge Function created and client wired, but not yet deployed - requires `npx supabase functions deploy openrouter-tag-extract --no-verify-jwt`. Toast error handling implemented but not yet wired to App.tsx save handler.
 Resume file: None
