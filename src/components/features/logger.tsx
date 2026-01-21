@@ -42,6 +42,7 @@ interface LoggerProps {
 
 const Logger = forwardRef<LoggerHandle, LoggerProps>(
   ({ open, onOpenChange, onSubmit, isSaving, climb }, ref) => {
+  const hideFailureReasons = climb === null || climb === undefined
   const { data: profile } = useProfile()
   const [gradeScale, setGradeScale] = useState<GradeScale>('color_circuit')
   const [discipline, setDiscipline] = useState<Discipline>('boulder')
@@ -395,33 +396,46 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <FormLabel>
-                  {outcome === 'Fail' ? 'Failure Reasons' : 'Imperfect Aspects'} (select all that
-                  apply)
-                </FormLabel>
-                <div className="flex flex-wrap gap-2">
-                  {getFailureReasons(outcome).map((reason) => (
-                    <Badge
-                      key={reason}
-                      variant={selectedReasons.includes(reason) ? 'default' : 'outline'}
-                      className={cn(
-                        'cursor-pointer text-xs font-mono uppercase',
-                        selectedReasons.includes(reason) ? '' : 'border-white/20 text-[#ccc]'
-                      )}
-                      onClick={() => toggleReason(reason)}
-                    >
-                      {reason}
-                    </Badge>
-                  ))}
+              {!hideFailureReasons && (
+                <div className="space-y-2">
+                  <FormLabel>
+                    {outcome === 'Fail' ? 'Failure Reasons' : 'Imperfect Aspects'} (select all that
+                    apply)
+                  </FormLabel>
+                  <div className="flex flex-wrap gap-2">
+                    {getFailureReasons(outcome).map((reason) => (
+                      <Badge
+                        key={reason}
+                        variant={selectedReasons.includes(reason) ? 'default' : 'outline'}
+                        className={cn(
+                          'cursor-pointer text-xs font-mono uppercase',
+                          selectedReasons.includes(reason) ? '' : 'border-white/20 text-[#ccc]'
+                        )}
+                        onClick={() => toggleReason(reason)}
+                      >
+                        {reason}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-2">
-                <FormLabel>Notes (optional)</FormLabel>
+                <div className="space-y-1">
+                  <FormLabel>Notes (optional)</FormLabel>
+                  {hideFailureReasons && (
+                    <p className="text-xs text-white/30">
+                      Describe the climb in detail - AI will analyze these notes to extract style and failure reasons
+                    </p>
+                  )}
+                </div>
                 <Textarea
                   {...register('notes')}
-                  placeholder="Any additional thoughts..."
+                  placeholder={
+                    hideFailureReasons
+                      ? "Describe the route, holds, movement, and what made it challenging..."
+                      : "Any additional thoughts..."
+                  }
                   className="border-white/10 bg-white/[0.02] text-white placeholder:text-white/30 hover:border-white/30 focus-visible:border-white/30"
                 />
               </div>
