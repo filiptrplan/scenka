@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-20)
 ## Current Position
 
 Phase: Phase 31 - AI Tag Extraction Service (complete 2026-01-21)
-Plan: Plan 06 (Deploy AI Tag Extraction Service) completed
-Status: Phase 31 complete - Database migrations applied, Edge Function deployed, environment variables configured
-Last activity: 2026-01-21 — Completed 31-06-PLAN.md (Deployment to production)
+Plan: Plan 07 (Wire Extraction Error Toasts) completed
+Status: Phase 31 complete - Database migrations applied, Edge Function deployed, environment variables configured, error notifications wired
+Last activity: 2026-01-21 — Completed 31-07-PLAN.md (Extraction error toast wiring)
 
-Progress: [█████████ ] 66% (21/32 requirements complete) - v2.1 in progress
+Progress: [█████████ ] 69% (22/32 requirements complete) - v2.1 in progress
 
 ## Performance Metrics
 
@@ -43,7 +43,7 @@ Progress: [█████████ ] 66% (21/32 requirements complete) - v2.
 | 28 (Chat System Prompt) | 1 | 8 min | 8 min |
 | 29 (Markdown Rendering) | 3 | 6 min | 2 min |
 | 30 (Simplified Logger) | 2 | 5 min | 2 min |
-| 31 (AI Tag Extraction) | 5 | 23 min | 5 min |
+| 31 (AI Tag Extraction) | 7 | 26 min | 4 min |
 
 **Recent Trend:**
 - Last 5 plans: 3 min
@@ -258,7 +258,7 @@ None yet.
 
 ### Blockers/Concerns
 
-**Plan 31-05 Note:** Quota exceeded toast notification is now fully integrated. Other extraction error types (api_error, network_error) remain logged but not shown to users pending architectural decision. Options: (1) Modify service API to return extractionError (breaking change), (2) Implement event emitter, (3) Use global state store (Zustand). This is optional, not a blocker.
+**None** - Plan 31-07 completed extraction error toast wiring. All extraction error types now show appropriate toast notifications (api_error, network_error, unknown). Quota exceeded handled separately by existing isQuotaReached logic.
 
 **No blockers identified** - Phase 31 complete, ready to proceed with Phase 32 (Tag Display & Editing).
 
@@ -274,6 +274,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Completed 31-06-PLAN.md (Deploy AI Tag Extraction Service)
-Status: Phase 31 complete. Database migrations applied, Edge Function deployed, environment variables configured. AI tag extraction service fully operational.
+Stopped at: Completed 31-07-PLAN.md (Wire Extraction Error Toasts)
+Status: Phase 31 complete. All plans executed (31-01 through 31-07). Extraction error notifications wired for api_error, network_error, and unknown types. Type system fixed with missing exports. AI tag extraction service fully operational with graceful failure handling.
 Resume file: None
