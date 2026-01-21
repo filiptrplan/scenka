@@ -61,7 +61,11 @@ Scenka is a personal, privacy-focused mobile PWA for recreational boulderers who
 <summary>🚧 v2.1 Simplified Logging + AI Auto-Tagging (Phases 30-33) — IN PROGRESS</summary>
 
 - [x] Phase 30: Simplified Logger Foundation (2/2 plans, 1 wave) — completed 2026-01-21
-- [ ] Phase 31: AI Tag Extraction Service (0/8 requirements) — not started
+- [ ] Phase 31: AI Tag Extraction Service (4/4 plans, 4 waves) — not started
+  - [ ] 31-01-PLAN.md — Database migrations (tag_count, RPC function, api_usage table)
+  - [ ] 31-02-PLAN.md — Edge Function implementation (openrouter-tag-extract)
+  - [ ] 31-03-PLAN.md — Client service and wiring (trigger extraction after climb save)
+  - [ ] 31-04-PLAN.md — Error handling and user feedback (toast notifications, quota UI)
 - [ ] Phase 32: Tag Display & Editing (0/6 requirements) — not started
 - [ ] Phase 33: Offline Support & Analytics Integration (0/9 requirements) — not started
 
