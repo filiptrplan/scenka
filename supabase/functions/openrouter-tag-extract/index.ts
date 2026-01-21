@@ -449,7 +449,7 @@ Example output:
         // Track API usage with OpenRouter's cost
         const costUsd = lastUsage.cost || 0
 
-        const { error: usageError } = await supabase.from('tag_extraction_api_usage').insert({
+        const { error: usageError } = await supabase.from('api_usage').insert({
           user_id: userId,
           prompt_tokens: lastUsage.prompt_tokens,
           completion_tokens: lastUsage.completion_tokens,
@@ -496,7 +496,7 @@ Example output:
 
         // Track failed attempt with cost=0
         const { error: failedUsageError } = await supabase
-          .from('tag_extraction_api_usage')
+          .from('api_usage')
           .insert({
             user_id: userId,
             prompt_tokens: 0,

@@ -329,7 +329,7 @@ Deno.serve(async (req: Request) => {
 
           // Track API usage with OpenRouter's cost
           if (finalUsage) {
-            const { error: usageError } = await supabase.from('coach_api_usage').insert({
+            const { error: usageError } = await supabase.from('api_usage').insert({
               user_id: userId,
               prompt_tokens: finalUsage.prompt_tokens || 0,
               completion_tokens: finalUsage.completion_tokens || 0,
