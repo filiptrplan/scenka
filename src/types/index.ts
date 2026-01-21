@@ -416,6 +416,43 @@ export type CompositeTypes<
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
+// Type aliases for commonly used tables
+export type Climb = Tables<'climbs'>
+export type AnonymizedClimb = Omit<Climb, 'user_id' | 'location'> & {
+  location?: string
+  notes: string
+  date: string
+}
+export type GradeScale = 'font' | 'v_scale' | 'color_circuit'
+export type Discipline = 'boulder' | 'sport'
+export type Outcome = 'Sent' | 'Fail'
+export type Style = 'Slab' | 'Vert' | 'Overhang' | 'Roof' | 'Dyno' | 'Crimp' | 'Sloper' | 'Pinch' | 'Tension'
+export type FailureReason =
+  | 'Pumped'
+  | 'Finger Strength'
+  | 'Core'
+  | 'Power'
+  | 'Bad Feet'
+  | 'Body Position'
+  | 'Beta Error'
+  | 'Precision'
+  | 'Fear'
+  | 'Commitment'
+  | 'Focus'
+export type HoldColor =
+  | 'Teal'
+  | 'Green'
+  | 'Yellow'
+  | 'Orange'
+  | 'Red'
+  | 'Purple'
+  | 'Blue'
+  | 'Pink'
+  | 'White'
+  | 'Black'
+export type TerrainType = 'Slab' | 'Vert' | 'Overhang' | 'Roof' | 'Dyno' | 'Crimp' | 'Sloper' | 'Pinch'
+export type AwkwardnessLevel = 'awkward' | 'normal' | 'smooth'
+
 export const Constants = {
   graphql_public: {
     Enums: {},
