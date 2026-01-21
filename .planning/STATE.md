@@ -9,20 +9,20 @@ See: .planning/PROJECT.md (updated 2026-01-20)
 
 ## Current Position
 
-Phase: Phase 30 - Simplified Logger Foundation (completed 2026-01-21)
-Plan: All 2 plans executed and verified
-Status: Phase complete, ready for Phase 31
-Last activity: 2026-01-21 — Phase 30 verified (9/9 must-haves passed)
+Phase: Phase 31 - AI Tag Extraction Service (in progress 2026-01-21)
+Plan: Plan 01 (Database Migrations) completed, 3 remaining
+Status: Plan 01 complete, migrations pending push to database
+Last activity: 2026-01-21 — Completed 31-01-PLAN.md (3 database migrations created)
 
-Progress: [███      ] 28% (9/32 requirements complete) - v2.1 in progress
+Progress: [███      ] 31% (10/32 requirements complete) - v2.1 in progress
 
 ## Performance Metrics
 
 **Velocity:**
 - Total plans completed (previous milestones): 67
-- v2.1 plans completed: 2
+- v2.1 plans completed: 3
 - Average duration: 9 min
-- Total execution time: 10.1 hours
+- Total execution time: 10.2 hours
 
 **By Phase (All Milestones):**
 
@@ -43,6 +43,7 @@ Progress: [███      ] 28% (9/32 requirements complete) - v2.1 in progress
 | 28 (Chat System Prompt) | 1 | 8 min | 8 min |
 | 29 (Markdown Rendering) | 3 | 6 min | 2 min |
 | 30 (Simplified Logger) | 2 | 5 min | 2 min |
+| 31 (AI Tag Extraction) | 1 | 5 min | 5 min |
 
 **Recent Trend:**
 - Last 5 plans: 3 min
@@ -218,6 +219,10 @@ Recent decisions affecting current work:
 - Phase 30-02: Terrain type as primary classifier - physical characteristics (objective) vs movement patterns (subjective)
 - Phase 30-02: Color-coded awkwardness buttons: green (smooth), white (normal), red (awkward)
 - Phase 30-02: No edit mode support for old climbs yet - defaults terrain_type to 'Vert', awkwardness to 'normal'
+- Phase 31-01: Atomic RPC function increment_tag_count() with UTC midnight reset pattern for quota enforcement
+- Phase 31-01: tag_count column as INTEGER NOT NULL DEFAULT 0 with CHECK constraint (>= 0) for safety
+- Phase 31-01: No INSERT/UPDATE RLS policies on tag_extraction_api_usage - Edge Functions use service role key
+- Phase 31-01: tags_extracted_at nullable column for deduplication - NULL indicates not yet extracted
 - Phase 31: Async tag extraction never blocks save flow - core value is frictionless logging
 - Phase 31: Cost tracking and per-user quotas (50 climbs/day) prevent runaway expenses
 - Phase 31: PII detection before API calls protects user privacy
@@ -246,6 +251,7 @@ None identified yet.
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Completed 30-02-PLAN.md (Build SimplifiedLogger Component)
-Status: Ready to continue with next plan
+Stopped at: Completed 31-01-PLAN.md (Database Migrations for AI Tag Extraction)
+Status: Ready to continue with Phase 31-02 (Edge Function Implementation)
+Note: Migrations created but not yet pushed - requires `npx supabase db push`
 Resume file: None
