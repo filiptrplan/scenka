@@ -35,7 +35,6 @@ export async function triggerTagExtraction(climb: Climb, userId: string): Promis
 
   if (!climb.notes || climb.notes.trim().length === 0) {
     // Skip extraction for climbs without notes
-    console.log(`Skipping tag extraction for climb ${climb.id}: no notes provided`)
     return
   }
 
@@ -59,21 +58,22 @@ export async function triggerTagExtraction(climb: Climb, userId: string): Promis
       ),
     ])
 
-    if (error) {
+    if (error !== null && error !== undefined) {
       // Handle specific error cases
-      if (error instanceof Error && error.message.includes('403')) {
+      const errorMessage = String(error)
+      if (errorMessage.includes('403')) {
         console.error(`Unauthorized tag extraction request for climb ${climb.id}`)
-      } else if (error instanceof Error && error.message.includes('429')) {
-        console.log(`Quota exceeded for user ${userId} (limit: ${DAILY_TAG_LIMIT}/day)`)
+      } else if (errorMessage.includes('429')) {
+        console.error(`Quota exceeded for user ${userId} (limit: ${DAILY_TAG_LIMIT}/day)`)
         // Plan 04 will add toast notification for quota exceeded
-      } else if (error instanceof Error && error.message.includes('timeout')) {
-        console.error(`Tag extraction timeout for climb ${climb.id}: ${error.message}`)
-      } else if (error instanceof Error && error.message.includes('Network')) {
-        console.error(`Network error triggering extraction for climb ${climb.id}: ${error.message}`)
+      } else if (errorMessage.includes('timeout')) {
+        console.error(`Tag extraction timeout for climb ${climb.id}: ${errorMessage}`)
+      } else if (errorMessage.includes('Network')) {
+        console.error(`Network error triggering extraction for climb ${climb.id}: ${errorMessage}`)
       } else {
         console.error(`Tag extraction error for climb ${climb.id}:`, error)
       }
-    } else if (data) {
+    } else if (data !== null && data !== undefined) {
       console.log(`Tag extraction triggered successfully for climb ${climb.id}:`, data)
     }
   } catch (err) {
