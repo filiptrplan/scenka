@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-01-20)
 ## Current Position
 
 Phase: Phase 31 - AI Tag Extraction Service (in progress 2026-01-21)
-Plan: Plan 01 (Database Migrations) completed, 3 remaining
-Status: Plan 01 complete, migrations pending push to database
-Last activity: 2026-01-21 — Completed 31-01-PLAN.md (3 database migrations created)
+Plan: Plan 02 (Edge Function Implementation) completed, 2 remaining
+Status: Plan 02 complete, Edge Function created but not yet deployed
+Last activity: 2026-01-21 — Completed 31-02-PLAN.md (AI tag extraction Edge Function implemented)
 
-Progress: [███      ] 31% (10/32 requirements complete) - v2.1 in progress
+Progress: [███      ] 34% (11/32 requirements complete) - v2.1 in progress
 
 ## Performance Metrics
 
@@ -43,10 +43,10 @@ Progress: [███      ] 31% (10/32 requirements complete) - v2.1 in progress
 | 28 (Chat System Prompt) | 1 | 8 min | 8 min |
 | 29 (Markdown Rendering) | 3 | 6 min | 2 min |
 | 30 (Simplified Logger) | 2 | 5 min | 2 min |
-| 31 (AI Tag Extraction) | 1 | 5 min | 5 min |
+| 31 (AI Tag Extraction) | 2 | 10 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 3 min
+- Last 5 plans: 4 min
 - Trend: Steady
 
 *Updated after each plan completion*
@@ -223,6 +223,15 @@ Recent decisions affecting current work:
 - Phase 31-01: tag_count column as INTEGER NOT NULL DEFAULT 0 with CHECK constraint (>= 0) for safety
 - Phase 31-01: No INSERT/UPDATE RLS policies on tag_extraction_api_usage - Edge Functions use service role key
 - Phase 31-01: tags_extracted_at nullable column for deduplication - NULL indicates not yet extracted
+- Phase 31-02: PII anonymization module in supabase/functions/_shared/anonymize.ts removes gym/crag names, emails, phones, URLs, IPs before API calls
+- Phase 31-02: OpenRouter tag extraction uses separate OPENROUTER_TAG_MODEL env var (no default) for independent model configuration
+- Phase 31-02: Tag extraction uses low temperature (0.2) for consistent, deterministic output (vs 0.6 for creative coach)
+- Phase 31-02: Token estimation and proportional truncation (max 1000 tokens) controls cost while preserving content structure
+- Phase 31-02: Confidence threshold (70%) filters extracted tags - only high-confidence tags returned to user
+- Phase 31-02: Non-blocking response pattern - always returns success (climb saved), tags optional via tags_extracted flag
+- Phase 31-02: Retry logic (2 attempts, exponential backoff 1s/2s) handles transient API failures
+- Phase 31-02: API duration measurement with performance logging warns if exceeds 3-second target (EXTR-07)
+- Phase 31-02: Track cost via OpenRouter usage.cost field after successful API call (no manual calculation)
 - Phase 31: Async tag extraction never blocks save flow - core value is frictionless logging
 - Phase 31: Cost tracking and per-user quotas (50 climbs/day) prevent runaway expenses
 - Phase 31: PII detection before API calls protects user privacy
@@ -251,7 +260,7 @@ None identified yet.
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Completed 31-01-PLAN.md (Database Migrations for AI Tag Extraction)
-Status: Ready to continue with Phase 31-02 (Edge Function Implementation)
-Note: Migrations created but not yet pushed - requires `npx supabase db push`
+Stopped at: Completed 31-02-PLAN.md (Edge Function Implementation)
+Status: Ready to continue with Phase 31-03 (Client-side Integration)
+Note: Edge Function created but not yet deployed - requires `npx supabase functions deploy openrouter-tag-extract --no-verify-jwt`
 Resume file: None
