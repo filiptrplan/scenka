@@ -9,6 +9,7 @@ Scenka is a personal, privacy-focused mobile PWA for recreational boulderers who
 - **v1.0 Hold Color Feature** — Phases 1-4 (shipped 2026-01-15)
 - **v1.1 UX & Analytics** — Phases 5-17 (shipped 2026-01-17)
 - **v2.0 AI Coach** — Phases 18-29 (shipped 2026-01-20)
+- **v2.1 Simplified Logging + AI Auto-Tagging** — Phases 30-33 (in progress)
 
 ## Phases
 
@@ -56,10 +57,34 @@ Scenka is a personal, privacy-focused mobile PWA for recreational boulderers who
 
 </details>
 
+<details>
+<summary>🚧 v2.1 Simplified Logging + AI Auto-Tagging (Phases 30-33) — IN PROGRESS</summary>
+
+- [ ] Phase 30: Simplified Logger Foundation (0/9 requirements) — not started
+- [ ] Phase 31: AI Tag Extraction Service (0/8 requirements) — not started
+- [ ] Phase 32: Tag Display & Editing (0/6 requirements) — not started
+- [ ] Phase 33: Offline Support & Analytics Integration (0/9 requirements) — not started
+
+**Goal:** Simplify climb logging to reduce friction while using AI to auto-extract tags from notes for analytics.
+
+**Key Features:**
+- Simplified logger form: grade, outcome, terrain type (8 options), awkwardness (3 options: awkward/normal/smooth), notes
+- AI-powered auto-tagging: analyze notes on save and extract relevant tags automatically
+- Reduced friction: eliminate multi-select decisions from logging flow
+- Notes as primary source: rich free-form text captures everything, AI categorizes for patterns
+- Offline-first: AI extraction queued when offline, processed when online
+
+</details>
+
 ## Progress
 
-| Phase | Milestone | Plans Complete | Status      | Completed  |
-|-------|-----------|----------------|--------------|------------|
-| 1-4   | v1.0      | 6/6            | Complete     | 2026-01-15 |
-| 5-17  | v1.1      | 23/23           | Complete     | 2026-01-17 |
-| 18-29  | v2.0      | 47/47           | Complete     | 2026-01-20 |
+| Phase | Milestone | Requirements Complete | Status      | Completed  |
+|-------|-----------|----------------------|--------------|------------|
+| 1-4   | v1.0      | N/A                  | Complete     | 2026-01-15 |
+| 5-17  | v1.1      | N/A                  | Complete     | 2026-01-17 |
+| 18-29 | v2.0      | N/A                  | Complete     | 2026-01-20 |
+| 30-33 | v2.1      | 0/32                 | Not Started  | -          |
+
+---
+
+*Last updated: 2026-01-20*

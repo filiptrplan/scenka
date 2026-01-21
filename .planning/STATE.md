@@ -5,25 +5,25 @@
 See: .planning/PROJECT.md (updated 2026-01-20)
 
 **Core value:** Quick, frictionless climb logging
-**Current focus:** Planning next milestone
+**Current focus:** Planning v2.1 milestone (Simplified Logging + AI Auto-Tagging)
 
 ## Current Position
 
-Phase: Next phase not started
+Phase: Phase 30 - Simplified Logger Foundation (not started)
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-01-20 — v2.0 milestone complete
+Last activity: 2026-01-20 — v2.1 roadmap created
 
-Progress: [██████████] 100% (67/67 plans complete) - v2.0 shipped
+Progress: [          ] 0% (0/32 requirements complete) - v2.1 not started
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 67 (v1.0 + v1.1 + v2.0 phase 18-29)
+- Total plans completed (previous milestones): 67
 - Average duration: 9 min
 - Total execution time: 10.1 hours
 
-**By Phase:**
+**By Phase (Previous Milestones):**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
@@ -55,6 +55,7 @@ Progress: [██████████] 100% (67/67 plans complete) - v2.0 sh
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+**Previous Milestone Decisions (v1.0-v2.0):**
 - Phase 18-01: Used JSONB for recommendation content to support schema evolution
 - Phase 18-01: Added separate columns (generation_date, time_window_start) for frequently queried fields
 - Phase 18-01: Created GIN indexes on JSONB columns using jsonb_path_ops operator class
@@ -208,32 +209,38 @@ Recent decisions affecting current work:
 - Phase 29-03: rehypeHighlight plugin added to remarkPlugins array for syntax coloring (after remarkGfm for proper composition)
 - Phase 29-03: github-dark.css theme imported for syntax highlighting (matches app's dark theme)
 
+**Current Milestone Decisions (v2.1):**
+- Phase 30: Simplified logger form removes manual tag selectors, preserves v1.1 auto-reset behavior
+- Phase 30: Terrain type uses 8 standard options (Slab, Vert, Overhang, Roof, Dyno, Crimp, Sloper, Pinch)
+- Phase 30: Awkwardness simplified to 3 options (awkward/normal/smooth) instead of 5-point scale
+- Phase 31: Async tag extraction never blocks save flow - core value is frictionless logging
+- Phase 31: Cost tracking and per-user quotas (50 climbs/day) prevent runaway expenses
+- Phase 31: PII detection before API calls protects user privacy
+- Phase 32: Tag confirmation dialog with grouped display (styles vs failure reasons)
+- Phase 32: Single-tap tag editing, explicit save button prevents accidental removal
+- Phase 33: Offline queue extended with tags_pending_sync flag
+- Phase 33: Analytics work unchanged with AI-extracted tags (data pipeline consistency)
+
 ### Pending Todos
 
 None yet.
 
 ### Blockers/Concerns
 
-- **Edge Function deployment (UPDATED):** User must run `supabase functions deploy openrouter-chat` to deploy updated system prompt with recommendations support (after Phase 28-01). Also run `supabase functions deploy openrouter-coach` for projecting focus (if not already deployed)
-- **OPENROUTER_MODEL required:** User must set OPENROUTER_MODEL environment variable via `supabase secrets set OPENROUTER_MODEL=google/gemini-2.5-pro` (documented in 22-01 SUMMARY)
-- **OpenRouter API key required:** User must configure OPENROUTER_API_KEY in Supabase Dashboard before Edge Function works (documented in 20-01 SUMMARY)
-- **Database migration required:** User must run `npx supabase db push` to apply climbing_context migration to profiles table (documented in 25-01 SUMMARY)
-- **Screenshots need capture:** README includes TODO comments for screenshot capture that need to be fulfilled (coach page, chat page)
+None identified yet.
 
 ### Roadmap Evolution
 
-- Phase 22 added: OpenRouter model configuration via environment variables
-- Phase 23 added: Refocus coach on technique (review system prompt and data passed to coach)
-- Phase 24 added: Projecting focus recommendations to help users select boulders to project on each week
-- Phase 25 added: User climbing context for prompts (allow users to describe what kind of climber they are)
-- Phase 26 added: Update README with the work done in this milestone
-- Phase 27 added: Impose daily limit of 2 recommendation generations and 10 chat messages per day
-- Phase 28 added: Rework chat system prompt and data context (include latest recommendations in chatbot context)
-- Phase 29 added: Add markdown rendering to chat bubbles for better formatted responses
+**v2.1 Changes:**
+- Phase 30 added: Simplified Logger Foundation (9 requirements)
+- Phase 31 added: AI Tag Extraction Service (8 requirements)
+- Phase 32 added: Tag Display & Editing (6 requirements)
+- Phase 33 added: Offline Support & Analytics Integration (9 requirements)
+- Total: 32 requirements across 4 phases
 
 ## Session Continuity
 
 Last session: 2026-01-20
-Stopped at: Completed Phase 29-03: Wire Up rehype-highlight for Syntax Highlighting
-Status: Project complete (67/67 plans finished)
+Stopped at: Roadmap created for v2.1 milestone
+Status: Ready to start Phase 30 planning
 Resume file: None

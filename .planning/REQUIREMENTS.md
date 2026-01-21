@@ -96,44 +96,44 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SIMP-01 | Phase 1 | Pending |
-| SIMP-02 | Phase 1 | Pending |
-| SIMP-03 | Phase 1 | Pending |
-| SIMP-04 | Phase 1 | Pending |
-| SIMP-05 | Phase 1 | Pending |
-| SIMP-06 | Phase 1 | Pending |
-| SIMP-07 | Phase 1 | Pending |
-| SIMP-08 | Phase 1 | Pending |
-| SIMP-09 | Phase 1 | Pending |
-| EXTR-01 | Phase 2 | Pending |
-| EXTR-02 | Phase 2 | Pending |
-| EXTR-03 | Phase 2 | Pending |
-| EXTR-04 | Phase 2 | Pending |
-| EXTR-05 | Phase 2 | Pending |
-| EXTR-06 | Phase 2 | Pending |
-| EXTR-07 | Phase 2 | Pending |
-| EXTR-08 | Phase 2 | Pending |
-| DISP-01 | Phase 3 | Pending |
-| DISP-02 | Phase 3 | Pending |
-| DISP-03 | Phase 3 | Pending |
-| DISP-04 | Phase 3 | Pending |
-| DISP-05 | Phase 3 | Pending |
-| DISP-06 | Phase 3 | Pending |
-| OFFL-01 | Phase 4 | Pending |
-| OFFL-02 | Phase 4 | Pending |
-| OFFL-03 | Phase 4 | Pending |
-| OFFL-04 | Phase 4 | Pending |
-| OFFL-05 | Phase 4 | Pending |
-| ANAL-01 | Phase 4 | Pending |
-| ANAL-02 | Phase 4 | Pending |
-| ANAL-03 | Phase 4 | Pending |
-| ANAL-04 | Phase 4 | Pending |
+| SIMP-01 | Phase 30 | Pending |
+| SIMP-02 | Phase 30 | Pending |
+| SIMP-03 | Phase 30 | Pending |
+| SIMP-04 | Phase 30 | Pending |
+| SIMP-05 | Phase 30 | Pending |
+| SIMP-06 | Phase 30 | Pending |
+| SIMP-07 | Phase 30 | Pending |
+| SIMP-08 | Phase 30 | Pending |
+| SIMP-09 | Phase 30 | Pending |
+| EXTR-01 | Phase 31 | Pending |
+| EXTR-02 | Phase 31 | Pending |
+| EXTR-03 | Phase 31 | Pending |
+| EXTR-04 | Phase 31 | Pending |
+| EXTR-05 | Phase 31 | Pending |
+| EXTR-06 | Phase 31 | Pending |
+| EXTR-07 | Phase 31 | Pending |
+| EXTR-08 | Phase 31 | Pending |
+| DISP-01 | Phase 32 | Pending |
+| DISP-02 | Phase 32 | Pending |
+| DISP-03 | Phase 32 | Pending |
+| DISP-04 | Phase 32 | Pending |
+| DISP-05 | Phase 32 | Pending |
+| DISP-06 | Phase 32 | Pending |
+| OFFL-01 | Phase 33 | Pending |
+| OFFL-02 | Phase 33 | Pending |
+| OFFL-03 | Phase 33 | Pending |
+| OFFL-04 | Phase 33 | Pending |
+| OFFL-05 | Phase 33 | Pending |
+| ANAL-01 | Phase 33 | Pending |
+| ANAL-02 | Phase 33 | Pending |
+| ANAL-03 | Phase 33 | Pending |
+| ANAL-04 | Phase 33 | Pending |
 
 **Coverage:**
-- v1.1 requirements: 28 total
-- Mapped to phases: 0 (roadmap will populate)
-- Unmapped: 28 ⚠️
+- v1.1 requirements: 32 total
+- Mapped to phases: 32
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-20*
-*Last updated: 2026-01-20 after initial definition*
+*Last updated: 2026-01-20 after roadmap creation*
