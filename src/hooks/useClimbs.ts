@@ -58,10 +58,19 @@ export function useCreateClimb() {
 
         return oldData.map((climb) => {
           if (climb.id === climbId) {
+            // Merge AI tags with existing tags (deduplicate)
+            const mergedStyles = result.style
+              ? [...new Set([...(climb.style || []), ...result.style])]
+              : climb.style
+
+            const mergedFailureReasons = result.failure_reasons
+              ? [...new Set([...(climb.failure_reasons || []), ...result.failure_reasons])]
+              : climb.failure_reasons
+
             return {
               ...climb,
-              style: result.style ?? climb.style,
-              failure_reasons: result.failure_reasons ?? climb.failure_reasons,
+              style: mergedStyles,
+              failure_reasons: mergedFailureReasons,
               tags_extracted_at: new Date().toISOString(),
             }
           }

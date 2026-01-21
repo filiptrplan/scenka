@@ -445,12 +445,27 @@ Example output:
           `Extracted tags for climb ${body.climb_id}: ${styleTags.length} styles, ${failureReasons.length} failure reasons`
         )
 
-        // Update climb with extracted tags
+        // Fetch existing tags to merge with AI tags
+        const { data: existingClimb } = await supabase
+          .from('climbs')
+          .select('style, failure_reasons')
+          .eq('id', body.climb_id)
+          .single()
+
+        // Merge tags (union, deduplicated)
+        const mergedStyles = [
+          ...new Set([...(existingClimb?.style || []), ...styleTags]),
+        ]
+        const mergedFailureReasons = [
+          ...new Set([...(existingClimb?.failure_reasons || []), ...failureReasons]),
+        ]
+
+        // Update climb with merged tags
         const { error: updateError } = await supabase
           .from('climbs')
           .update({
-            style: styleTags,
-            failure_reasons: failureReasons,
+            style: mergedStyles,
+            failure_reasons: mergedFailureReasons,
             tags_extracted_at: new Date().toISOString(),
           })
           .eq('id', body.climb_id)
@@ -484,8 +499,8 @@ Example output:
           JSON.stringify({
             success: true,
             tags_extracted: true,
-            style: styleTags,
-            failure_reasons: failureReasons,
+            style: mergedStyles,
+            failure_reasons: mergedFailureReasons,
           }),
           {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
