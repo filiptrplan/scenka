@@ -9,15 +9,15 @@ Requirements for simplified logging + AI auto-tagging. Each maps to roadmap phas
 
 ### Simplified Logger
 
-- [ ] **SIMP-01**: User can log climb with grade scale and grade value
-- [ ] **SIMP-02**: User can log climb with outcome (Sent/Fail)
-- [ ] **SIMP-03**: User can log climb with terrain type from 8 options
-- [ ] **SIMP-04**: User can log climb with awkwardness (3 options: awkward/normal/smooth)
-- [ ] **SIMP-05**: User can log climb with free-form notes (primary data source)
-- [ ] **SIMP-06**: Logger form does NOT include manual style tags selector
-- [ ] **SIMP-07**: Logger form does NOT include manual failure reasons selector
-- [ ] **SIMP-08**: Form validates all required fields before submission
-- [ ] **SIMP-09**: Form auto-resets after successful submission (preserve v1.1 behavior)
+- [x] **SIMP-01**: User can log climb with grade scale and grade value
+- [x] **SIMP-02**: User can log climb with outcome (Sent/Fail)
+- [x] **SIMP-03**: User can log climb with terrain type from 8 options
+- [x] **SIMP-04**: User can log climb with awkwardness (3 options: awkward/normal/smooth)
+- [x] **SIMP-05**: User can log climb with free-form notes (primary data source)
+- [x] **SIMP-06**: Logger form does NOT include manual style tags selector
+- [x] **SIMP-07**: Logger form does NOT include manual failure reasons selector
+- [x] **SIMP-08**: Form validates all required fields before submission
+- [x] **SIMP-09**: Form auto-resets after successful submission (preserve v1.1 behavior)
 
 ### AI Tag Extraction
 
@@ -96,15 +96,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SIMP-01 | Phase 30 | Pending |
-| SIMP-02 | Phase 30 | Pending |
-| SIMP-03 | Phase 30 | Pending |
-| SIMP-04 | Phase 30 | Pending |
-| SIMP-05 | Phase 30 | Pending |
-| SIMP-06 | Phase 30 | Pending |
-| SIMP-07 | Phase 30 | Pending |
-| SIMP-08 | Phase 30 | Pending |
-| SIMP-09 | Phase 30 | Pending |
+| SIMP-01 | Phase 30 | Complete |
+| SIMP-02 | Phase 30 | Complete |
+| SIMP-03 | Phase 30 | Complete |
+| SIMP-04 | Phase 30 | Complete |
+| SIMP-05 | Phase 30 | Complete |
+| SIMP-06 | Phase 30 | Complete |
+| SIMP-07 | Phase 30 | Complete |
+| SIMP-08 | Phase 30 | Complete |
+| SIMP-09 | Phase 30 | Complete |
 | EXTR-01 | Phase 31 | Pending |
 | EXTR-02 | Phase 31 | Pending |
 | EXTR-03 | Phase 31 | Pending |

@@ -60,9 +60,7 @@ Scenka is a personal, privacy-focused mobile PWA for recreational boulderers who
 <details>
 <summary>🚧 v2.1 Simplified Logging + AI Auto-Tagging (Phases 30-33) — IN PROGRESS</summary>
 
-- [ ] Phase 30: Simplified Logger Foundation (2/2 plans, 1 wave)
-  - [ ] 30-01-PLAN.md — Create simplified validation schema and constants
-  - [ ] 30-02-PLAN.md — Build simplified logger component
+- [x] Phase 30: Simplified Logger Foundation (2/2 plans, 1 wave) — completed 2026-01-21
 - [ ] Phase 31: AI Tag Extraction Service (0/8 requirements) — not started
 - [ ] Phase 32: Tag Display & Editing (0/6 requirements) — not started
 - [ ] Phase 33: Offline Support & Analytics Integration (0/9 requirements) — not started
@@ -85,7 +83,7 @@ Scenka is a personal, privacy-focused mobile PWA for recreational boulderers who
 | 1-4   | v1.0      | N/A                  | Complete     | 2026-01-15 |
 | 5-17  | v1.1      | N/A                  | Complete     | 2026-01-17 |
 | 18-29 | v2.0      | N/A                  | Complete     | 2026-01-20 |
-| 30-33 | v2.1      | 0/32                 | Not Started  | -          |
+| 30-33 | v2.1      | 9/32                 | In Progress  | -          |
 
 ---
 
