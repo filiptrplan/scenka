@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import type { HoldColor } from '@/types'
+import { TERRAIN_OPTIONS, AWKWARDNESS_OPTIONS } from '@/lib/constants'
 
 export const DEFAULT_COLORS: HoldColor[] = ['red', 'green', 'blue', 'yellow', 'orange', 'purple', 'pink']
 
@@ -89,6 +90,25 @@ export const profileSchema = z.object({
 })
 
 export type UpdateProfileInput = z.infer<typeof profileSchema>
+
+export const simplifiedClimbSchema = z.object({
+  location: z.string().min(1, 'Location is required'),
+  climb_type: z.enum(['boulder', 'sport']),
+  grade_scale: z.enum(['font', 'v_scale', 'color_circuit']),
+  grade_value: z
+    .any()
+    .refine((val) => val !== undefined && val !== '', {
+      message: 'You must select a grade',
+    })
+    .pipe(z.string()),
+  hold_color: z.enum(['red', 'green', 'blue', 'yellow', 'black', 'white', 'orange', 'purple', 'pink', 'teal']).optional(),
+  outcome: z.enum(['Sent', 'Fail']),
+  terrain_type: z.enum(TERRAIN_OPTIONS),
+  awkwardness: z.enum(AWKWARDNESS_OPTIONS),
+  notes: z.string().optional(),
+})
+
+export type SimplifiedClimbInput = z.infer<typeof simplifiedClimbSchema>
 
 export const onboardingSchema = z.object({
   preferred_grade_scale: z.enum(['font', 'v_scale', 'color_circuit']),
