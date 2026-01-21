@@ -3,6 +3,21 @@ import { supabase } from '@/lib/supabase'
 import type { Climb } from '@/types'
 
 /**
+ * Error type for tag extraction failures.
+ * Used by UI to display appropriate user feedback messages.
+ */
+export type TagExtractionErrorType = 'quota_exceeded' | 'api_error' | 'network_error' | 'unknown'
+
+/**
+ * Result from tag extraction trigger.
+ * Service layer returns error type, UI handles toast display.
+ */
+export interface TagExtractionResult {
+  success: boolean
+  errorType?: TagExtractionErrorType
+}
+
+/**
  * Triggers asynchronous AI tag extraction for a newly saved climb.
  *
  * This function calls the Edge Function which:
@@ -19,23 +34,23 @@ import type { Climb } from '@/types'
  * @param climb - The climb object (must have id and notes)
  * @param userId - The authenticated user ID
  *
- * @returns Promise<void> - Resolves immediately (fire-and-forget pattern)
+ * @returns Promise<TagExtractionResult> - Result object with success flag and optional error type
  */
-export async function triggerTagExtraction(climb: Climb, userId: string): Promise<void> {
+export async function triggerTagExtraction(climb: Climb, userId: string): Promise<TagExtractionResult> {
   if (!supabase) {
     console.error('Cannot trigger tag extraction: Supabase client not configured')
-    return
+    return { success: false, errorType: 'unknown' }
   }
 
   // Validate climb has required fields
   if (!climb.id) {
     console.error('Cannot trigger tag extraction: climb.id is missing')
-    return
+    return { success: false, errorType: 'unknown' }
   }
 
   if (!climb.notes || climb.notes.trim().length === 0) {
     // Skip extraction for climbs without notes
-    return
+    return { success: true }
   }
 
   try {
@@ -63,22 +78,36 @@ export async function triggerTagExtraction(climb: Climb, userId: string): Promis
       const errorMessage = String(error)
       if (errorMessage.includes('403')) {
         console.error(`Unauthorized tag extraction request for climb ${climb.id}`)
+        return { success: false, errorType: 'api_error' }
       } else if (errorMessage.includes('429')) {
         console.error(`Quota exceeded for user ${userId} (limit: ${DAILY_TAG_LIMIT}/day)`)
-        // Plan 04 will add toast notification for quota exceeded
+        return { success: false, errorType: 'quota_exceeded' }
       } else if (errorMessage.includes('timeout')) {
         console.error(`Tag extraction timeout for climb ${climb.id}: ${errorMessage}`)
-      } else if (errorMessage.includes('Network')) {
+        return { success: false, errorType: 'network_error' }
+      } else if (errorMessage.includes('Network') || errorMessage.includes('fetch')) {
         console.error(`Network error triggering extraction for climb ${climb.id}: ${errorMessage}`)
+        return { success: false, errorType: 'network_error' }
       } else {
         console.error(`Tag extraction error for climb ${climb.id}:`, error)
+        return { success: false, errorType: 'api_error' }
       }
     } else if (data !== null && data !== undefined) {
       console.log(`Tag extraction triggered successfully for climb ${climb.id}:`, data)
+      return { success: true }
     }
+
+    return { success: true }
   } catch (err) {
     // Catch-all error handler - extraction failure should never break climb save
     const errorMessage = err instanceof Error ? err.message : String(err)
     console.error(`Failed to trigger tag extraction for climb ${climb.id}:`, errorMessage)
+
+    // Determine error type based on message
+    if (errorMessage.includes('Network') || errorMessage.includes('fetch') || errorMessage.includes('timeout')) {
+      return { success: false, errorType: 'network_error' }
+    }
+
+    return { success: false, errorType: 'unknown' }
   }
 }
