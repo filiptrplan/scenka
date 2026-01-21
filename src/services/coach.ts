@@ -86,7 +86,7 @@ export async function checkUserRateLimit(userId: string): Promise<{
   const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
 
   const { data: usage, error } = await supabase
-    .from('coach_api_usage')
+    .from('api_usage')
     .select('total_tokens')
     .eq('user_id', userId)
     .gte('created_at', dayAgo)
