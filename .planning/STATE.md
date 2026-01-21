@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-01-20)
 ## Current Position
 
 Phase: Phase 31 - AI Tag Extraction Service (in progress 2026-01-21)
-Plan: Plan 04 (User Feedback and Edge Function Deployment) completed, 0 remaining
-Status: Plan 04 complete, Error handling and quota indicator implemented, Edge Function not yet deployed
-Last activity: 2026-01-21 — Completed 31-04-PLAN.md (User feedback and error handling)
+Plan: Plan 05 (Quota Exceeded Toast Integration) completed, 0 remaining
+Status: Plan 05 complete, Quota exceeded toast wired to climb save, Edge Function not yet deployed
+Last activity: 2026-01-21 — Completed 31-05-PLAN.md (Quota toast integration)
 
 Progress: [████████ ] 62% (20/32 requirements complete) - v2.1 in progress
 
@@ -20,9 +20,9 @@ Progress: [████████ ] 62% (20/32 requirements complete) - v2.1 i
 
 **Velocity:**
 - Total plans completed (previous milestones): 67
-- v2.1 plans completed: 4
+- v2.1 plans completed: 5
 - Average duration: 8 min
-- Total execution time: 10.4 hours
+- Total execution time: 10.5 hours
 
 **By Phase (All Milestones):**
 
@@ -43,7 +43,7 @@ Progress: [████████ ] 62% (20/32 requirements complete) - v2.1 i
 | 28 (Chat System Prompt) | 1 | 8 min | 8 min |
 | 29 (Markdown Rendering) | 3 | 6 min | 2 min |
 | 30 (Simplified Logger) | 2 | 5 min | 2 min |
-| 31 (AI Tag Extraction) | 4 | 20 min | 5 min |
+| 31 (AI Tag Extraction) | 5 | 23 min | 5 min |
 
 **Recent Trend:**
 - Last 5 plans: 4 min
@@ -237,6 +237,10 @@ Recent decisions affecting current work:
 - Phase 31-04: Quota indicator (X/50) displays in simplified logger form below submit button
 - Phase 31-04: TanStack Query for quota tracking with staleTime: 0 ensures fresh data
 - Phase 31-04: Non-blocking error handling - tag extraction failures logged but don't break climb save flow
+- Phase 31-05: Quota exceeded toast wired to App.tsx climb save flow via useTagExtractionFeedback hook
+- Phase 31-05: Toast trigger on save success after "Climb logged successfully" message
+- Phase 31-05: Explicit boolean check (isQuotaReached === true) for ESLint compliance
+- Phase 31-05: Toast shows warning message with time until reset from getTimeUntilNextReset()
 - Phase 31: Async tag extraction never blocks save flow - core value is frictionless logging
 - Phase 31: Cost tracking and per-user quotas (50 climbs/day) prevent runaway expenses
 - Phase 31: PII detection before API calls protects user privacy
@@ -251,7 +255,7 @@ None yet.
 
 ### Blockers/Concerns
 
-**Plan 31-04 Note:** Toast notifications for extraction errors are implemented in useTagExtractionFeedback hook but not yet wired to climb save flow in App.tsx. Optional: Call showExtractionError() in handleClimbSubmit after successful save to show extraction errors immediately. This is a minor integration task, not a blocker.
+**Plan 31-05 Note:** Quota exceeded toast notification is now fully integrated. Other extraction error types (api_error, network_error) remain logged but not shown to users pending architectural decision. Options: (1) Modify service API to return extractionError (breaking change), (2) Implement event emitter, (3) Use global state store (Zustand). This is optional, not a blocker.
 
 ### Roadmap Evolution
 
@@ -265,7 +269,7 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-21
-Stopped at: Completed 31-04-PLAN.md (User feedback and error handling)
-Status: Ready to continue with Phase 31-04 completion, or Phase 32-01 (Tag Display UI)
-Note: Edge Function created and client wired, but not yet deployed - requires `npx supabase functions deploy openrouter-tag-extract --no-verify-jwt`. Toast error handling implemented but not yet wired to App.tsx save handler.
+Stopped at: Completed 31-05-PLAN.md (Quota exceeded toast integration)
+Status: Phase 31 complete. Ready to proceed with Phase 32 (Tag Display & Editing) or Edge Function deployment.
+Note: Edge Function created and client wired, but not yet deployed - requires `npx supabase functions deploy openrouter-tag-extract --no-verify-jwt`. Quota exceeded toast now integrated into climb save flow.
 Resume file: None
