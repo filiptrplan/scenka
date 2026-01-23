@@ -194,13 +194,10 @@ Deno.serve(async (req: Request) => {
 
   // Only accept POST requests
   if (req.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed', success: false }),
-      {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    )
+    return new Response(JSON.stringify({ error: 'Method not allowed', success: false }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 
   let userId: string | null = null
@@ -209,13 +206,10 @@ Deno.serve(async (req: Request) => {
     // Extract and validate JWT token
     const authHeader = req.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     const token = authHeader.replace('Bearer ', '')
@@ -227,13 +221,10 @@ Deno.serve(async (req: Request) => {
     } = await supabase.auth.getUser(token)
 
     if (claimsError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid or expired token' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     userId = user.id
@@ -256,13 +247,10 @@ Deno.serve(async (req: Request) => {
 
     // Verify user_id matches token
     if (body.user_id !== userId) {
-      return new Response(
-        JSON.stringify({ error: 'User ID mismatch' }),
-        {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'User ID mismatch' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     // Check daily tag limit BEFORE making any API calls
@@ -330,7 +318,8 @@ Deno.serve(async (req: Request) => {
     const anonymizedNotes = anonymizeNotes(notes)
 
     // System prompt for tag extraction
-    const systemPrompt = `Extract climbing tags from the user's notes. Return ONLY raw JSON with no markdown code blocks, no explanations, no additional text.
+    const systemPrompt = `
+Extract climbing tags from the user's notes. Return ONLY raw JSON with no markdown code blocks, no explanations, no additional text.
 
 Output format:
 {
@@ -355,23 +344,39 @@ Valid style tags (use exactly these words):
 - \`Pinch\`: Holds gripped between thumb and fingers
 
 Valid failure reasons (use exactly these words):
-
-Physical:
-- \`Pumped\`: Forearm fatigue causing inability to hold on
-- \`Finger Strength\`: Insufficient finger power for small holds
-- \`Core\`: Inability to maintain body position due to weak core
-- \`Power\`: Lack of explosive strength for difficult moves
-
-Technical:
 - \`Bad Feet\`: Poor foot placement or foot slipping
 - \`Body Position\`: Suboptimal body positioning relative to the wall
 - \`Beta Error\`: Wrong sequence of moves or technique
 - \`Precision\`: Difficulty hitting small or distant holds accurately
-
-Mental:
-- \`Fear\`: Anxiety about falling or injury affecting performance
-- \`Commitment\`: Hesitation or lack of full commitment to moves
+- \`Precision (Feet)\`: Specifically inaccurate foot placement
+- \`Precision (Hands)\`: Specifically inaccurate hand placement
+- \`Coordination (Hands)\`: Difficulty timing or executing hand movements
+- \`Coordination (Feet)\`: Difficulty timing or executing foot movements
+- \`Foot Swap\`: Difficulty swapping feet on the same hold
+- \`Heel Hook\`: Failed or improper heel hook technique
+- \`Toe Hook\`: Failed or improper toe hook technique
+- \`Rockover\`: Difficulty executing rockover move (standing up on high foothold)
+- \`Pistol Squat\`: Insufficient single-leg strength for high steps
+- \`Drop Knee\`: Failed or improper drop knee technique
+- \`Twist Lock\`: Difficulty with hip twist and lock-off positions
+- \`Flagging\`: Poor flagging technique for balance
+- \`Dyno\`: Failed dynamic jumping movement
+- \`Deadpoint\`: Failed controlled dynamic movement
+- \`Latch\`: Difficulty catching or sticking dynamic moves
+- \`Mantle\`: Failed or improper mantle technique
+- \`Undercling\`: Failed or improper undercling technique
+- \`Gaston\`: Failed or improper gaston technique
+- \`Match\`: Difficulty matching hands or feet on same hold
+- \`Cross\`: Difficulty with cross-through moves
+- \`Pumped\`: Forearm fatigue causing inability to hold on
+- \`Finger Strength\`: Insufficient finger power for small holds
+- \`Core\`: Inability to maintain body position due to weak core
+- \`Power\`: Lack of explosive strength for difficult moves
+- \`Flexibility\`: Limited range of motion preventing optimal positioning
+- \`Balance\`: Inability to maintain equilibrium on the wall
+- \`Endurance\`: Overall fatigue over the course of the climb
 - \`Focus\`: Loss of concentration or mind wandering
+- \`Commitment\`: Hesitation or lack of full commitment to moves
 
 Rules:
 - Return ONLY the JSON object, nothing else
@@ -386,7 +391,8 @@ Example output:
 {
   "style_tags": [{"name": "Crimp", "confidence": 85}],
   "failure_reasons": [{"name": "Pumped", "confidence": 90}]
-}`
+}
+`
 
     // User message with notes
     const userMessage = `Notes: ${anonymizedNotes}`
@@ -453,9 +459,7 @@ Example output:
           .single()
 
         // Merge tags (union, deduplicated)
-        const mergedStyles = [
-          ...new Set([...(existingClimb?.style || []), ...styleTags]),
-        ]
+        const mergedStyles = [...new Set([...(existingClimb?.style || []), ...styleTags])]
         const mergedFailureReasons = [
           ...new Set([...(existingClimb?.failure_reasons || []), ...failureReasons]),
         ]
