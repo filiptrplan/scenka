@@ -445,13 +445,10 @@ Deno.serve(async (req: Request) => {
 
   // Only accept POST requests
   if (req.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed', success: false }),
-      {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    )
+    return new Response(JSON.stringify({ error: 'Method not allowed', success: false }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 
   let userId: string | null = null
@@ -460,13 +457,10 @@ Deno.serve(async (req: Request) => {
     // Extract and validate JWT token
     const authHeader = req.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     const token = authHeader.replace('Bearer ', '')
@@ -478,38 +472,34 @@ Deno.serve(async (req: Request) => {
     } = await supabase.auth.getUser(token)
 
     if (claimsError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid or expired token' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     userId = user.id
 
     // Check daily recommendation limit BEFORE making any API calls
-    const { data: limits, error: limitsError } = await supabase
-      .from('user_limits')
-      .select('rec_count, limit_date')
-      .eq('user_id', userId)
-      .maybeSingle() // Use maybeSingle() for users without limits yet
+    const today = new Date()
+    today.setUTCHours(0, 0, 0, 0)
+    const midnightUTC = today.toISOString()
 
-    if (limitsError) {
-      console.error('Failed to fetch user limits:', limitsError)
+    // Count today's API usage for recommendations
+    const { data: todayUsage, error: usageError } = await supabase
+      .from('api_usage')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('endpoint', 'openrouter-coach')
+      .gte('time_window_start', midnightUTC)
+
+    if (usageError) {
+      console.error('Failed to fetch API usage:', usageError)
       // Continue anyway - limit check is a safety feature, don't block on errors
     }
 
     // Calculate if limit exceeded
-    const recCount = limits?.rec_count ?? 0
-    const limitDate = limits?.limit_date ? new Date(limits.limit_date) : new Date('1970-01-01')
-    const today = new Date()
-    today.setUTCHours(0, 0, 0, 0)
-
-    // Reset count if new day (handle same-day check with comparison)
-    const isSameDay = limitDate.toISOString().split('T')[0] === today.toISOString().split('T')[0]
-    const effectiveCount = isSameDay ? recCount : 0
+    const effectiveCount = todayUsage?.length ?? 0
 
     if (effectiveCount >= dailyRecLimit) {
       // Calculate hours until next reset (UTC midnight)
@@ -517,11 +507,12 @@ Deno.serve(async (req: Request) => {
       tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
       const hoursUntilReset = Math.ceil((tomorrow.getTime() - Date.now()) / (1000 * 60 * 60))
 
-      const resetMessage = hoursUntilReset <= 1
-        ? 'Next reset in less than 1 hour'
-        : hoursUntilReset < 24
-          ? `Next reset in ${hoursUntilReset} hours`
-          : 'Next reset tomorrow at midnight UTC'
+      const resetMessage =
+        hoursUntilReset <= 1
+          ? 'Next reset in less than 1 hour'
+          : hoursUntilReset < 24
+            ? `Next reset in ${hoursUntilReset} hours`
+            : 'Next reset tomorrow at midnight UTC'
 
       return new Response(
         JSON.stringify({
@@ -534,8 +525,7 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // Increment counter BEFORE LLM API call to ensure we don't make expensive calls for blocked requests
-    await supabase.rpc('increment_rec_count', { p_user_id: userId })
+    // No need to increment counter - API usage will be tracked when request completes
 
     // Parse request body
     const body: RequestBody = await req.json()
@@ -555,13 +545,10 @@ Deno.serve(async (req: Request) => {
 
     // Verify user_id matches token
     if (body.user_id !== userId) {
-      return new Response(
-        JSON.stringify({ error: 'User ID mismatch' }),
-        {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'User ID mismatch' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     // Get cached recommendations for fallback
@@ -671,18 +658,16 @@ Deno.serve(async (req: Request) => {
               .eq('id', cachedRecommendations.id)
 
             // Track failed attempt with cost=0
-            const { error: failedUsageError } = await supabase
-              .from('api_usage')
-              .insert({
-                user_id: userId,
-                prompt_tokens: 0,
-                completion_tokens: 0,
-                total_tokens: 0,
-                cost_usd: 0,
-                model,
-                endpoint: 'openrouter-coach',
-                time_window_start: new Date().toISOString(),
-              })
+            const { error: failedUsageError } = await supabase.from('api_usage').insert({
+              user_id: userId,
+              prompt_tokens: 0,
+              completion_tokens: 0,
+              total_tokens: 0,
+              cost_usd: 0,
+              model,
+              endpoint: 'openrouter-coach',
+              time_window_start: new Date().toISOString(),
+            })
             if (failedUsageError) {
               console.error('Failed to track failed usage:', failedUsageError)
             }
@@ -701,30 +686,26 @@ Deno.serve(async (req: Request) => {
           }
 
           // No cached recommendations available - track error and return failure
-          const { error: errorInsertError } = await supabase
-            .from('coach_recommendations')
-            .insert({
-              user_id: userId,
-              content: {},
-              is_cached: false,
-              error_message: `Failed to generate valid recommendations: ${lastError?.message}`,
-            })
+          const { error: errorInsertError } = await supabase.from('coach_recommendations').insert({
+            user_id: userId,
+            content: {},
+            is_cached: false,
+            error_message: `Failed to generate valid recommendations: ${lastError?.message}`,
+          })
           if (errorInsertError) {
             console.error('Failed to store error message:', errorInsertError)
           }
 
-          const { error: finalFailedUsageError } = await supabase
-            .from('api_usage')
-            .insert({
-              user_id: userId,
-              prompt_tokens: 0,
-              completion_tokens: 0,
-              total_tokens: 0,
-              cost_usd: 0,
-              model,
-              endpoint: 'openrouter-coach',
-              time_window_start: new Date().toISOString(),
-            })
+          const { error: finalFailedUsageError } = await supabase.from('api_usage').insert({
+            user_id: userId,
+            prompt_tokens: 0,
+            completion_tokens: 0,
+            total_tokens: 0,
+            cost_usd: 0,
+            model,
+            endpoint: 'openrouter-coach',
+            time_window_start: new Date().toISOString(),
+          })
           if (finalFailedUsageError) {
             console.error('Failed to track failed usage:', finalFailedUsageError)
           }
@@ -751,12 +732,9 @@ Deno.serve(async (req: Request) => {
   } catch (error: any) {
     console.error('Error in openrouter-coach:', error.message, error.stack)
 
-    return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    )
+    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 })

@@ -276,26 +276,24 @@ Deno.serve(async (req: Request) => {
     }
 
     // Check daily tag limit BEFORE making any API calls
-    const { data: limits, error: limitsError } = await supabase
-      .from('user_limits')
-      .select('tag_count, limit_date')
-      .eq('user_id', userId)
-      .maybeSingle() // Use maybeSingle() for users without limits yet
+    const today = new Date()
+    today.setUTCHours(0, 0, 0, 0)
+    const midnightUTC = today.toISOString()
 
-    if (limitsError) {
-      console.error('Failed to fetch user limits:', limitsError)
+    // Count today's API usage for tag extraction
+    const { data: todayUsage, error: usageError } = await supabase
+      .from('api_usage')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('endpoint', 'openrouter-tag-extract')
+      .gte('time_window_start', midnightUTC)
+
+    if (usageError) {
+      console.error('Failed to fetch API usage:', usageError)
       // Continue anyway - limit check is a safety feature, don't block on errors
     }
 
-    // Calculate if limit exceeded
-    const tagCount = limits?.tag_count ?? 0
-    const limitDate = limits?.limit_date ? new Date(limits.limit_date) : new Date('1970-01-01')
-    const today = new Date()
-    today.setUTCHours(0, 0, 0, 0)
-
-    // Reset count if new day (handle same-day check with comparison)
-    const isSameDay = limitDate.toISOString().split('T')[0] === today.toISOString().split('T')[0]
-    const effectiveCount = isSameDay ? tagCount : 0
+    const effectiveCount = todayUsage?.length ?? 0
 
     if (effectiveCount >= DAILY_TAG_LIMIT) {
       // Calculate hours until next reset (UTC midnight)
@@ -321,8 +319,7 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // Increment counter BEFORE OpenRouter API call to ensure we don't make expensive calls for blocked requests
-    await supabase.rpc('increment_tag_count', { p_user_id: userId })
+    // No need to increment counter - API usage will be tracked when request completes
 
     // Estimate tokens and truncate if necessary
     let notes = body.notes

@@ -89,7 +89,7 @@ export async function checkUserRateLimit(userId: string): Promise<{
     .from('api_usage')
     .select('total_tokens')
     .eq('user_id', userId)
-    .gte('created_at', dayAgo)
+    .gte('time_window_start', dayAgo)
 
   if (error) {
     throw error

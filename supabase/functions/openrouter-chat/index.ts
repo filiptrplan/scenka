@@ -4,7 +4,13 @@ import { corsHeaders } from '../_shared/cors.ts'
 import { getChatSystemPrompt, type RecommendationsData } from '../_shared/system-prompt.ts'
 
 // Environment variable validation
-const requiredEnvVars = ['OPENROUTER_API_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'OPENROUTER_MODEL', 'DAILY_CHAT_LIMIT']
+const requiredEnvVars = [
+  'OPENROUTER_API_KEY',
+  'SUPABASE_URL',
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'OPENROUTER_MODEL',
+  'DAILY_CHAT_LIMIT',
+]
 for (const envVar of requiredEnvVars) {
   if (!Deno.env.get(envVar)) {
     throw new Error(`Missing required environment variable: ${envVar}`)
@@ -96,7 +102,10 @@ async function fetchRecommendationsIfMissing(
 // Helper function to estimate token count (rough approximation: ~1.3 tokens per word, or ~4 chars per token)
 function estimateTokenCount(text: string): number {
   // Count words (split by whitespace, filter empty)
-  const wordCount = text.trim().split(/\s+/).filter(w => w.length > 0).length
+  const wordCount = text
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 0).length
   // Or count characters / 4 for English text approximation
   const charBasedEstimate = Math.ceil(text.length / 4)
   // Use the higher of the two to be conservative
@@ -118,13 +127,10 @@ Deno.serve(async (req: Request) => {
 
   // Only accept POST requests
   if (req.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed', success: false }),
-      {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    )
+    return new Response(JSON.stringify({ error: 'Method not allowed', success: false }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 
   let userId: string | null = null
@@ -133,13 +139,10 @@ Deno.serve(async (req: Request) => {
     // Extract and validate JWT token
     const authHeader = req.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     const token = authHeader.replace('Bearer ', '')
@@ -151,37 +154,33 @@ Deno.serve(async (req: Request) => {
     } = await supabase.auth.getUser(token)
 
     if (claimsError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid or expired token' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     userId = user.id
 
     // Check daily chat limit BEFORE making LLM API call
-    const { data: limits, error: limitsError } = await supabase
-      .from('user_limits')
-      .select('chat_count, limit_date')
-      .eq('user_id', userId)
-      .maybeSingle()
+    const today = new Date()
+    today.setUTCHours(0, 0, 0, 0)
+    const midnightUTC = today.toISOString()
 
-    if (limitsError) {
-      console.error('Failed to fetch user limits:', limitsError)
+    // Count today's API usage for chat
+    const { data: todayUsage, error: usageError } = await supabase
+      .from('api_usage')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('endpoint', 'openrouter-chat')
+      .gte('time_window_start', midnightUTC)
+
+    if (usageError) {
+      console.error('Failed to fetch API usage:', usageError)
       // Continue anyway - don't block on limit check error
     }
 
-    const chatCount = limits?.chat_count ?? 0
-    const limitDate = limits?.limit_date ? new Date(limits.limit_date) : new Date('1970-01-01')
-    const today = new Date()
-    today.setUTCHours(0, 0, 0, 0)
-
-    // Reset count if new day (handle same-day check with comparison)
-    const isSameDay = limitDate.toISOString().split('T')[0] === today.toISOString().split('T')[0]
-    const effectiveCount = isSameDay ? chatCount : 0
+    const effectiveCount = todayUsage?.length ?? 0
 
     if (effectiveCount >= dailyChatLimit) {
       // Calculate hours until next reset (UTC midnight)
@@ -189,11 +188,12 @@ Deno.serve(async (req: Request) => {
       tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
       const hoursUntilReset = Math.ceil((tomorrow.getTime() - Date.now()) / (1000 * 60 * 60))
 
-      const resetMessage = hoursUntilReset <= 1
-        ? 'Next reset in less than 1 hour'
-        : hoursUntilReset < 24
-        ? `Next reset in ${hoursUntilReset} hours`
-        : 'Next reset tomorrow at midnight UTC'
+      const resetMessage =
+        hoursUntilReset <= 1
+          ? 'Next reset in less than 1 hour'
+          : hoursUntilReset < 24
+            ? `Next reset in ${hoursUntilReset} hours`
+            : 'Next reset tomorrow at midnight UTC'
 
       return new Response(
         JSON.stringify({
@@ -206,41 +206,31 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // Increment counter BEFORE storing message and making LLM API call
-    await supabase.rpc('increment_chat_count', { p_user_id: userId })
+    // No need to increment counter - API usage will be tracked when request completes
 
     // Parse request body
     const body: RequestBody = await req.json()
 
     // Validate message
     if (!body.message || typeof body.message !== 'string') {
-      return new Response(
-        JSON.stringify({ error: 'Message is required and must be a string' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Message is required and must be a string' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     if (body.message.trim().length === 0) {
-      return new Response(
-        JSON.stringify({ error: 'Message cannot be empty' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Message cannot be empty' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     if (body.message.length > 5000) {
-      return new Response(
-        JSON.stringify({ error: 'Message cannot exceed 5000 characters' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      return new Response(JSON.stringify({ error: 'Message cannot exceed 5000 characters' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     // Check token limit (10k tokens) to prevent abuse
@@ -262,7 +252,11 @@ Deno.serve(async (req: Request) => {
     }
 
     // Estimate tokens from system prompt (rough estimate)
-    const systemPrompt = getChatSystemPrompt(body.patterns_data, body.climbing_context, body.recommendations)
+    const systemPrompt = getChatSystemPrompt(
+      body.patterns_data,
+      body.climbing_context,
+      body.recommendations
+    )
     const systemPromptTokens = estimateTokenCount(systemPrompt)
 
     // Total estimated tokens for this request
@@ -381,18 +375,15 @@ Deno.serve(async (req: Request) => {
         ...corsHeaders,
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        Connection: 'keep-alive',
       },
     })
   } catch (error: any) {
     console.error('Error in openrouter-chat:', error.message, error.stack)
 
-    return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    )
+    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
   }
 })
