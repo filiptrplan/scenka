@@ -148,26 +148,24 @@ export async function generateRecommendations(
     },
   })
 
-  const parsed_data = JSON.parse(data)
-
   if (error) {
     // Edge Function already tracks all API usage (including failures)
     throw new Error(`Failed to generate recommendations: ${error.message}`)
   }
 
   // Handle Edge Function response format
-  if (!parsed_data.success && parsed_data.error) {
-    throw new Error(parsed_data.error)
+  if (!data.success && data.error) {
+    throw new Error(data.error)
   }
 
   // Log warning if cached data returned
-  if (parsed_data.warning) {
-    console.warn('Recommendations warning:', parsed_data.warning)
+  if (data.warning) {
+    console.warn('Recommendations warning:', data.warning)
   }
 
   return {
-    weekly_focus: parsed_data.content.weekly_focus,
-    drills: parsed_data.content.drills,
-    projecting_focus: parsed_data.content.projecting_focus || [],
+    weekly_focus: data.content.weekly_focus,
+    drills: data.content.drills,
+    projecting_focus: data.content.projecting_focus || [],
   } as GenerateRecommendationsResponse
 }
