@@ -2,12 +2,12 @@ import { formatDistanceToNow } from 'date-fns'
 import { MapPin, TrendingDown, TrendingUp, Edit, Trash2, Check } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { getAwkwardnessLabel } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
 import { FormLabel } from '@/components/ui/form-label'
 import { FormSection } from '@/components/ui/form-section'
 import { useUpdateClimb } from '@/hooks/useClimbs'
 import { COLOR_CIRCUIT } from '@/lib/grades'
+import { getAwkwardnessLabel } from '@/lib/constants'
 import type { Climb, HoldColor } from '@/types'
 
 // Color mapping for hold colors (matches ColorSettings component)
@@ -77,7 +77,7 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
                 <FormLabel>Hold Color</FormLabel>
                 <div
                   className="w-4 h-4 rounded-full border-2 border-white/20 ring-1 ring-white/10"
-                  style={{ backgroundColor: HOLD_COLOR_MAP[climb.hold_color] }}
+                  style={{ backgroundColor: HOLD_COLOR_MAP[climb.hold_color as HoldColor] }}
                   aria-label={`Hold color: ${climb.hold_color}`}
                 />
               </div>

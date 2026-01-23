@@ -36,10 +36,10 @@ export function SettingsPage() {
   const { handleSubmit, register, setValue, watch, reset } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      preferred_grade_scale: profile?.preferred_grade_scale ?? 'font',
-      preferred_discipline: profile?.preferred_discipline ?? 'boulder',
+      preferred_grade_scale: (profile?.preferred_grade_scale as 'font' | 'v_scale' | 'color_circuit') ?? 'font',
+      preferred_discipline: (profile?.preferred_discipline as 'boulder' | 'sport') ?? 'boulder',
       home_gym: profile?.home_gym ?? '',
-      enabled_hold_colors: profile?.enabled_hold_colors ?? DEFAULT_COLORS,
+      enabled_hold_colors: (profile?.enabled_hold_colors as HoldColor[]) ?? DEFAULT_COLORS,
       close_logger_after_add: profile?.close_logger_after_add ?? true,
       climbing_context: profile?.climbing_context ?? '',
     },
@@ -54,10 +54,10 @@ export function SettingsPage() {
   useEffect(() => {
     if (profile) {
       reset({
-        preferred_grade_scale: profile.preferred_grade_scale,
-        preferred_discipline: profile.preferred_discipline,
+        preferred_grade_scale: profile.preferred_grade_scale as 'font' | 'v_scale' | 'color_circuit',
+        preferred_discipline: profile.preferred_discipline as 'boulder' | 'sport',
         home_gym: profile.home_gym ?? '',
-        enabled_hold_colors: profile.enabled_hold_colors ?? DEFAULT_COLORS,
+        enabled_hold_colors: profile.enabled_hold_colors as HoldColor[] ?? DEFAULT_COLORS,
         close_logger_after_add: profile.close_logger_after_add ?? true,
         climbing_context: profile.climbing_context ?? '',
       })

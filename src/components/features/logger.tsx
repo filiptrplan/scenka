@@ -303,14 +303,14 @@ const Logger = forwardRef<LoggerHandle, LoggerProps>(
                           <button
                             key={color}
                             type="button"
-                            onClick={() => handleColorSelect(color)}
+                            onClick={() => handleColorSelect(color as HoldColor)}
                             className={cn(
                               'h-14 w-full rounded-lg border-2 transition-all',
                               selectedHoldColor === color
                                 ? 'ring-2 ring-white ring-offset-2 ring-offset-[#0a0a0a]'
                                 : 'opacity-40 hover:opacity-70'
                             )}
-                            style={{ backgroundColor: colorMap[color] }}
+                            style={{ backgroundColor: colorMap[color as HoldColor] }}
                             aria-label={`Select ${color} color`}
                             aria-pressed={selectedHoldColor === color}
                           />

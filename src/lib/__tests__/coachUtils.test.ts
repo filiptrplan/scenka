@@ -23,6 +23,7 @@ describe('coachUtils', () => {
           notes: 'My project',
           hold_color: 'red',
           redemption_at: null,
+          tags_extracted_at: null,
         },
       ]
 
@@ -48,6 +49,7 @@ describe('coachUtils', () => {
           notes: 'My project',
           hold_color: 'red',
           redemption_at: null,
+          tags_extracted_at: null,
         },
       ]
 
@@ -73,6 +75,7 @@ describe('coachUtils', () => {
           notes: 'My project',
           hold_color: 'red',
           redemption_at: null,
+          tags_extracted_at: null,
         },
       ]
 
@@ -82,6 +85,9 @@ describe('coachUtils', () => {
       expect(result[0]).not.toHaveProperty('user_id')
       expect(result[0]).not.toHaveProperty('notes')
       expect(result[0]).not.toHaveProperty('created_at')
+      expect(result[0]).not.toHaveProperty('hold_color')
+      expect(result[0]).not.toHaveProperty('redemption_at')
+      expect(result[0]).not.toHaveProperty('tags_extracted_at')
     })
   })
 

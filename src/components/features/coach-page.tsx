@@ -341,7 +341,7 @@ export function CoachPage() {
                       <p className="text-center text-[#888]">No failure data yet</p>
                     ) : (
                       <div className="space-y-3">
-                        {patterns.failure_patterns.most_common_failure_reasons.map((item) => (
+                        {patterns.failure_patterns.most_common_failure_reasons.map((item: { reason: string; count: number; percentage: number }) => (
                           <div key={item.reason} className="flex items-center justify-between">
                             <Badge
                               variant="outline"
@@ -373,7 +373,7 @@ export function CoachPage() {
                       <p className="text-center text-[#888]">No style data yet</p>
                     ) : (
                       <div className="space-y-3">
-                        {patterns.style_weaknesses.struggling_styles.map((item) => (
+                        {patterns.style_weaknesses.struggling_styles.map((item: { style: string; fail_rate: number; fail_count: number; total_attempts: number }) => (
                           <div key={item.style} className="flex items-center justify-between">
                             <Badge
                               variant="outline"
@@ -440,7 +440,7 @@ export function CoachPage() {
                         <div className="pt-4 border-t border-white/10">
                           <p className="text-sm text-[#888] mb-3 text-center">Grade Progression</p>
                           <div className="space-y-2">
-                            {patterns.recent_successes.grade_progression.map((gp, i) => (
+                            {patterns.recent_successes.grade_progression.map((gp: { grade: string; date: string }, i: number) => (
                               <div key={i} className="flex justify-between text-sm">
                                 <span className="text-[#888]">{gp.date}</span>
                                 <span className="font-mono">{gp.grade}</span>

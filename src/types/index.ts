@@ -418,38 +418,71 @@ export type CompositeTypes<
 
 // Type aliases for commonly used tables
 export type Climb = Tables<'climbs'>
-export type AnonymizedClimb = Omit<Climb, 'user_id' | 'location'> & {
-  location?: string
-  notes: string
+export type AnonymizedClimb = Omit<Climb, 'user_id' | 'location' | 'created_at' | 'hold_color' | 'id' | 'redemption_at' | 'tags_extracted_at'> & {
+  location: string
+  notes: string | null
   date: string
 }
 export type GradeScale = 'font' | 'v_scale' | 'color_circuit'
 export type Discipline = 'boulder' | 'sport'
 export type Outcome = 'Sent' | 'Fail'
-export type Style = 'Slab' | 'Vert' | 'Overhang' | 'Roof' | 'Dyno' | 'Crimp' | 'Sloper' | 'Pinch' | 'Tension'
+export type Style =
+  | 'Slab'
+  | 'Vert'
+  | 'Overhang'
+  | 'Roof'
+  | 'Dyno'
+  | 'Crimp'
+  | 'Sloper'
+  | 'Pinch'
+  | 'Compression'
+  | 'Tension'
 export type FailureReason =
   | 'Pumped'
   | 'Finger Strength'
   | 'Core'
   | 'Power'
+  | 'Flexibility'
+  | 'Balance'
+  | 'Endurance'
   | 'Bad Feet'
   | 'Body Position'
   | 'Beta Error'
   | 'Precision'
+  | 'Precision (Feet)'
+  | 'Precision (Hands)'
+  | 'Coordination (Hands)'
+  | 'Coordination (Feet)'
+  | 'Foot Swap'
+  | 'Heel Hook'
+  | 'Toe Hook'
+  | 'Rockover'
+  | 'Pistol Squat'
+  | 'Drop Knee'
+  | 'Twist Lock'
+  | 'Flagging'
+  | 'Dyno'
+  | 'Deadpoint'
+  | 'Latch'
+  | 'Mantle'
+  | 'Undercling'
+  | 'Gaston'
+  | 'Match'
+  | 'Cross'
   | 'Fear'
   | 'Commitment'
   | 'Focus'
 export type HoldColor =
-  | 'Teal'
-  | 'Green'
-  | 'Yellow'
-  | 'Orange'
-  | 'Red'
-  | 'Purple'
-  | 'Blue'
-  | 'Pink'
-  | 'White'
-  | 'Black'
+  | 'teal'
+  | 'green'
+  | 'yellow'
+  | 'orange'
+  | 'red'
+  | 'purple'
+  | 'blue'
+  | 'pink'
+  | 'white'
+  | 'black'
 export type TerrainType = 'Slab' | 'Vert' | 'Overhang' | 'Roof' | 'Dyno' | 'Crimp' | 'Sloper' | 'Pinch'
 export type AwkwardnessLevel = 'awkward' | 'normal' | 'smooth'
 
@@ -461,3 +494,39 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
+export interface PatternAnalysis {
+  failure_patterns: {
+    most_common_failure_reasons: Array<{
+      reason: string
+      count: number
+      percentage: number
+    }>
+  }
+  style_weaknesses: {
+    struggling_styles: Array<{
+      style: string
+      fail_rate: number
+      fail_count: number
+      total_attempts: number
+    }>
+  }
+  climbing_frequency: {
+    climbs_per_week: Array<{
+      week: string
+      count: number
+    }>
+    climbs_per_month: number
+    avg_climbs_per_session: number
+  }
+  recent_successes: {
+    recent_sends: Climb[]
+    grade_progression: Array<{
+      grade: string
+      date: string
+    }>
+    redemption_count: number
+  }
+}
+
+export type Profile = Tables<'profiles'>

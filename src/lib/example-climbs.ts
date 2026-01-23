@@ -16,6 +16,7 @@ export const EXAMPLE_CLIMBS: Climb[] = [
     failure_reasons: ['Finger Strength', 'Beta Error'],
     notes: 'Fell at the crux, need to work on left-hand crimp sequence',
     redemption_at: null,
+    tags_extracted_at: null,
   },
   {
     id: '2',
@@ -32,6 +33,7 @@ export const EXAMPLE_CLIMBS: Climb[] = [
     failure_reasons: ['Bad Feet'],
     notes: 'Felt good, sloper crux was tricky but figured out the beta',
     redemption_at: null,
+    tags_extracted_at: null,
   },
   {
     id: '3',
@@ -48,6 +50,7 @@ export const EXAMPLE_CLIMBS: Climb[] = [
     failure_reasons: ['Fear', 'Commitment'],
     notes: 'Sketched out at the clip, pumped out trying to hang',
     redemption_at: null,
+    tags_extracted_at: null,
   },
   {
     id: '4',
@@ -64,6 +67,7 @@ export const EXAMPLE_CLIMBS: Climb[] = [
     failure_reasons: ['Pumped', 'Core'],
     notes: 'Core was weak on the roof section, need more core work',
     redemption_at: null,
+    tags_extracted_at: null,
   },
   {
     id: '5',
@@ -80,6 +84,7 @@ export const EXAMPLE_CLIMBS: Climb[] = [
     failure_reasons: [],
     notes: 'Flow state! Dyno felt effortless',
     redemption_at: null,
+    tags_extracted_at: null,
   },
   {
     id: '6',
@@ -96,6 +101,7 @@ export const EXAMPLE_CLIMBS: Climb[] = [
     failure_reasons: ['Body Position', 'Precision'],
     notes: 'Couldnt find the right body position on the overhang crux',
     redemption_at: null,
+    tags_extracted_at: null,
   },
   {
     id: '7',
@@ -112,6 +118,7 @@ export const EXAMPLE_CLIMBS: Climb[] = [
     failure_reasons: ['Finger Strength', 'Power', 'Beta Error'],
     notes: 'Projecting this one, roof is absolutely savage',
     redemption_at: null,
+    tags_extracted_at: null,
   },
   {
     id: '8',
@@ -128,5 +135,6 @@ export const EXAMPLE_CLIMBS: Climb[] = [
     failure_reasons: ['Focus'],
     notes: 'Lost focus once but recovered quickly',
     redemption_at: null,
+    tags_extracted_at: null,
   },
 ]
