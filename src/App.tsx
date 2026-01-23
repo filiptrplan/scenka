@@ -119,6 +119,7 @@ function Layout() {
           onSuccess: () => {
             setLoggerOpen(false)
             setEditingClimb(null)
+            loggerRef.current?.resetAllState()
             toast.success('Climb updated successfully')
           },
           onError: (error) => {
