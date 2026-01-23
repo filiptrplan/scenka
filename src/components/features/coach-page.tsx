@@ -126,9 +126,7 @@ export function CoachPage() {
             <span className="text-xs text-[#888]">
               {recCount}/{dailyRecLimit} used today
             </span>
-            {isRecAtLimit && (
-              <p className="text-xs text-red-400">{getTimeUntilNextReset()}</p>
-            )}
+            {isRecAtLimit ? <p className="text-xs text-red-400">{getTimeUntilNextReset()}</p> : null}
           </div>
         </div>
       </div>
@@ -231,11 +229,9 @@ export function CoachPage() {
                       <p className="text-sm text-[#bbb] leading-relaxed mb-3">
                         {drill.description ?? 'No description available'}
                       </p>
-                      {drill.measurable_outcome && (
-                        <p className="text-xs text-green-400/80 leading-relaxed font-mono">
+                      {drill.measurable_outcome ? <p className="text-xs text-green-400/80 leading-relaxed font-mono">
                           Goal: {drill.measurable_outcome}
-                        </p>
-                      )}
+                        </p> : null}
                     </FormSection>
                   )
                 )
@@ -294,9 +290,7 @@ export function CoachPage() {
               <span className="text-xs text-[#888] text-center">
                 {recCount}/{dailyRecLimit} used today
               </span>
-              {isRecAtLimit && (
-                <p className="text-xs text-red-400 text-center">{getTimeUntilNextReset()}</p>
-              )}
+              {isRecAtLimit ? <p className="text-xs text-red-400 text-center">{getTimeUntilNextReset()}</p> : null}
               <Button
                 variant="outline"
                 onClick={() => void navigate('/coach/chat')}

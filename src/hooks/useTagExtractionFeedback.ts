@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import { getTimeUntilNextReset } from '@/hooks/useUserLimits'
-import { DAILY_TAG_LIMIT } from '@/lib/constants'
+import { DAILY_TAG_LIMIT } from '@/lib/constants/config'
 import { supabase } from '@/lib/supabase'
 import type { TagExtractionErrorType } from '@/services/tagExtraction'
 

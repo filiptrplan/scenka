@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { userLimitsKeys } from './useUserLimits'
+
 import { supabase } from '@/lib/supabase'
 import type { TablesInsert } from '@/types'
-import { userLimitsKeys } from './useUserLimits'
 
 export interface CoachMessage {
   id: string
@@ -47,7 +48,7 @@ async function getCoachMessages(): Promise<CoachMessage[]> {
 }
 
 async function createCoachMessage(
-  message: Omit<CoachMessage, 'id' | 'user_id' | 'created_at'>,
+  message: Omit<CoachMessage, 'id' | 'user_id' | 'created_at'>
 ): Promise<CoachMessage> {
   if (!supabase) {
     throw new Error('Supabase client not configured')
@@ -117,10 +118,7 @@ export function useClearCoachMessages() {
         throw new Error('Not authenticated')
       }
 
-      const { error } = await supabase
-        .from('coach_messages')
-        .delete()
-        .eq('user_id', user.id)
+      const { error } = await supabase.from('coach_messages').delete().eq('user_id', user.id)
 
       if (error) {
         throw error

@@ -6,23 +6,10 @@ import { Button } from '@/components/ui/button'
 import { FormLabel } from '@/components/ui/form-label'
 import { FormSection } from '@/components/ui/form-section'
 import { useUpdateClimb } from '@/hooks/useClimbs'
+import { HOLD_COLOR_MAP } from '@/lib/constants/colors'
+import { getAwkwardnessLabel } from '@/lib/constants/config'
 import { COLOR_CIRCUIT } from '@/lib/grades'
-import { getAwkwardnessLabel } from '@/lib/constants'
 import type { Climb, HoldColor } from '@/types'
-
-// Color mapping for hold colors (matches ColorSettings component)
-const HOLD_COLOR_MAP: Record<HoldColor, string> = {
-  red: '#ef4444',
-  green: '#22c55e',
-  blue: '#3b82f6',
-  yellow: '#eab308',
-  black: '#18181b',
-  white: '#fafafa',
-  orange: '#f97316',
-  purple: '#a855f7',
-  pink: '#ec4899',
-  teal: '#14b8a6',
-}
 
 interface ClimbCardProps {
   climb: Climb
@@ -72,7 +59,7 @@ export function ClimbCard({ climb, onEditClick, onDeleteClick }: ClimbCardProps)
               <MapPin className="h-3 w-3" />
               <FormLabel>{climb.location}</FormLabel>
             </div>
-            {climb.hold_color !== null && climb.hold_color !== undefined && (
+            {climb.hold_color !== null && (
               <div className="flex items-center gap-2 mt-1">
                 <FormLabel>Hold Color</FormLabel>
                 <div

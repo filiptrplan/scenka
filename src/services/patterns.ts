@@ -1,7 +1,7 @@
+import { anonymizeClimbsForAI } from '@/lib/coachUtils'
 import { normalizeGrade } from '@/lib/grades'
 import { supabase } from '@/lib/supabase'
 import type { Climb, PatternAnalysis, AnonymizedClimb } from '@/types'
-import { anonymizeClimbsForAI } from '@/lib/coachUtils'
 
 export async function extractPatterns(userId: string): Promise<PatternAnalysis> {
   if (!supabase) {
@@ -129,9 +129,7 @@ function extractClimbingFrequency(climbs: Climb[]) {
   const lastClimb = climbs.length > 0 ? climbs[0] : null
 
   const daysSpanned =
-    firstClimb && lastClimb
-      ? getDaysSpanned(lastClimb.created_at, firstClimb.created_at)
-      : 0
+    firstClimb && lastClimb ? getDaysSpanned(lastClimb.created_at, firstClimb.created_at) : 0
   const avgPerMonth = daysSpanned > 0 ? Math.round((totalClimbs / daysSpanned) * 30) : 0
 
   return {
@@ -198,7 +196,7 @@ function getWeekNumber(date: Date): number {
   const dayNum = d.getUTCDay() || 7
   d.setUTCDate(d.getUTCDate() + 4 - dayNum)
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
-  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7)
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7)
 }
 
 function formatWeek(weekKey: string): string {
@@ -213,7 +211,9 @@ function getDaysSpanned(start: string, end: string): number {
 }
 
 function calculateAvgPerSession(climbs: Climb[]): number {
-  if (climbs.length === 0) {return 0}
+  if (climbs.length === 0) {
+    return 0
+  }
 
   // Group climbs by day (approximate session)
   const sessions = new Map<string, number>()

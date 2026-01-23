@@ -50,11 +50,11 @@ export function useCreateClimb() {
     // If tags were extracted, update the cache with new tags
     if (result.success && (result.style || result.failure_reasons)) {
       const climbId = lastCreatedClimbIdRef.current
-      if (!climbId) return
+      if (!climbId) {return}
 
       queryClient.setQueryData(climbsKeys.list(), (oldData: Climb[] | undefined) => {
         console.log('Setting...')
-        if (!oldData) return oldData
+        if (!oldData) {return oldData}
 
         return oldData.map((climb) => {
           if (climb.id === climbId) {

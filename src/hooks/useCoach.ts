@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { userLimitsKeys } from './useUserLimits'
+
 import { supabase } from '@/lib/supabase'
 import {
   checkUserRateLimit,
@@ -9,7 +11,6 @@ import {
   type ProjectingFocus,
 } from '@/services/coach'
 import { extractPatterns } from '@/services/patterns'
-import { userLimitsKeys } from './useUserLimits'
 
 interface CoachRecommendation {
   id: string

@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
-import { getProfile } from '@/services/profiles'
 import { extractPatterns, extractRecentClimbs } from '@/services/patterns'
+import { getProfile } from '@/services/profiles'
 import type { Climb, AnonymizedClimb } from '@/types'
 
 export interface ApiUsage {
@@ -171,4 +171,3 @@ export async function generateRecommendations(
     projecting_focus: parsed_data.content.projecting_focus || [],
   } as GenerateRecommendationsResponse
 }
-

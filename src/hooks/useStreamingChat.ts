@@ -114,7 +114,7 @@ export function useStreamingChat({ addUserMessage, addAssistantMessage }: UseStr
         let fullResponse = ''
 
         // Connect to SSE endpoint
-        await fetchEventSource(supabaseUrl + '/functions/v1/openrouter-chat', {
+        await fetchEventSource(`${supabaseUrl  }/functions/v1/openrouter-chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

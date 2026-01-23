@@ -1,4 +1,4 @@
-import { DAILY_TAG_LIMIT, TAG_EXTRACTION_TIMEOUT_MS } from '@/lib/constants'
+import { DAILY_TAG_LIMIT, TAG_EXTRACTION_TIMEOUT_MS } from '@/lib/constants/config'
 import { supabase } from '@/lib/supabase'
 import type { Climb } from '@/types'
 

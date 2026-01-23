@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+
 import { useCoachMessages, useCreateCoachMessage, type CoachMessage } from './useCoachMessages'
 
 export function useLocalChatMessages() {
